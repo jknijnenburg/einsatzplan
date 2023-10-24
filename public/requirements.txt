@@ -1,0 +1,2 @@
+tkinter==8.6
+ttkthemes==3.2.0

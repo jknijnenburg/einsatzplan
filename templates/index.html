@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Einsatzplan - SLT</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  {% block title %}
+    <body>
+      <head>
+        <p id="week-output"></p>
+      </head>
+
+      <main>
+        <div id="login-frame">
+          <form id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required /><br /><br />
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required /><br /><br />
+            <button type="button" id="login-button">Login</button>
+          </form>
+        </div>
+        <div id="main-frame">
+          <h1>Einsatzplan</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for colleague in data %}
+                <tr>
+                  <td>{{ colleague.name }}</td>
+                  <td>{{ colleague.role }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </main>
+
+      <script src="js/javascript.js" async defer></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script>
+        $(document).ready(function () {
+          $('#Admin-b').click(function () {
+            $('#login-frame').show()
+          })
+        
+          $('#login-button').click(function () {
+            var username = $('#username').val()
+            var password = $('#password').val()
+        
+            // Send a POST request to your server for authentication
+            // Example using jQuery:
+            $.ajax({
+              url: '/login', // Replace with the actual login URL on your server
+              type: 'POST',
+              data: {
+                username: username,
+                password: password
+              },
+              success: function (response) {
+                console.log(response) // Log the response to the console
+                if (response === 'success') {
+                  $('#login-frame').hide()
+                  $('#assign-frame').load('/admin-panel')
+                } else {
+                  alert('Invalid username or password. Please try again.')
+                }
+              }
+            })
+          })
+        })
+      </script>
+
+      <script src="https://cdn.jsdelivr.net/npm/brython@3.9.1/brython.min.js"></script>
+    </body>
+  {% endblock %}
+</html>

@@ -5,6 +5,8 @@ from tkinter import *
 from tkinter import Label
 import tkinter.font as tkFont
 
+from flask import Flask
+
 class CompanyOverviewApp(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -177,5 +179,5 @@ class AssignFrame(tk.Frame):
                 self.master.table_frame.table.set(item_id, day, self.master.user_assignments[user][day])
 
 if __name__ == "__main__":
-    app = CompanyOverviewApp()
-    app.mainloop()
+    app = Flask(__name__)
+    app.run()

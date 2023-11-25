@@ -79,8 +79,6 @@ class TableFrame(tk.Frame):
 
         self.usernames = usernames
         self.user_groups = user_groups
-        
-        """ Passendes Datum zum Wochentag darüber anzeigen """
 
         self.table = ttk.Treeview(self, columns=("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"))
         self.table.heading("#0", text="Name")

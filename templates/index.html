@@ -6,7 +6,8 @@
     <title>Einsatzplan - SLT</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'styles.css') }}" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
   </head>
   {% block title %}
     <body>
@@ -16,71 +17,274 @@
 
       <main>
         <div id="login-frame">
-          <form id="login-form">
+          <form id="login-form" method="POST" action="{{ url_for('login') }}">
+            {{ form.hidden_tag() }}
+            {{ form.csrf_token }}
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required /><br /><br />
+            {{ form.username }}
+            <br /><br />
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required /><br /><br />
-            <button type="button" id="login-button">Login</button>
+            {{ form.password }}
+            <br /><br />
+            <button type="submit" id="login-button">Login</button>
           </form>
         </div>
-        <div id="main-frame">
-          <h1>Einsatzplan</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Role</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for colleague in data %}
+
+        {% block content %}
+          <div id="main-frame">
+            <h1>Einsatzplan</h1>
+            <table class="table">
+              <thead>
                 <tr>
-                  <td>{{ colleague.name }}</td>
-                  <td>{{ colleague.role }}</td>
+                  <th>P-Nr.</th>
+                  <th>Name</th>
+                  <th>Mo</th>
+                  <th>Di</th>
+                  <th>Mi</th>
+                  <th>Do</th>
+                  <th>Fr</th>
+                  <th>Sa</th>
+                  <th>So</th>
                 </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                <!-- Pro work_field die Tabellen separieren -->
+                {% if data %}
+                  <tr>
+                    <td colspan="4">
+                      <strong>Schlosser</strong>
+                    </td>
+                  </tr>
+                  {% for row in data %}
+                    {% if row[3] == 'Schlosser' %}
+                      <tr>
+                        <td>{{ row[0] }}</td> <!-- Personal-Nr. -->
+                        <td>{{ row[1] }}</td> <!-- Name -->
+                        {% for i in range(2, 9) %}
+                          {% set found = false %}
+                          {% for assignment in assignment_table_data %}
+                            {% if assignment.user_id == row[0] and assignment.day_of_week == i - 1 and assignment.week_id == week_id %}
+                              {% set found = true %}
+                              <td>{{ assignment.task_id }}</td>
+                            {% endif %}
+                          {% endfor %}
+                          {% if not found %}
+                            <td></td>
+                          {% endif %}
+                        {% endfor %}
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                  <tr>
+                    <td colspan="4">
+                      <strong>Dreher & Fräser</strong>
+                    </td>
+                  </tr>
+                  {% for row in data %}
+                    {% if row[3] == 'Dreher & Fräser' %}
+                      <tr>
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                  <tr>
+                    <td colspan="4">
+                      <strong>Elektriker</strong>
+                    </td>
+                  </tr>
+                  {% for row in data %}
+                    {% if row[3] == 'Elektriker' %}
+                      <tr>
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                  <tr>
+                    <td colspan="4">
+                      <strong>Freie Mitarbeiter</strong>
+                    </td>
+                  </tr>
+                  {% for row in data %}
+                    {% if row[3] == 'Freie Mitarbeiter' %}
+                      <tr>
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                  <tr>
+                    <td colspan="4">
+                      <strong>Büro</strong>
+                    </td>
+                  </tr>
+                  {% for row in data %}
+                    {% if row[3] == 'Büro' %}
+                      <tr>
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                  <tr>
+                    <td colspan="4">
+                      <strong>Hauswart</strong>
+                    </td>
+                  </tr>
+                  {% for row in data %}
+                    {% if row[3] == 'Hauswart' %}
+                      <tr>
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td colspan="9">No data available</td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+            {% if user_role == 'admin' %}
+              <div id="assign-frame">
+                {% block assign_frame %}
+                  <form action="">
+                    <label>
+                      Mitarbeiter:<select name="mitarbeiter" id="dd-m">
+                        {% for row in data %}
+                          <option value="">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
+                      </select>
+                    </label>
+                    <!-- Entweder auswählen oder in der Tabelle anklicken -->
+                    <label>Von-Bis-Datum:<input type="text" id="date-select" name="datefilter" value="" /></label>
+                    <label>
+                      Kunde:<select name="kunden" id="dd-c">
+                        <!-- Kunden aus Datenbank auslesen -->
+                        <option value="" disabled selected>Kunde</option>
+                        <option value=""></option>
+                      </select>
+                    </label>
+                    <label>
+                      Projekt:<select name="projekt" id="dd-p">
+                        <!-- Projektnummern aus Datenbank auslesen -->
+                        <option value="" disabled selected>Projekt</option>
+                        <option value=""></option>
+                      </select>
+                    </label>
+                    <label>
+                      Auto:<select name="auto" id="dd-p">
+                        <!-- Autos aus Datenbank auslesen -->
+                        <option value="" disabled selected>Auto</option>
+                        <option value=""></option>
+                      </select>
+                    </label>
+                    <label>
+                      Ort:<select name="ort" id="dd-l">
+                        <option value="vO">V</option>
+                        <option value="iF">F</option>
+                      </select>
+                    </label>
+                    <button class="confirm">Bestätigen</button>
+                  </form>
+                  <div class="group-create">
+                    <h3>Gruppe erstellen & zuweisen</h3>
+                    <p>Wähle mehrere Mitarbeiter aus, um eine Gruppe zu erstellen.</p>
+                    <!-- Vielleicht eine Mehrfachauswahl-Liste implementieren? -->
+                    <p>Wähle eine Farbe für diese Gruppe und anschließend das Projekt sowie weitere "Eigenschaften".</p>
+                  </div>
+                  <div class="add-data">
+                    <h3>Füge Daten zu der Datenbank hinzu.</h3>
+                    <label>
+                      Neuen Mitarbeiter:<input type="text" placeholder="Personal-Nr." />
+                      <input type="text" placeholder="Vorname" />
+                      <input type="text" placeholder="Nachname" />
+                      <select name="" id="">
+                        <option value="" disabled selected>Bereich</option>
+                        <option value="">Schlosser</option>
+                        <option value="">Dreher & Fräser</option>
+                        <option value="">Elektriker</option>
+                        <option value="">Freie Mitarbeiter</option>
+                        <option value="">Büro</option>
+                        <option value="">Hauswart</option>
+                      </select>
+                    </label>
+                    <label>Neuen Kunden:</label>
+                    <label>Neues Auto:<input type="text" placeholder="Kennzeichen.." /></label>
+                    <label>Neues Projekt:<input type="text" placeholder="Projekt-Nr.." /></label>
+                  </div>
+                  <div class="delete-data">
+                    <h3>Lösche Daten aus der Datenbank.</h3>
+                    <label>Kunden</label>
+                    <label>Mitarbeiter</label>
+                    <label>Auto</label>
+                    <label>Projekt</label>
+                  </div>
+                {% endblock %}
+              </div>
+            {% endif %}
+          </div>
+        {% endblock %}
       </main>
 
-      <script src="js/javascript.js" async defer></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+      <script src="{{ url_for('static', filename = 'javascript.js') }}"></script>
       <script>
-        $(document).ready(function () {
-          $('#Admin-b').click(function () {
-            $('#login-frame').show()
-          })
-        
-          $('#login-button').click(function () {
-            var username = $('#username').val()
-            var password = $('#password').val()
-        
-            // Send a POST request to your server for authentication
-            // Example using jQuery:
-            $.ajax({
-              url: '/login', // Replace with the actual login URL on your server
-              type: 'POST',
-              data: {
-                username: username,
-                password: password
-              },
-              success: function (response) {
-                console.log(response) // Log the response to the console
-                if (response === 'success') {
-                  $('#login-frame').hide()
-                  $('#assign-frame').load('/admin-panel')
+        document.addEventListener('DOMContentLoaded', function () {
+          document.getElementById('login-form').addEventListener('submit', function (e) {
+            e.preventDefault()
+            var formData = new FormData(this)
+            fetch('/login', {
+              method: 'POST',
+              body: formData
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                console.log('Login Response:', data) // Log the response to the console
+                if (data.status === 'success') {
+                  console.log('User Role:', data.user_role) // Log the user role to the console
+                  window.location.href = '/?user_role=' + (data.user_role || 'user')
                 } else {
                   alert('Invalid username or password. Please try again.')
                 }
-              }
-            })
+              })
+              .catch((error) => {
+                console.error('Error:', error)
+              })
+          })
+        })
+        
+        $(document).ready(function () {
+          $('#date-range').daterangepicker({
+            startDate: '2023-01-01',
+            endDate: '2035-12-31',
+            minDate: '2023-01-01',
+            maxDate: '2035-12-31'
           })
         })
       </script>
 
       <script src="https://cdn.jsdelivr.net/npm/brython@3.9.1/brython.min.js"></script>
+      <footer>
+        <tr>
+          <td style="background-color:#287429;" width="100%">
+            <table cellspacing="0" cellpadding="0" border="0" width="800">
+              <tbody>
+                <tr>
+                  <td width="100%" height="30" align="center" valign="center" style="font-size:10px;">
+                    © 2023 SLT-Technologies GmbH &amp; Co. KG • Telefon +49 (421) 66 05 8-0 • Fax +49 (421) 66 05 8-40 • Email
+                    <a href="mailto:info@slt-technologies.com">info@slt-technologies.com</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </footer>
     </body>
   {% endblock %}
 </html>

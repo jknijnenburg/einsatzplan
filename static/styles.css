@@ -1,0 +1,23 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: rgb(233, 240, 232);
+    font-family: "Roboto", Arial, Helvetica, sans-serif;
+}
+
+table {
+    width: 90%;
+    border: black 1px solid;
+}
+
+td {
+    border: black 1px solid;
+}
+
+footer {
+    margin-top: 200px;
+}

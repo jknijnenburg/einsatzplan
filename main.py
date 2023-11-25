@@ -4,44 +4,73 @@ from tkinter import ttk
 from tkinter import *
 from tkinter import Label
 import tkinter.font as tkFont
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import g
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField, validators
 import sqlite3
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "your_secret_key"
 
-app.config['DATABASE'] = 'datenbank.db'
+app.config["DATABASE"] = "datenbank.db"
+
+conn = sqlite3.connect("datenbank.db")
+cursor = conn.cursor()
+cursor.execute("SELECT * FROM assignment_table")
+rows = cursor.fetchall()
+
+cursor.close()
+conn.close()
+
 
 def get_db():
-    db = getattr(Flask, '_database', None)
+    db = getattr(g, "_database", None)
     if db is None:
-        db = Flask._database = sqlite3.connect(app.config['DATABASE'])
+        db = g._database = sqlite3.connect(app.config["DATABASE"])
     return db
+
 
 @app.teardown_appcontext
 def close_db(error):
-    db = getattr(Flask, '_database', None)
+    db = getattr(g, "_database", None)
     if db is not None:
-        db.close()
+        db.commit()
+
 
 @app.route("/")
 def index():
     db = get_db()
-    cursor = db.execute('SELECT * FROM assignment_table')
+    cursor = db.execute("SELECT * FROM users ORDER BY work_field")
     rows = cursor.fetchall()
-    return render_template("index.html", data = rows)
+    assign_data = db.execute("SELECT * FROM assignment_table")
+    assign_rows = assign_data.fetchall()
+    form = LoginForm()
+    user_role = request.args.get("user_role", "user")
+    return render_template("index.html", data=rows, assignment_table_data=assign_rows, form=form, user_role=user_role)
 
 
 # Add a new route for handling login requests
 @app.route("/login", methods=["POST"])
 def login():
-    username = str(request.form.get("username")).strip()
-    password = str(request.form.get("password")).strip()
+    form = LoginForm(request.form)
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
 
     # Perform authentication logic here, e.g., check credentials against a database
     if username == "admin" and password == "admin":
-        return jsonify({"status": "success"})
+        return jsonify({"status": "success", "user_role": "admin"})
     else:
-        return jsonify({"status": "error"})
+        return jsonify({"status": "error", "user_role": "user"})
+
+    return redirect(url_for("index"))
+
+
+class LoginForm(FlaskForm):
+    username = StringField("Username", [validators.DataRequired()])
+    password = PasswordField("Password", [validators.DataRequired()])
+    submit = SubmitField("Login")
 
 
 class CompanyOverviewApp(tk.Tk):
@@ -58,6 +87,14 @@ class CompanyOverviewApp(tk.Tk):
         self.login_frame.destroy()
         self.main_frame = MainFrame(self, user_role)
         self.main_frame.pack(fill=tk.BOTH, expand=True)
+
+        form = LoginForm()
+        self.main_frame.assign_frame = (
+            AssignFrame(self, self.users) if user_role == "admin" else None
+        )
+        self.main_frame.assign_frame.pack(
+            fill=tk.BOTH, expand=True
+        ) if self.main_frame.assign_frame else None
 
 
 class LoginFrame(tk.Frame):
@@ -80,12 +117,14 @@ class LoginFrame(tk.Frame):
         username = self.username_entry.get()
         password = self.password_entry.get()
 
-        if username == "admin" and password == "admin":
-            self.master.show_main_frame("admin")
-        elif username in self.master.users and self.master.users[username] == password:
+        if username in self.master.users and self.master.users[username] == password:
             self.master.show_main_frame("user")
+            return jsonify({"status": "success"})
+        elif username == "admin" and password == "admin":
+            self.master.show_main_frame("admin")
+            return jsonify({"status": "success"})
         else:
-            messagebox.showinfo("Login", "Falscher Nutzername oder Password.")
+            return jsonify({"status": "error"})
 
 
 class MainFrame(tk.Frame):
@@ -305,5 +344,4 @@ class AssignFrame(tk.Frame):
 
 
 if __name__ == "__main__":
-    app.run()
-    app.debug = True
+    app.run(debug=True)

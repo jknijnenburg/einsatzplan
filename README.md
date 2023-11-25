@@ -1,6 +1,35 @@
 # einsatzplan
 Einsatzplan Management
 
+
+# -- Anforderungen -- #
+
+- Mitarbeiter an Wochentagen zuweisen
+- Mitarbeiter zu Baustellen zuweisen
+- Datum über Wochentag
+- Zwischen den Kalenderwochen wechseln können (vlt. mit Button für direkt zur derzeitigen KW)
+- Löschfunktion für Einträge
+- 3-4 KW sichtbar
+- Zeiten für 1 Jahr
+- Gruppenfunktion mit Verschiebung -> Farbige Hinterlegen
+- Hotel + Stundenzettel (Buchstaben)
+- Kunden hinzufügen/löschen können
+- Baustelle -- "" --
+- Auto -- "" --
+- Baustelle gegen Projekt tauschen
+- Detailansicht wenn man auf ein Feld draufklickt z.B. Ort
+- Vor-Ort oder in der Firma (Buchstaben)
+- Personalnummer
+- Bei Gruppen jeweils Auto zuweisen bzw. mehrere Autos
+- Hinweisfeld zum Eintragen
+
+- Legende
+
+
+Zukunft:
+- Auslesen der aktuellen Datenbank von z.B. den eingetragenen Urlaubstagen, etc. um diese vielleicht auch abzugleichen.
+
+
 # -- SETUP ENV -- #
 
 1. python3 -m venv venv

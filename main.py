@@ -47,7 +47,13 @@ def index():
     assign_rows = assign_data.fetchall()
     form = LoginForm()
     user_role = request.args.get("user_role", "user")
-    return render_template("index.html", data=rows, assignment_table_data=assign_rows, form=form, user_role=user_role)
+    return render_template(
+        "index.html",
+        data=rows,
+        assignment_table_data=assign_rows,
+        form=form,
+        user_role=user_role,
+    )
 
 
 # Add a new route for handling login requests
@@ -65,6 +71,50 @@ def login():
         return jsonify({"status": "error", "user_role": "user"})
 
     return redirect(url_for("index"))
+
+
+@app.route("/submit_m_add", methods=["POST"])
+def create_new_user():
+    personal_nr = request.form.get("personal_nr")
+    vorname = request.form.get("vorname")
+    nachname = request.form.get("nachname")
+    bereich = request.form.get("bereich")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    # Perform database operation to create a new user with the provided inputs
+    try:
+        cursor.execute(
+            "INSERT INTO users (user_id, first_name, last_name, work_field) VALUES (?, ?, ?, ?)",
+            (personal_nr, vorname, nachname, bereich),
+        )
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        conn.close()
+
+    return "Mitarbeiter erfolgreich angelegt."
+
+
+@app.route("/submit_m_delete", methods=["POST"])
+def delete_user():
+    personal_nr = request.form.get("personal_nr")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    # Perform database operation to create a new user with the provided inputs
+    try:
+        cursor.execute("DELETE FROM users WHERE user_id=?", (personal_nr,))
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        conn.close()
+
+    return "Mitarbeiter erfolgreich entfernt."
 
 
 class LoginForm(FlaskForm):

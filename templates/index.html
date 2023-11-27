@@ -150,7 +150,7 @@
             {% if user_role == 'admin' %}
               <div id="assign-frame">
                 {% block assign_frame %}
-                  <form action="">
+                  <form action="" method="POST">
                     <label>
                       Mitarbeiter:<select name="mitarbeiter" id="dd-m">
                         {% for row in data %}
@@ -197,26 +197,49 @@
                   </div>
                   <div class="add-data">
                     <h3>Füge Daten zu der Datenbank hinzu.</h3>
-                    <label>
-                      Neuen Mitarbeiter:<input type="text" placeholder="Personal-Nr." />
-                      <input type="text" placeholder="Vorname" />
-                      <input type="text" placeholder="Nachname" />
-                      <select name="" id="">
-                        <option value="" disabled selected>Bereich</option>
-                        <option value="">Schlosser</option>
-                        <option value="">Dreher & Fräser</option>
-                        <option value="">Elektriker</option>
-                        <option value="">Freie Mitarbeiter</option>
-                        <option value="">Büro</option>
-                        <option value="">Hauswart</option>
-                      </select>
-                    </label>
+                    <form action="/submit_m_add" method="POST">
+                      <label>
+                        Neuen Mitarbeiter:<br />
+                        <input type="text" name="personal_nr" placeholder="Personal-Nr." />
+                        <input type="text" name="vorname" placeholder="Vorname" />
+                        <input type="text" name="nachname" placeholder="Nachname" />
+                        <select name="bereich" id="">
+                          <option value="" disabled selected>Bereich</option>
+                          <option value="Schlosser">Schlosser</option>
+                          <option value="Dreher & Fräser">Dreher & Fräser</option>
+                          <option value="Elektriker">Elektriker</option>
+                          <option value="Freie Mitarbeiter">Freie Mitarbeiter</option>
+                          <option value="Büro">Büro</option>
+                          <option value="Hauswart">Hauswart</option>
+                        </select>
+                      </label>
+                      <button type="submit">Erstellen</button>
+                    </form>
+                    <br />
                     <label>Neuen Kunden:</label>
+                    <br />
                     <label>Neues Auto:<input type="text" placeholder="Kennzeichen.." /></label>
+                    <br />
                     <label>Neues Projekt:<input type="text" placeholder="Projekt-Nr.." /></label>
                   </div>
                   <div class="delete-data">
                     <h3>Lösche Daten aus der Datenbank.</h3>
+                    <h4>Mitarbeiter löschen:</h4>
+
+                    <form action="/submit_m_delete" method="POST">
+                      <select name="personal_nr" id="">
+                        {% for row in data %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
+                      </select>
+                      <button type="submit">Löschen</button>
+                    </form>
+
+                    <br />
+                    <h4>Kunden löschen:</h4>
+                    <select name="kunden-delete" id="">
+                      <option value=""></option>
+                    </select>
                     <label>Kunden</label>
                     <label>Mitarbeiter</label>
                     <label>Auto</label>

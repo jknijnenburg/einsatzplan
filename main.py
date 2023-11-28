@@ -9,6 +9,7 @@ from flask import g
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, validators
 import sqlite3
+import uuid
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "your_secret_key"
@@ -45,12 +46,21 @@ def index():
     rows = cursor.fetchall()
     assign_data = db.execute("SELECT * FROM assignment_table")
     assign_rows = assign_data.fetchall()
+    customer_data = db.execute("SELECT * FROM customers")
+    customer_rows = customer_data.fetchall()
+    project_data = db.execute("SELECT * FROM projects")
+    project_rows = project_data.fetchall()
+    car_data = db.execute("SELECT * FROM cars")
+    car_rows = car_data.fetchall()
     form = LoginForm()
     user_role = request.args.get("user_role", "user")
     return render_template(
         "index.html",
         data=rows,
         assignment_table_data=assign_rows,
+        customer_table_data=customer_rows,
+        project_table_data=project_rows,
+        car_table_data=car_rows,
         form=form,
         user_role=user_role,
     )
@@ -71,6 +81,55 @@ def login():
         return jsonify({"status": "error", "user_role": "user"})
 
     return redirect(url_for("index"))
+
+
+@app.route("/assign_mitarbeiter", methods=["POST"])
+def assign_mitarbeiter():
+    personal_nr = request.form.get("personal_nr")
+
+    week_id = request.form.get("kw")
+    startDate = request.form.get("startDate")
+    endDate = request.form.get("endDate")
+    year = request.form.get("year")
+
+    project_id = request.form.get("project_id")
+    car_id = request.form.get("car_id")
+    location = request.form.get("ort")
+
+    extra1 = request.form.get("extra1")
+    extra2 = request.form.get("extra2")
+    extra3 = request.form.get("extra3")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+    assignment_id = str(uuid.uuid4())
+
+    # Perform database operation to create a new user with the provided inputs
+    try:
+        cursor.execute(
+            "INSERT INTO assignment_table (assignment_id, user_id, car_id, project_id, startDate, endDate, week_id, year, extra1, extra2, extra3, ort) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                assignment_id,
+                personal_nr,
+                car_id,
+                project_id,
+                startDate,
+                endDate,
+                48,
+                year,
+                extra1,
+                extra2,
+                extra3,
+                location,
+            ),
+        )
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        conn.close()
+
+    return "Mitarbeiter erfolgreich zugewiesen."
 
 
 @app.route("/submit_m_add", methods=["POST"])
@@ -96,6 +155,53 @@ def create_new_user():
         conn.close()
 
     return "Mitarbeiter erfolgreich angelegt."
+
+
+@app.route("/submit_c_add", methods=["POST"])
+def create_new_customer():
+    customer_id = request.form.get("customer_id")
+    customer_name = request.form.get("customer_name")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    # Perform database operation to create a new user with the provided inputs
+    try:
+        cursor.execute(
+            "INSERT INTO customers (customer_id, customer_name) VALUES (?, ?)",
+            (customer_id, customer_name),
+        )
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        conn.close()
+
+    return "Kunde erfolgreich angelegt."
+
+
+@app.route("/submit_p_add", methods=["POST"])
+def create_new_project():
+    project_id = request.form.get("project_id")
+    project_name = request.form.get("project_name")
+    customer_id = request.form.get("customer_id")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    # Perform database operation to create a new user with the provided inputs
+    try:
+        cursor.execute(
+            "INSERT INTO projects (project_id, project_name, customer_id) VALUES (?, ?, ?)",
+            (project_id, project_name, customer_id),
+        )
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        conn.close()
+
+    return "Projekt erfolgreich angelegt."
 
 
 @app.route("/submit_m_delete", methods=["POST"])

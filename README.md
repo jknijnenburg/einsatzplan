@@ -5,7 +5,7 @@ Einsatzplan Management
 # -- Anforderungen -- #
 
 - Mitarbeiter an Wochentagen zuweisen
-- Mitarbeiter zu Baustellen zuweisen
+- Mitarbeiter zu Projekten zuweisen
 - Datum über Wochentag
 - Zwischen den Kalenderwochen wechseln können (vlt. mit Button für direkt zur derzeitigen KW)
 - Löschfunktion für Einträge
@@ -14,9 +14,8 @@ Einsatzplan Management
 - Gruppenfunktion mit Verschiebung -> Farbige Hinterlegen
 - Hotel + Stundenzettel (Buchstaben)
 - Kunden hinzufügen/löschen können
-- Baustelle -- "" --
+- Projekt -- "" --
 - Auto -- "" --
-- Baustelle gegen Projekt tauschen
 - Detailansicht wenn man auf ein Feld draufklickt z.B. Ort
 - Vor-Ort oder in der Firma (Buchstaben)
 - Personalnummer
@@ -28,6 +27,8 @@ Einsatzplan Management
 
 Zukunft:
 - Auslesen der aktuellen Datenbank von z.B. den eingetragenen Urlaubstagen, etc. um diese vielleicht auch abzugleichen.
+
+- Automatische Aktualisierung der Seite, wenn was an der Datenbank verändert wird.
 
 
 # -- SETUP ENV -- #

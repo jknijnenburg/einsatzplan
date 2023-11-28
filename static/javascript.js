@@ -24,6 +24,24 @@ $(function () {
           " - " +
           picker.endDate.format("DD/MM/YYYY")
       );
+
+      const year = picker.startDate.getFullYear();
+      // Send the selected dates to the Python backend
+      $.ajax({
+        url: "/assign_mitarbeiter",
+        method: "POST",
+        data: {
+          startDate: startDate,
+          endDate: endDate,
+          year: year,
+        },
+        success: function (response) {
+          // Handle the response from the Python backend
+        },
+        error: function (xhr, status, error) {
+          // Handle the error
+        },
+      });
     }
   );
 

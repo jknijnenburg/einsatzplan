@@ -38,20 +38,44 @@
                 <tr>
                   <th>P-Nr.</th>
                   <th>Name</th>
-                  <th>Mo</th>
-                  <th>Di</th>
-                  <th>Mi</th>
-                  <th>Do</th>
-                  <th>Fr</th>
-                  <th>Sa</th>
-                  <th>So</th>
+                  <th id="mondayHeading">Mo</th>
+                  <th id="tuesdayHeading">Di</th>
+                  <th id="wednesdayHeading">Mi</th>
+                  <th id="thursdayHeading">Do</th>
+                  <th id="fridayHeading">Fr</th>
+                  <th id="saturdayHeading">Sa</th>
+                  <th id="sundayHeading">So</th>
+
+                  <script>
+                    // Get the current date
+                    var todayDate = new Date()
+                    
+                    // Get the current day (0-6, where 0 is Sunday and 6 is Saturday)
+                    var todayDay = todayDate.getDay()
+                    
+                    // Calculate the dates for the current week
+                    var weekDates = []
+                    for (var i = 0; i < 8; i++) {
+                      var date = new Date()
+                      date.setDate(todayDate.getDate() - todayDay + i)
+                      weekDates.push(date)
+                    }
+                    
+                    // Update the table headings with the corresponding dates and month
+                    document.getElementById('mondayHeading').innerHTML = weekDates[1].toLocaleDateString('de-DE', { weekday: 'short', month: 'short', day: 'numeric' })
+                    document.getElementById('tuesdayHeading').innerHTML = weekDates[2].toLocaleDateString('de-DE', { weekday: 'short', month: 'short', day: 'numeric' })
+                    document.getElementById('wednesdayHeading').innerHTML = weekDates[3].toLocaleDateString('de-DE', { weekday: 'short', month: 'short', day: 'numeric' })
+                    document.getElementById('thursdayHeading').innerHTML = weekDates[4].toLocaleDateString('de-DE', { weekday: 'short', month: 'short', day: 'numeric' })
+                    document.getElementById('fridayHeading').innerHTML = weekDates[5].toLocaleDateString('de-DE', { weekday: 'short', month: 'short', day: 'numeric' })
+                    document.getElementById('saturdayHeading').innerHTML = weekDates[6].toLocaleDateString('de-DE', { weekday: 'short', month: 'short', day: 'numeric' })
+                    document.getElementById('sundayHeading').innerHTML = weekDates[7].toLocaleDateString('de-DE', { weekday: 'short', month: 'short', day: 'numeric' })
+                  </script>
                 </tr>
               </thead>
               <tbody>
-                <!-- Pro work_field die Tabellen separieren -->
                 {% if data %}
                   <tr>
-                    <td colspan="4">
+                    <td colspan="2">
                       <strong>Schlosser</strong>
                     </td>
                   </tr>
@@ -76,7 +100,7 @@
                     {% endif %}
                   {% endfor %}
                   <tr>
-                    <td colspan="4">
+                    <td colspan="2">
                       <strong>Dreher & Fräser</strong>
                     </td>
                   </tr>
@@ -85,11 +109,23 @@
                       <tr>
                         <td>{{ row[0] }}</td>
                         <td>{{ row[1] }}</td>
+                        {% for i in range(2, 9) %}
+                          {% set found = false %}
+                          {% for assignment in assignment_table_data %}
+                            {% if assignment.user_id == row[0] and assignment.day_of_week == i - 1 and assignment.week_id == week_id %}
+                              {% set found = true %}
+                              <td>{{ assignment.task_id }}</td>
+                            {% endif %}
+                          {% endfor %}
+                          {% if not found %}
+                            <td></td>
+                          {% endif %}
+                        {% endfor %}
                       </tr>
                     {% endif %}
                   {% endfor %}
                   <tr>
-                    <td colspan="4">
+                    <td colspan="2">
                       <strong>Elektriker</strong>
                     </td>
                   </tr>
@@ -98,11 +134,23 @@
                       <tr>
                         <td>{{ row[0] }}</td>
                         <td>{{ row[1] }}</td>
+                        {% for i in range(2, 9) %}
+                          {% set found = false %}
+                          {% for assignment in assignment_table_data %}
+                            {% if assignment.user_id == row[0] and assignment.day_of_week == i - 1 and assignment.week_id == week_id %}
+                              {% set found = true %}
+                              <td>{{ assignment.task_id }}</td>
+                            {% endif %}
+                          {% endfor %}
+                          {% if not found %}
+                            <td></td>
+                          {% endif %}
+                        {% endfor %}
                       </tr>
                     {% endif %}
                   {% endfor %}
                   <tr>
-                    <td colspan="4">
+                    <td colspan="2">
                       <strong>Freie Mitarbeiter</strong>
                     </td>
                   </tr>
@@ -111,11 +159,23 @@
                       <tr>
                         <td>{{ row[0] }}</td>
                         <td>{{ row[1] }}</td>
+                        {% for i in range(2, 9) %}
+                          {% set found = false %}
+                          {% for assignment in assignment_table_data %}
+                            {% if assignment.user_id == row[0] and assignment.day_of_week == i - 1 and assignment.week_id == week_id %}
+                              {% set found = true %}
+                              <td>{{ assignment.task_id }}</td>
+                            {% endif %}
+                          {% endfor %}
+                          {% if not found %}
+                            <td></td>
+                          {% endif %}
+                        {% endfor %}
                       </tr>
                     {% endif %}
                   {% endfor %}
                   <tr>
-                    <td colspan="4">
+                    <td colspan="2">
                       <strong>Büro</strong>
                     </td>
                   </tr>
@@ -124,11 +184,23 @@
                       <tr>
                         <td>{{ row[0] }}</td>
                         <td>{{ row[1] }}</td>
+                        {% for i in range(2, 9) %}
+                          {% set found = false %}
+                          {% for assignment in assignment_table_data %}
+                            {% if assignment.user_id == row[0] and assignment.day_of_week == i - 1 and assignment.week_id == week_id %}
+                              {% set found = true %}
+                              <td>{{ assignment.task_id }}</td>
+                            {% endif %}
+                          {% endfor %}
+                          {% if not found %}
+                            <td></td>
+                          {% endif %}
+                        {% endfor %}
                       </tr>
                     {% endif %}
                   {% endfor %}
                   <tr>
-                    <td colspan="4">
+                    <td colspan="2">
                       <strong>Hauswart</strong>
                     </td>
                   </tr>
@@ -137,70 +209,104 @@
                       <tr>
                         <td>{{ row[0] }}</td>
                         <td>{{ row[1] }}</td>
+                        {% for i in range(2, 9) %}
+                          {% set found = false %}
+                          {% for assignment in assignment_table_data %}
+                            {% if assignment.user_id == row[0] and assignment.day_of_week == i - 1 and assignment.week_id == week_id %}
+                              {% set found = true %}
+                              <td>{{ assignment.task_id }}</td>
+                            {% endif %}
+                          {% endfor %}
+                          {% if not found %}
+                            <td></td>
+                          {% endif %}
+                        {% endfor %}
                       </tr>
                     {% endif %}
                   {% endfor %}
                 {% else %}
                   <tr>
-                    <td colspan="9">No data available</td>
+                    <td colspan="5">No data available</td>
                   </tr>
                 {% endif %}
               </tbody>
             </table>
+            <br />
+
             {% if user_role == 'admin' %}
               <div id="assign-frame">
                 {% block assign_frame %}
-                  <form action="" method="POST">
+                  <form action="/assign_mitarbeiter" method="POST">
                     <label>
-                      Mitarbeiter:<select name="mitarbeiter" id="dd-m">
+                      Mitarbeiter:<select name="personal_nr" id="dd-m">
+                        <option value="" disabled selected>Mitarbeiter</option>
                         {% for row in data %}
-                          <option value="">{{ row[0] }}: {{ row[1] }}</option>
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                         {% endfor %}
                       </select>
                     </label>
                     <!-- Entweder auswählen oder in der Tabelle anklicken -->
                     <label>Von-Bis-Datum:<input type="text" id="date-select" name="datefilter" value="" /></label>
                     <label>
-                      Kunde:<select name="kunden" id="dd-c">
-                        <!-- Kunden aus Datenbank auslesen -->
-                        <option value="" disabled selected>Kunde</option>
-                        <option value=""></option>
-                      </select>
-                    </label>
-                    <label>
-                      Projekt:<select name="projekt" id="dd-p">
-                        <!-- Projektnummern aus Datenbank auslesen -->
+                      Projekt:<select name="project_id" id="dd-p">
                         <option value="" disabled selected>Projekt</option>
-                        <option value=""></option>
+                        {% for row in project_table_data %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
                       </select>
                     </label>
                     <label>
-                      Auto:<select name="auto" id="dd-p">
+                      Auto:<select name="car_id" id="dd-p">
                         <!-- Autos aus Datenbank auslesen -->
                         <option value="" disabled selected>Auto</option>
-                        <option value=""></option>
+                        {% for row in car_table_data %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
                       </select>
                     </label>
                     <label>
                       Ort:<select name="ort" id="dd-l">
-                        <option value="vO">V</option>
-                        <option value="iF">F</option>
+                        <option value="vO">Vor-Ort</option>
+                        <option value="iF">In Firma</option>
+                      </select>
+                    </label>
+                    <label>
+                      Zusatz:<select name="extra1" id="dd-x">
+                        <option value="" disabled selected>Weiteres..</option>
+                        <option value="ST.">Stundenzettel</option>
+                        <option value="H">Hotel</option>
+                      </select>
+                    </label>
+                    <label>
+                      <select name="extra2" id="dd-x">
+                        <option value="" disabled selected>Weiteres..</option>
+                        <option value="ST.">Stundenzettel</option>
+                        <option value="H">Hotel</option>
+                      </select>
+                    </label>
+                    <label>
+                      <select name="extra3" id="dd-x">
+                        <option value="" disabled selected>Weiteres..</option>
+                        <option value="ST.">Stundenzettel</option>
+                        <option value="H">Hotel</option>
                       </select>
                     </label>
                     <button class="confirm">Bestätigen</button>
                   </form>
+
                   <div class="group-create">
                     <h3>Gruppe erstellen & zuweisen</h3>
                     <p>Wähle mehrere Mitarbeiter aus, um eine Gruppe zu erstellen.</p>
                     <!-- Vielleicht eine Mehrfachauswahl-Liste implementieren? -->
                     <p>Wähle eine Farbe für diese Gruppe und anschließend das Projekt sowie weitere "Eigenschaften".</p>
                   </div>
+
                   <div class="add-data">
                     <h3>Füge Daten zu der Datenbank hinzu.</h3>
                     <form action="/submit_m_add" method="POST">
                       <label>
                         Neuen Mitarbeiter:<br />
-                        <input type="text" name="personal_nr" placeholder="Personal-Nr." />
+                        <input type="number" name="personal_nr" placeholder="Personal-Nr." />
                         <input type="text" name="vorname" placeholder="Vorname" />
                         <input type="text" name="nachname" placeholder="Nachname" />
                         <select name="bereich" id="">
@@ -217,15 +323,37 @@
                     </form>
                     <br />
                     <label>Neuen Kunden:</label>
+                    <form action="/submit_c_add" method="POST">
+                      <input type="number" name="customer_id" placeholder="Kunden-Nr." />
+                      <input type="text" name="customer_name" placeholder="Kunden-Name" />
+                      <button type="submit">Erstellen</button>
+                    </form>
                     <br />
-                    <label>Neues Auto:<input type="text" placeholder="Kennzeichen.." /></label>
+                    <label>Neues Projekt:</label>
                     <br />
-                    <label>Neues Projekt:<input type="text" placeholder="Projekt-Nr.." /></label>
+                    <form action="/submit_p_add" method="POST">
+                      <input type="number" name="project_id" placeholder="Projekt-Nr." />
+                      <input type="text" name="project_name" placeholder="Projekt-Name" />
+                      <select name="customer_id" id="dd-c">
+                        <option value="" disabled selected>Kunde</option>
+                        {% for row in customer_table_data %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
+                      </select>
+                      <button type="submit">Erstellen</button>
+                    </form>
+                    <label>Neues Auto:</label>
+                    <br />
+                    <form action="/submit_car_add" method="POST">
+                      <input type="text" name="car_id" placeholder="Kennzeichen.." />
+                      <button type="submit">Erstellen</button>
+                    </form>
+                    <br />
                   </div>
                   <div class="delete-data">
                     <h3>Lösche Daten aus der Datenbank.</h3>
-                    <h4>Mitarbeiter löschen:</h4>
 
+                    <h4>Mitarbeiter löschen:</h4>
                     <form action="/submit_m_delete" method="POST">
                       <select name="personal_nr" id="">
                         {% for row in data %}
@@ -237,13 +365,36 @@
 
                     <br />
                     <h4>Kunden löschen:</h4>
-                    <select name="kunden-delete" id="">
-                      <option value=""></option>
-                    </select>
-                    <label>Kunden</label>
-                    <label>Mitarbeiter</label>
-                    <label>Auto</label>
-                    <label>Projekt</label>
+                    <form action="/submit_c_delete" method="POST">
+                      <select name="kunden-delete" id="">
+                        <option value="" disabled selected>Kunde</option>
+                        {% for row in customer_table_data %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
+                      </select>
+                      <button type="submit">Löschen</button>
+                    </form>
+
+                    <h4>Auto löschen:</h4>
+                    <form action="/submit_car_delete" method="POST">
+                      <select name="car-delete" id="">
+                        <option value="" disabled selected>Auto</option>
+                        {% for row in car_table_data %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
+                      </select>
+                      <button type="submit">Löschen</button>
+                    </form>
+                    <h4>Projekt löschen:</h4>
+                    <form action="/submit_p_delete" method="POST">
+                      <select name="project-delete" id="">
+                        <option value="" disabled selected>Projekt</option>
+                        {% for row in project_table_data %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
+                      </select>
+                      <button type="submit">Löschen</button>
+                    </form>
                   </div>
                 {% endblock %}
               </div>
@@ -310,4 +461,6 @@
       </footer>
     </body>
   {% endblock %}
+
+  <!-- Jan Knijnenburg -->
 </html>

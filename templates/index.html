@@ -33,7 +33,7 @@
         {% block content %}
           <div id="main-frame">
             <h1>Einsatzplan</h1>
-            <table class="table">
+            <table class="week-table">
               <thead>
                 <tr>
                   <th>P-Nr.</th>
@@ -84,18 +84,6 @@
                       <tr>
                         <td>{{ row[0] }}</td> <!-- Personal-Nr. -->
                         <td>{{ row[1] }}</td> <!-- Name -->
-                        {% for i in range(2, 9) %}
-                          {% set found = false %}
-                          {% for assignment in assignment_table_data %}
-                            {% if assignment.user_id == row[0] and assignment.day_of_week == i - 1 and assignment.week_id == week_id %}
-                              {% set found = true %}
-                              <td>{{ assignment.task_id }}</td>
-                            {% endif %}
-                          {% endfor %}
-                          {% if not found %}
-                            <td></td>
-                          {% endif %}
-                        {% endfor %}
                       </tr>
                     {% endif %}
                   {% endfor %}
@@ -109,18 +97,6 @@
                       <tr>
                         <td>{{ row[0] }}</td>
                         <td>{{ row[1] }}</td>
-                        {% for i in range(2, 9) %}
-                          {% set found = false %}
-                          {% for assignment in assignment_table_data %}
-                            {% if assignment.user_id == row[0] and assignment.day_of_week == i - 1 and assignment.week_id == week_id %}
-                              {% set found = true %}
-                              <td>{{ assignment.task_id }}</td>
-                            {% endif %}
-                          {% endfor %}
-                          {% if not found %}
-                            <td></td>
-                          {% endif %}
-                        {% endfor %}
                       </tr>
                     {% endif %}
                   {% endfor %}
@@ -134,18 +110,6 @@
                       <tr>
                         <td>{{ row[0] }}</td>
                         <td>{{ row[1] }}</td>
-                        {% for i in range(2, 9) %}
-                          {% set found = false %}
-                          {% for assignment in assignment_table_data %}
-                            {% if assignment.user_id == row[0] and assignment.day_of_week == i - 1 and assignment.week_id == week_id %}
-                              {% set found = true %}
-                              <td>{{ assignment.task_id }}</td>
-                            {% endif %}
-                          {% endfor %}
-                          {% if not found %}
-                            <td></td>
-                          {% endif %}
-                        {% endfor %}
                       </tr>
                     {% endif %}
                   {% endfor %}
@@ -159,18 +123,6 @@
                       <tr>
                         <td>{{ row[0] }}</td>
                         <td>{{ row[1] }}</td>
-                        {% for i in range(2, 9) %}
-                          {% set found = false %}
-                          {% for assignment in assignment_table_data %}
-                            {% if assignment.user_id == row[0] and assignment.day_of_week == i - 1 and assignment.week_id == week_id %}
-                              {% set found = true %}
-                              <td>{{ assignment.task_id }}</td>
-                            {% endif %}
-                          {% endfor %}
-                          {% if not found %}
-                            <td></td>
-                          {% endif %}
-                        {% endfor %}
                       </tr>
                     {% endif %}
                   {% endfor %}
@@ -185,16 +137,30 @@
                         <td>{{ row[0] }}</td>
                         <td>{{ row[1] }}</td>
                         {% for i in range(2, 9) %}
-                          {% set found = false %}
                           {% for assignment in assignment_table_data %}
-                            {% if assignment.user_id == row[0] and assignment.day_of_week == i - 1 and assignment.week_id == week_id %}
-                              {% set found = true %}
-                              <td>{{ assignment.task_id }}</td>
+                            {% if row[0] == assignment[1] and assignment[6] == current_week and current_date >= assignment[4] and current_date <= assignment[5] %}
+                              <td>
+                                {% if assignment[2] %}
+                                  {{ assignment[3] }}
+                                  <br />
+                                  {% for car in car_table_data %}
+                                    {% if car[0] == assignment[2] %}
+                                      {{ car[1] }}
+                                    {% endif %}
+                                  {% endfor %}
+                                  <br />
+                                  {{ assignment[7] }}
+                                  {{ assignment[8] }}
+                                  {{ assignment[9] }}
+                                  <br />
+                                  {{ assignment[10] }}
+                                {% endif %}
+                              </td>
+                            {% else %}
+                              <!-- Create an empty td when no assignment is found -->
+                              <td></td>
                             {% endif %}
                           {% endfor %}
-                          {% if not found %}
-                            <td></td>
-                          {% endif %}
                         {% endfor %}
                       </tr>
                     {% endif %}
@@ -209,18 +175,6 @@
                       <tr>
                         <td>{{ row[0] }}</td>
                         <td>{{ row[1] }}</td>
-                        {% for i in range(2, 9) %}
-                          {% set found = false %}
-                          {% for assignment in assignment_table_data %}
-                            {% if assignment.user_id == row[0] and assignment.day_of_week == i - 1 and assignment.week_id == week_id %}
-                              {% set found = true %}
-                              <td>{{ assignment.task_id }}</td>
-                            {% endif %}
-                          {% endfor %}
-                          {% if not found %}
-                            <td></td>
-                          {% endif %}
-                        {% endfor %}
                       </tr>
                     {% endif %}
                   {% endfor %}
@@ -440,6 +394,9 @@
             maxDate: '2035-12-31'
           })
         })
+        var assignment_table_data = {{ assignment_table_data | tojson | safe }};
+        
+        console.log("Assignment data:", assignment_table_data);
       </script>
 
       <script src="https://cdn.jsdelivr.net/npm/brython@3.9.1/brython.min.js"></script>

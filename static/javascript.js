@@ -20,9 +20,9 @@ $(function () {
     "apply.daterangepicker",
     function (ev, picker) {
       $(this).val(
-        picker.startDate.format("DD/MM/YYYY") +
+        picker.startDate.format("DD.MM.YYYY") +
           " - " +
-          picker.endDate.format("DD/MM/YYYY")
+          picker.endDate.format("DD.MM.YYYY")
       );
 
       const year = picker.startDate.getFullYear();

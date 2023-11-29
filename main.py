@@ -10,6 +10,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, validators
 import sqlite3
 import uuid
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "your_secret_key"
@@ -54,6 +55,12 @@ def index():
     car_rows = car_data.fetchall()
     form = LoginForm()
     user_role = request.args.get("user_role", "user")
+
+    # Get the current week and calculate week dates
+    current_date = datetime.now().date()
+    current_week = get_current_calendar_week()
+    week_dates = [datetime.now().date() + timedelta(days=i) for i in range(7)]
+
     return render_template(
         "index.html",
         data=rows,
@@ -63,7 +70,20 @@ def index():
         car_table_data=car_rows,
         form=form,
         user_role=user_role,
+        current_date=current_date,
+        current_week=current_week,
+        week_dates=week_dates,
     )
+
+
+def get_current_calendar_week():
+    # Get the current date
+    current_date = datetime.now().date()
+
+    # Calculate the ISO week number (calendar week) for the current date
+    current_week = current_date.isocalendar()[1]
+
+    return current_week
 
 
 # Add a new route for handling login requests
@@ -88,9 +108,13 @@ def assign_mitarbeiter():
     personal_nr = request.form.get("personal_nr")
 
     week_id = request.form.get("kw")
-    startDate = request.form.get("startDate")
-    endDate = request.form.get("endDate")
-    year = request.form.get("year")
+    # startDate = request.form.get("startDate")
+    # endDate = request.form.get("endDate")
+    # year = request.form.get("year")
+
+    startDate = "30.11.2023"
+    endDate = "30.11.2023"
+    year = "2023"
 
     project_id = request.form.get("project_id")
     car_id = request.form.get("car_id")
@@ -102,7 +126,8 @@ def assign_mitarbeiter():
 
     conn = sqlite3.connect("datenbank.db")
     cursor = conn.cursor()
-    assignment_id = str(uuid.uuid4())
+    # assignment_id = str(uuid.uuid4())
+    assignment_id = 1
 
     # Perform database operation to create a new user with the provided inputs
     try:

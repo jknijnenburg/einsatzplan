@@ -10,7 +10,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, validators
 import sqlite3
 import uuid
+import json
 from datetime import datetime, timedelta
+import locale
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "your_secret_key"
@@ -40,6 +42,43 @@ def close_db(error):
         db.commit()
 
 
+def generate_week_dates1():
+    today_date = datetime.now()
+    today_day = today_date.weekday()
+
+    week_dates = [today_date - timedelta(days=today_day - i) for i in range(0, 7)]
+
+    return [date.strftime("%Y-%m-%d") for date in week_dates]
+
+
+def generate_week_dates2():
+    today_date = datetime.now()
+    today_day = today_date.weekday()
+
+    week_dates = [today_date - timedelta(days=today_day - i) for i in range(7, 14)]
+
+    return [date.strftime("%Y-%m-%d") for date in week_dates]
+
+
+def generate_week_dates3():
+    today_date = datetime.now()
+    today_day = today_date.weekday()
+
+    week_dates = [today_date - timedelta(days=today_day - i) for i in range(14, 21)]
+
+    return [date.strftime("%Y-%m-%d") for date in week_dates]
+
+
+def generate_week_days():
+    locale.setlocale(locale.LC_TIME, "de_DE")
+    today_date = datetime.now()
+    today_day = today_date.weekday()
+
+    week_days = [today_date - timedelta(days=today_day - i) for i in range(0, 7)]
+
+    return [date.strftime("%a") for date in week_days]
+
+
 @app.route("/")
 def index():
     db = get_db()
@@ -56,10 +95,11 @@ def index():
     form = LoginForm()
     user_role = request.args.get("user_role", "user")
 
-    # Get the current week and calculate week dates
-    current_date = datetime.now().date()
-    current_week = get_current_calendar_week()
-    week_dates = [datetime.now().date() + timedelta(days=i) for i in range(7)]
+    # Generate the week dates
+    weekDates1 = generate_week_dates1()
+    weekDates2 = generate_week_dates2()
+    weekDates3 = generate_week_dates3()
+    weekDays = generate_week_days()
 
     return render_template(
         "index.html",
@@ -70,20 +110,11 @@ def index():
         car_table_data=car_rows,
         form=form,
         user_role=user_role,
-        current_date=current_date,
-        current_week=current_week,
-        week_dates=week_dates,
+        weekDates1=weekDates1,
+        weekDates2=weekDates2,
+        weekDates3=weekDates3,
+        weekDays=weekDays,
     )
-
-
-def get_current_calendar_week():
-    # Get the current date
-    current_date = datetime.now().date()
-
-    # Calculate the ISO week number (calendar week) for the current date
-    current_week = current_date.isocalendar()[1]
-
-    return current_week
 
 
 # Add a new route for handling login requests
@@ -112,8 +143,8 @@ def assign_mitarbeiter():
     # endDate = request.form.get("endDate")
     # year = request.form.get("year")
 
-    startDate = "30.11.2023"
-    endDate = "30.11.2023"
+    startDate = datetime.strptime("30.11.2023", "%d.%m.%Y")
+    endDate = datetime.strptime("30.11.2023", "%d.%m.%Y")
     year = "2023"
 
     project_id = request.form.get("project_id")

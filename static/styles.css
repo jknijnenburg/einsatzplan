@@ -9,9 +9,14 @@ body {
     font-family: "Roboto", Arial, Helvetica, sans-serif;
 }
 
+.tables-container {
+    display: flex;
+}
+
 table {
     width: 90%;
     border: black 1px solid;
+    border-radius: 10px;
 }
 
 td {

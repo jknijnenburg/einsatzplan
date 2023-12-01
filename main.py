@@ -138,40 +138,48 @@ def login():
 def assign_mitarbeiter():
     personal_nr = request.form.get("personal_nr")
 
-    week_id = request.form.get("kw")
-    # startDate = request.form.get("startDate")
-    # endDate = request.form.get("endDate")
-    # year = request.form.get("year")
-
-    startDate = datetime.strptime("30.11.2023", "%d.%m.%Y")
-    endDate = datetime.strptime("30.11.2023", "%d.%m.%Y")
-    year = "2023"
+    startDate = request.form.get("startDate")
+    endDate = request.form.get("endDate")
+    year = request.form.get("year")
+    location = request.form.get("ort")
 
     project_id = request.form.get("project_id")
     car_id = request.form.get("car_id")
-    location = request.form.get("ort")
+
+    if not car_id:
+        car_id = 99
 
     extra1 = request.form.get("extra1")
+
+    if not extra1:
+        extra1 = "no"
+
     extra2 = request.form.get("extra2")
+
+    if not extra2:
+        extra2 = "no"
+
     extra3 = request.form.get("extra3")
+
+    if not extra3:
+        extra3 = "no"
+
+    print(
+        f"Received values: personal_nr={personal_nr}, startDate={startDate}, endDate={endDate}, year={year}"
+    )
 
     conn = sqlite3.connect("datenbank.db")
     cursor = conn.cursor()
-    # assignment_id = str(uuid.uuid4())
-    assignment_id = 1
 
-    # Perform database operation to create a new user with the provided inputs
     try:
         cursor.execute(
-            "INSERT INTO assignment_table (assignment_id, user_id, car_id, project_id, startDate, endDate, week_id, year, extra1, extra2, extra3, ort) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, extra1, extra2, extra3, ort) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
-                assignment_id,
                 personal_nr,
                 car_id,
                 project_id,
                 startDate,
                 endDate,
-                48,
                 year,
                 extra1,
                 extra2,

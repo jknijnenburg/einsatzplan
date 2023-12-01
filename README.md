@@ -22,6 +22,8 @@ Einsatzplan Management
 - Bei Gruppen jeweils Auto zuweisen bzw. mehrere Autos
 - Hinweisfeld zum Eintragen
 
+- FREI eintragen wodurch dann die restlichen Datenbanksachen auf "no" gesetzt werden und nur "FREI" angezeigt wird
+
 - Legende
 
 

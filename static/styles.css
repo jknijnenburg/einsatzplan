@@ -9,18 +9,34 @@ body {
     font-family: "Roboto", Arial, Helvetica, sans-serif;
 }
 
-.tables-container {
+.top-container {
     display: flex;
 }
 
+.tables-container {
+    display: flex;
+    width: auto;
+    height: auto;
+}
+
 table {
-    width: 90%;
+    width: auto;
     border: black 1px solid;
     border-radius: 10px;
 }
 
+#m-pc-row {
+    display: none;
+}
+
 td {
     border: black 1px solid;
+    height: 80px;
+    width: 80px;
+}
+
+#t-a-field {
+    font-size: 12px;
 }
 
 footer {

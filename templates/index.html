@@ -16,18 +16,23 @@
       </head>
 
       <main>
-        <div id="login-frame">
-          <form id="login-form" method="POST" action="{{ url_for('login') }}">
-            {{ form.hidden_tag() }}
-            {{ form.csrf_token }}
-            <label for="username">Username:</label>
-            {{ form.username }}
-            <br /><br />
-            <label for="password">Password:</label>
-            {{ form.password }}
-            <br /><br />
-            <button type="submit" id="login-button">Login</button>
-          </form>
+        <div class="top-container">
+          <div id="login-frame">
+            <form id="login-form" method="POST" action="{{ url_for('login') }}">
+              {{ form.hidden_tag() }}
+              {{ form.csrf_token }}
+              <label for="username">Username:</label>
+              {{ form.username }}
+              <br /><br />
+              <label for="password">Password:</label>
+              {{ form.password }}
+              <br /><br />
+              <button type="submit" id="login-button">Login</button>
+            </form>
+          </div>
+          <div class="logo">
+            <img src="https://www.slt-technologies.com/images/main_header_left-slt.jpg" alt="" />
+          </div>
         </div>
 
         {% block content %}
@@ -47,7 +52,7 @@
                 <tbody>
                   {% if data %}
                     <tr>
-                      <td colspan="2">
+                      <td colspan="2" style="border:0;">
                         <strong>Schlosser</strong>
                       </td>
                       {% for day in weekDays %}
@@ -60,10 +65,10 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in weekDates1 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -72,10 +77,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -85,7 +90,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -99,7 +103,7 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
+                      <td colspan="2" style="border:0;">
                         <strong>Dreher & Fräser</strong>
                       </td>
                     </tr>
@@ -109,10 +113,10 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in weekDates1 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -121,10 +125,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -134,7 +138,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -148,7 +151,7 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
+                      <td colspan="2" style="border:0;">
                         <strong>Elektriker</strong>
                       </td>
                     </tr>
@@ -158,10 +161,10 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in weekDates1 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -170,10 +173,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -183,7 +186,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -197,7 +199,7 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
+                      <td colspan="2" style="border:0;">
                         <strong>Freie Mitarbeiter</strong>
                       </td>
                     </tr>
@@ -207,10 +209,10 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in weekDates1 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -219,10 +221,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -232,7 +234,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -246,7 +247,7 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
+                      <td colspan="2" style="border:0;">
                         <strong>Büro</strong>
                       </td>
                     </tr>
@@ -256,10 +257,10 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in weekDates1 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -268,10 +269,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -281,7 +282,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -295,7 +295,7 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
+                      <td colspan="2" style="border:0;">
                         <strong>Hauswart</strong>
                       </td>
                     </tr>
@@ -305,10 +305,10 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in weekDates1 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -317,10 +317,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -330,7 +330,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -353,8 +352,8 @@
               <table class="week-table">
                 <thead>
                   <tr>
-                    <th>P-Nr.</th>
-                    <th>Name</th>
+                    <th id="m-pc-row">P-Nr.</th>
+                    <th id="m-pc-row">Name</th>
                     {% for date in weekDates2 %}
                       <th>{{ date }}</th>
                     {% endfor %}
@@ -363,8 +362,8 @@
                 <tbody>
                   {% if data %}
                     <tr>
-                      <td colspan="2">
-                        <strong>Schlosser</strong>
+                      <td colspan="0" style="border: 0; display: none;">
+                        <strong style="color: rgb(233, 240, 232);">Schlosser</strong>
                       </td>
                       {% for day in weekDays %}
                         <th colspan="1">{{ day }}</th>
@@ -373,13 +372,13 @@
                     {% for row in data %}
                       {% if row[3] == 'Schlosser' %}
                         <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates2 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -388,10 +387,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -401,7 +400,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -415,20 +413,20 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
-                        <strong>Dreher & Fräser</strong>
+                      <td colspan="2" style="border:0;">
+                        <strong style="color: rgb(233, 240, 232);">Dreher & Fräser</strong>
                       </td>
                     </tr>
                     {% for row in data %}
                       {% if row[3] == 'Dreher & Fräser' %}
                         <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates2 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -437,10 +435,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -450,7 +448,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -464,20 +461,20 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
-                        <strong>Elektriker</strong>
+                      <td colspan="2" style="border:0;">
+                        <strong style="color: rgb(233, 240, 232);">Elektriker</strong>
                       </td>
                     </tr>
                     {% for row in data %}
                       {% if row[3] == 'Elektriker' %}
                         <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates2 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -486,10 +483,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -499,7 +496,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -513,20 +509,20 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
-                        <strong>Freie Mitarbeiter</strong>
+                      <td colspan="2" style="border:0;">
+                        <strong style="color: rgb(233, 240, 232);">Freie Mitarbeiter</strong>
                       </td>
                     </tr>
                     {% for row in data %}
                       {% if row[3] == 'Freie Mitarbeiter' %}
                         <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates2 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -535,10 +531,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -548,7 +544,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -562,20 +557,20 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
-                        <strong>Büro</strong>
+                      <td colspan="2" style="border:0;">
+                        <strong style="color: rgb(233, 240, 232);">Büro</strong>
                       </td>
                     </tr>
                     {% for row in data %}
                       {% if row[3] == 'Büro' %}
                         <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates2 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -584,10 +579,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -597,7 +592,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -611,20 +605,20 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
-                        <strong>Hauswart</strong>
+                      <td colspan="2" style="border:0;">
+                        <strong style="color: rgb(233, 240, 232);">Hauswart</strong>
                       </td>
                     </tr>
                     {% for row in data %}
                       {% if row[3] == 'Hauswart' %}
                         <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates2 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -633,10 +627,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -646,7 +640,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -669,8 +662,8 @@
               <table class="week-table">
                 <thead>
                   <tr>
-                    <th>P-Nr.</th>
-                    <th>Name</th>
+                    <th id="m-pc-row">P-Nr.</th>
+                    <th id="m-pc-row">Name</th>
                     {% for date in weekDates3 %}
                       <th>{{ date }}</th>
                     {% endfor %}
@@ -679,8 +672,8 @@
                 <tbody>
                   {% if data %}
                     <tr>
-                      <td colspan="2">
-                        <strong>Schlosser</strong>
+                      <td colspan="0" style="border: 0; display: none;">
+                        <strong style="color: rgb(233, 240, 232);">Schlosser</strong>
                       </td>
                       {% for day in weekDays %}
                         <th colspan="1">{{ day }}</th>
@@ -689,13 +682,13 @@
                     {% for row in data %}
                       {% if row[3] == 'Schlosser' %}
                         <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates3 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -704,10 +697,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -717,7 +710,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -731,20 +723,20 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
-                        <strong>Dreher & Fräser</strong>
+                      <td colspan="2" style="border:0;">
+                        <strong style="color: rgb(233, 240, 232);">Dreher & Fräser</strong>
                       </td>
                     </tr>
                     {% for row in data %}
                       {% if row[3] == 'Dreher & Fräser' %}
                         <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates3 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -753,10 +745,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -766,7 +758,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -780,20 +771,20 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
-                        <strong>Elektriker</strong>
+                      <td colspan="2" style="border:0;">
+                        <strong style="color: rgb(233, 240, 232);">Elektriker</strong>
                       </td>
                     </tr>
                     {% for row in data %}
                       {% if row[3] == 'Elektriker' %}
                         <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates3 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -802,10 +793,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -815,7 +806,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -829,20 +819,20 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
-                        <strong>Freie Mitarbeiter</strong>
+                      <td colspan="2" style="border:0;">
+                        <strong style="color: rgb(233, 240, 232);">Freie Mitarbeiter</strong>
                       </td>
                     </tr>
                     {% for row in data %}
                       {% if row[3] == 'Freie Mitarbeiter' %}
                         <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates3 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -880,20 +870,20 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
-                        <strong>Büro</strong>
+                      <td colspan="2" style="border:0;">
+                        <strong style="color: rgb(233, 240, 232);">Büro</strong>
                       </td>
                     </tr>
                     {% for row in data %}
                       {% if row[3] == 'Büro' %}
                         <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates3 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -902,10 +892,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -915,7 +905,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -929,20 +918,20 @@
                       {% endif %}
                     {% endfor %}
                     <tr>
-                      <td colspan="2">
-                        <strong>Hauswart</strong>
+                      <td colspan="2" style="border:0;">
+                        <strong style="color: rgb(233, 240, 232);">Hauswart</strong>
                       </td>
                     </tr>
                     {% for row in data %}
                       {% if row[3] == 'Hauswart' %}
                         <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates3 %}
-                            <td>
+                            <td id="t-a-field">
                               {% set assignment_found = false %}
                               {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] == date %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div>
                                     {{ assignment[3] }}
@@ -951,10 +940,10 @@
                                       {% if car[0] == assignment[2] %}
                                         {% if car[0] != 99 %}
                                           {{ car[1] }}
+                                          <br />
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    <br />
                                     {% if assignment[6] != 'no' %}
                                       {{ assignment[6] }}
                                     {% endif %}
@@ -964,7 +953,6 @@
                                     {% if assignment[8] != 'no' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    <br />
                                     {{ assignment[9] }}
                                   </div>
                                 {% endif %}
@@ -991,48 +979,50 @@
               <div id="assign-frame">
                 {% block assign_frame %}
                   <form id="assignForm" action="/assign_mitarbeiter" method="POST">
-                    <label>
-                      Mitarbeiter:<select name="personal_nr" id="dd-m">
-                        <option value="" disabled selected>Mitarbeiter</option>
-                        {% for row in data %}
-                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                        {% endfor %}
-                      </select>
-                    </label>
+                    <label>Mitarbeiter:</label><br />
+                    <select name="personal_nr" id="dd-m">
+                      <option value="" disabled selected>Mitarbeiter</option>
+                      {% for row in data %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                      {% endfor %}
+                    </select>
+                    <br />
                     <!-- Entweder auswählen oder in der Tabelle anklicken -->
-                    <label>Von-Bis-Datum:<input type="text" id="date-select" name="datefilter" value="" /></label>
-                    <label>
-                      Projekt:<select name="project_id" id="dd-p">
-                        <option value="" disabled selected>Projekt</option>
-                        {% for row in project_table_data %}
+                    <label>Von-Bis-Datum:</label><br />
+                    <input type="text" id="date-select" name="datefilter" value="" />
+                    <br />
+                    <label>Projekt:</label><br />
+                    <select name="project_id" id="dd-p">
+                      <option value="" disabled selected>Projekt</option>
+                      {% for row in project_table_data %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                      {% endfor %}
+                    </select>
+                    <br />
+                    <label>Auto:</label><br />
+                    <select name="car_id" id="dd-p">
+                      <!-- Autos aus Datenbank auslesen -->
+                      <option value="" disabled selected>Auto</option>
+                      {% for row in car_table_data %}
+                        {% if row[0] != 0 %}
                           <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                        {% endfor %}
-                      </select>
-                    </label>
-                    <label>
-                      Auto:<select name="car_id" id="dd-p">
-                        <!-- Autos aus Datenbank auslesen -->
-                        <option value="" disabled selected>Auto</option>
-                        {% for row in car_table_data %}
-                          {% if row[0] != 0 %}
-                            <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                          {% endif %}
-                        {% endfor %}
-                      </select>
-                    </label>
-                    <label>
-                      Ort:<select name="ort" id="dd-l">
-                        <option value="vO">Vor-Ort</option>
-                        <option value="iF">In Firma</option>
-                      </select>
-                    </label>
-                    <label>
-                      Zusatz:<select name="extra1" id="dd-x">
-                        <option value="" disabled selected>Weiteres..</option>
-                        <option value="ST.">Stundenzettel</option>
-                        <option value="H">Hotel</option>
-                      </select>
-                    </label>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                    <br />
+                    <label>Ort:</label><br />
+                    <select name="ort" id="dd-l">
+                      <option value="vO">Vor-Ort</option>
+                      <option value="iF">In Firma</option>
+                    </select>
+                    <br />
+                    <label>Zusatz:</label><br />
+                    <select name="extra1" id="dd-x">
+                      <option value="" disabled selected>Weiteres..</option>
+                      <option value="ST.">Stundenzettel</option>
+                      <option value="H">Hotel</option>
+                    </select>
+                    <br />
                     <label>
                       <select name="extra2" id="dd-x">
                         <option value="" disabled selected>Weiteres..</option>
@@ -1040,6 +1030,7 @@
                         <option value="H">Hotel</option>
                       </select>
                     </label>
+                    <br />
                     <label>
                       <select name="extra3" id="dd-x">
                         <option value="" disabled selected>Weiteres..</option>
@@ -1047,6 +1038,8 @@
                         <option value="H">Hotel</option>
                       </select>
                     </label>
+                    <br />
+                    <br />
                     <button class="confirm">Bestätigen</button>
                   </form>
 
@@ -1197,8 +1190,8 @@
           })
         })
         /* var assignment_table_data = {{ assignment_table_data | tojson | safe }};
-                                                                                                                                                                                                                                                                                                                                                                                console.log('Assignment data:', assignment_table_data)
-                                                                                                                                                                                                                                                                                                                                                                                */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        console.log('Assignment data:', assignment_table_data)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        */
       </script>
 
       <script src="https://cdn.jsdelivr.net/npm/brython@3.9.1/brython.min.js"></script>

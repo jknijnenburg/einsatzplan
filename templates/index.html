@@ -8,6 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'styles.css') }}" />
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,700;1,100&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" />
   </head>
   {% block title %}
     <body>
@@ -978,71 +983,70 @@
             {% if user_role == 'admin' %}
               <div id="assign-frame">
                 {% block assign_frame %}
-                  <form id="assignForm" action="/assign_mitarbeiter" method="POST">
-                    <label>Mitarbeiter:</label><br />
-                    <select name="personal_nr" id="dd-m">
-                      <option value="" disabled selected>Mitarbeiter</option>
-                      {% for row in data %}
-                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                      {% endfor %}
-                    </select>
-                    <br />
-                    <!-- Entweder auswählen oder in der Tabelle anklicken -->
-                    <label>Von-Bis-Datum:</label><br />
-                    <input type="text" id="date-select" name="datefilter" value="" />
-                    <br />
-                    <label>Projekt:</label><br />
-                    <select name="project_id" id="dd-p">
-                      <option value="" disabled selected>Projekt</option>
-                      {% for row in project_table_data %}
-                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                      {% endfor %}
-                    </select>
-                    <br />
-                    <label>Auto:</label><br />
-                    <select name="car_id" id="dd-p">
-                      <!-- Autos aus Datenbank auslesen -->
-                      <option value="" disabled selected>Auto</option>
-                      {% for row in car_table_data %}
-                        {% if row[0] != 0 %}
-                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                        {% endif %}
-                      {% endfor %}
-                    </select>
-                    <br />
-                    <label>Ort:</label><br />
-                    <select name="ort" id="dd-l">
-                      <option value="vO">Vor-Ort</option>
-                      <option value="iF">In Firma</option>
-                    </select>
-                    <br />
-                    <label>Zusatz:</label><br />
-                    <select name="extra1" id="dd-x">
-                      <option value="" disabled selected>Weiteres..</option>
-                      <option value="ST.">Stundenzettel</option>
-                      <option value="H">Hotel</option>
-                    </select>
-                    <br />
-                    <label>
-                      <select name="extra2" id="dd-x">
-                        <option value="" disabled selected>Weiteres..</option>
-                        <option value="ST.">Stundenzettel</option>
-                        <option value="H">Hotel</option>
-                      </select>
-                    </label>
-                    <br />
-                    <label>
-                      <select name="extra3" id="dd-x">
-                        <option value="" disabled selected>Weiteres..</option>
-                        <option value="ST.">Stundenzettel</option>
-                        <option value="H">Hotel</option>
-                      </select>
-                    </label>
-                    <br />
-                    <br />
-                    <button class="confirm">Bestätigen</button>
-                  </form>
-
+                  <div class="assign-m">
+                    <h3>Einzelne Mitarbeiter zuweisen</h3>
+                    <form id="assignForm" action="/assign_mitarbeiter" method="POST">
+                      <label id="a">
+                        Mitarbeiter:<select name="personal_nr" id="dd-m" required>
+                          <option value="" disabled selected>Mitarbeiter</option>
+                          {% for row in data %}
+                            <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                          {% endfor %}
+                        </select>
+                      </label>
+                      <!-- Entweder auswählen oder in der Tabelle anklicken -->
+                      <label>Von-Bis-Datum:<input type="text" id="date-select" name="datefilter" value="" required /></label>
+                      <label>
+                        Projekt:<select name="project_id" id="dd-p" required>
+                          <option value="" disabled selected>Projekt</option>
+                          {% for row in project_table_data %}
+                            <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                          {% endfor %}
+                        </select>
+                      </label>
+                      <label>
+                        Auto:<select name="car_id" id="dd-p">
+                          <!-- Autos aus Datenbank auslesen -->
+                          <option value="" disabled selected>Auto</option>
+                          {% for row in car_table_data %}
+                            {% if row[0] != 0 %}
+                              <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                            {% endif %}
+                          {% endfor %}
+                        </select>
+                      </label>
+                      <label>
+                        Ort:<select name="ort" id="dd-l" required>
+                          <option value="vO">Vor-Ort</option>
+                          <option value="iF">In Firma</option>
+                        </select>
+                      </label>
+                      <label>
+                        Zusatz:<select name="extra1" id="dd-x">
+                          <option value="" disabled selected>Weiteres..</option>
+                          <option value="ST.">Stundenzettel</option>
+                          <option value="H">Hotel</option>
+                        </select>
+                      </label>
+                      <label>
+                        <select name="extra2" id="dd-x">
+                          <option value="" disabled selected>Weiteres..</option>
+                          <option value="ST.">Stundenzettel</option>
+                          <option value="H">Hotel</option>
+                        </select>
+                      </label>
+                      <label>
+                        <select name="extra3" id="dd-x">
+                          <option value="" disabled selected>Weiteres..</option>
+                          <option value="ST.">Stundenzettel</option>
+                          <option value="H">Hotel</option>
+                        </select>
+                      </label>
+                      <label>Hinweis:<textarea name="hinweis" id="hinweis" cols="30" rows="5"></textarea></label>
+                      <br />
+                      <button class="confirm">Bestätigen</button>
+                    </form>
+                  </div>
                   <div class="group-create">
                     <h3>Gruppe erstellen & zuweisen</h3>
                     <p>Wähle mehrere Mitarbeiter aus, um eine Gruppe zu erstellen.</p>
@@ -1105,6 +1109,7 @@
                     <h4>Mitarbeiter löschen:</h4>
                     <form action="/submit_m_delete" method="POST">
                       <select name="personal_nr" id="">
+                        <option value="" disabled selected>Auto</option>
                         {% for row in data %}
                           <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                         {% endfor %}
@@ -1190,8 +1195,8 @@
           })
         })
         /* var assignment_table_data = {{ assignment_table_data | tojson | safe }};
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        console.log('Assignment data:', assignment_table_data)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        console.log('Assignment data:', assignment_table_data)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        */
       </script>
 
       <script src="https://cdn.jsdelivr.net/npm/brython@3.9.1/brython.min.js"></script>

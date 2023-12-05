@@ -35,9 +35,10 @@ $(function () {
     const extra1 = $('select[name="extra1"]').val();
     const extra2 = $('select[name="extra2"]').val();
     const extra3 = $('select[name="extra3"]').val();
+    const hinweis = $('textarea[name="hinweis"]').val();
 
     // Extend the form data with additional fields
-    const extendedFormData = `${formData}&startDate=${startDate}&endDate=${endDate}&year=${year}&personal_nr=${personal_nr}&project_id=${project_id}&car_id=${car_id}&ort=${ort}&extra1=${extra1}&extra2=${extra2}&extra3=${extra3}`;
+    const extendedFormData = `${formData}&startDate=${startDate}&endDate=${endDate}&year=${year}&personal_nr=${personal_nr}&project_id=${project_id}&car_id=${car_id}&ort=${ort}&extra1=${extra1}&extra2=${extra2}&extra3=${extra3}&hinweis=${hinweis}`;
 
     // Send the extended form data to the Python backend using AJAX
     $.ajax({

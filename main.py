@@ -200,6 +200,26 @@ def assign_mitarbeiter():
     return "Mitarbeiter erfolgreich zugewiesen."
 
 
+@app.route("/get_assignment_hinweis", methods=["POST"])
+def get_assignment_hinweis():
+    assignment_id = request.form.get("assignmentId")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT hinweis FROM assignment_table WHERE assignment_id=?", (assignment_id,)
+    )
+    result = cursor.fetchone()
+
+    if result:
+        hinweis = result[0]
+    else:
+        hinweis = ""
+
+    return jsonify({"hinweis": hinweis})
+
+
 @app.route("/submit_m_add", methods=["POST"])
 def create_new_user():
     personal_nr = request.form.get("personal_nr")
@@ -297,28 +317,28 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Login")
 
 
-class CompanyOverviewApp(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        self.title("Einsatzplan")
-        self.geometry("800x600")
-        self.login_frame = LoginFrame(self)
-        self.login_frame.pack(fill=tk.BOTH, expand=True)
+# class CompanyOverviewApp(tk.Tk):
+#     def __init__(self):
+#         super().__init__()
+#         self.title("Einsatzplan")
+#         self.geometry("800x600")
+#         self.login_frame = LoginFrame(self)
+#         self.login_frame.pack(fill=tk.BOTH, expand=True)
 
-        self.users = {"admin": "admin", "user": "123"}
+#         self.users = {"admin": "admin", "user": "123"}
 
-    def show_main_frame(self, user_role):
-        self.login_frame.destroy()
-        self.main_frame = MainFrame(self, user_role)
-        self.main_frame.pack(fill=tk.BOTH, expand=True)
+#     def show_main_frame(self, user_role):
+#         self.login_frame.destroy()
+#         self.main_frame = MainFrame(self, user_role)
+#         self.main_frame.pack(fill=tk.BOTH, expand=True)
 
-        form = LoginForm()
-        self.main_frame.assign_frame = (
-            AssignFrame(self, self.users) if user_role == "admin" else None
-        )
-        self.main_frame.assign_frame.pack(
-            fill=tk.BOTH, expand=True
-        ) if self.main_frame.assign_frame else None
+#         form = LoginForm()
+#         self.main_frame.assign_frame = (
+#             AssignFrame(self, self.users) if user_role == "admin" else None
+#         )
+#         self.main_frame.assign_frame.pack(
+#             fill=tk.BOTH, expand=True
+#         ) if self.main_frame.assign_frame else None
 
 
 # class LoginFrame(tk.Frame):

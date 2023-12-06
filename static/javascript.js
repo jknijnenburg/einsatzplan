@@ -9,7 +9,7 @@ const weekOutputElement = document.getElementById("week-output");
 weekOutputElement.textContent = "KW " + weeksInYear;
 
 $(function () {
-  $("#assignForm").on('submit', function (event) {
+  $("#assignForm").on("submit", function (event) {
     // Prevent the default form submission
     event.preventDefault();
 
@@ -78,4 +78,30 @@ $(function () {
       $(this).val("");
     }
   );
+});
+
+$(function () {
+  $(".assignment-cell").click(function () {
+    // Check if the clicked cell has data-assignment-id attribute
+    var assignmentId = $(this)
+      .find("div[data-assignment-id]")
+      .data("assignment-id");
+
+    if (assignmentId) {
+      $.ajax({
+        url: "/get_assignment_hinweis",
+        method: "POST",
+        data: { assignmentId: assignmentId },
+        success: function (response) {
+          var hinweis = response.hinweis;
+          // Display the hinweis information in a modal or tooltip
+          alert(hinweis);
+          // You can use a modal library like Bootstrap Modal for a better user experience
+        },
+        error: function (xhr, status, error) {
+          console.log("Kein Hinweis hinterlegt für dieses Assignment");
+        },
+      });
+    }
+  });
 });

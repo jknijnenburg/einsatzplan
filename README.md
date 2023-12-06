@@ -7,22 +7,31 @@ Einsatzplan Management
 - Mitarbeiter an Wochentagen zuweisen
 - Mitarbeiter zu Projekten zuweisen
 - Datum über Wochentag
-- Zwischen den Kalenderwochen wechseln können (vlt. mit Button für direkt zur derzeitigen KW)
-- Löschfunktion für Einträge
 - 3-4 KW sichtbar
-- Zeiten für 1 Jahr
-- Gruppenfunktion mit Verschiebung -> Farbige Hinterlegen
 - Hotel + Stundenzettel (Buchstaben)
 - Kunden hinzufügen/löschen können
 - Projekt -- "" --
 - Auto -- "" --
-- Detailansicht wenn man auf ein Feld draufklickt z.B. Ort
 - Vor-Ort oder in der Firma (Buchstaben)
 - Personalnummer
-- Bei Gruppen jeweils Auto zuweisen bzw. mehrere Autos
 - Hinweisfeld zum Eintragen
 
+
+- Gruppenfunktion mit Verschiebung -> Farbige Hinterlegen
+
+- Detailansicht wenn man auf ein Feld draufklickt z.B. Ort/Hinweis
+	=> JS
+
+- Bei Gruppen jeweils Auto zuweisen bzw. mehrere Autos
+
+- Zwischen den Kalenderwochen wechseln können (vlt. mit Button für direkt zur derzeitigen KW)
+- Löschfunktion für Einträge
+
+- Zeiten für 1 Jahr
+
 - FREI eintragen wodurch dann die restlichen Datenbanksachen auf "no" gesetzt werden und nur "FREI" angezeigt wird
+
+- 
 
 - Legende
 

@@ -70,12 +70,12 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in weekDates1 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -86,16 +86,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -118,12 +118,12 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in weekDates1 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -134,16 +134,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -166,12 +166,12 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in weekDates1 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -182,16 +182,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -214,12 +214,12 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in weekDates1 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -230,16 +230,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -262,12 +262,12 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in weekDates1 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -278,16 +278,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -310,12 +310,12 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in weekDates1 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -326,16 +326,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -380,12 +380,12 @@
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates2 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -396,16 +396,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -428,12 +428,12 @@
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates2 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -444,16 +444,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -476,12 +476,12 @@
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates2 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -492,16 +492,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -524,12 +524,12 @@
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates2 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -540,16 +540,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -572,12 +572,12 @@
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates2 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -588,16 +588,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -620,12 +620,12 @@
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates2 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -636,16 +636,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -690,12 +690,12 @@
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates3 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -706,16 +706,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -738,12 +738,12 @@
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates3 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -754,16 +754,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -786,12 +786,12 @@
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates3 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -802,16 +802,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -852,13 +852,13 @@
                                       {% endif %}
                                     {% endfor %}
                                     <br />
-                                    {% if assignment[6] != 'no' %}
+                                    {% if assignment[6] != 'no' and assignment[6] != 'null' %}
                                       {{ assignment[6] }}
                                     {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
                                     <br />
@@ -885,12 +885,12 @@
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates3 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -901,16 +901,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -933,12 +933,12 @@
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in weekDates3 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
+                            <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div>
+                                  <div data-assignment-id="{{ assignment[0] }}">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -949,16 +949,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[6] != 'no' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
                                       {{ assignment[7] }}
                                     {% endif %}
-                                    {% if assignment[8] != 'no' %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
-                                    {{ assignment[9] }}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -1195,8 +1195,8 @@
           })
         })
         /* var assignment_table_data = {{ assignment_table_data | tojson | safe }};
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        console.log('Assignment data:', assignment_table_data)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        console.log('Assignment data:', assignment_table_data)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        */
       </script>
 
       <script src="https://cdn.jsdelivr.net/npm/brython@3.9.1/brython.min.js"></script>

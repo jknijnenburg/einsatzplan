@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'styles.css') }}" />
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css" />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -75,7 +76,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -123,7 +124,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -171,7 +172,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -219,7 +220,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -267,7 +268,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -315,7 +316,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -385,7 +386,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -433,7 +434,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -481,7 +482,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -529,7 +530,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -577,7 +578,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -625,7 +626,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -695,7 +696,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -743,7 +744,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -791,7 +792,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -890,7 +891,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -938,7 +939,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -985,7 +986,7 @@
                 {% block assign_frame %}
                   <div class="assign-m">
                     <h3>Einzelne Mitarbeiter zuweisen</h3>
-                    <form id="assignForm" action="/assign_mitarbeiter" method="POST">
+                    <form id="assignForm" action="" method="POST">
                       <label id="a">
                         Mitarbeiter:<select name="personal_nr" id="dd-m" required>
                           <option value="" disabled selected>Mitarbeiter</option>
@@ -994,7 +995,6 @@
                           {% endfor %}
                         </select>
                       </label>
-                      <!-- Entweder auswählen oder in der Tabelle anklicken -->
                       <label>Von-Bis-Datum:<input type="text" id="date-select" name="datefilter" value="" required /></label>
                       <label>
                         Projekt:<select name="project_id" id="dd-p" required>
@@ -1005,7 +1005,7 @@
                         </select>
                       </label>
                       <label>
-                        Auto:<select name="car_id" id="dd-p">
+                        Auto:<select name="car_id" id="dd-car">
                           <!-- Autos aus Datenbank auslesen -->
                           <option value="" disabled selected>Auto</option>
                           {% for row in car_table_data %}
@@ -1027,16 +1027,12 @@
                           <option value="ST.">Stundenzettel</option>
                           <option value="H">Hotel</option>
                         </select>
-                      </label>
-                      <label>
-                        <select name="extra2" id="dd-x">
+                        <select name="extra2" id="dd-xx">
                           <option value="" disabled selected>Weiteres..</option>
                           <option value="ST.">Stundenzettel</option>
                           <option value="H">Hotel</option>
                         </select>
-                      </label>
-                      <label>
-                        <select name="extra3" id="dd-x">
+                        <select name="extra3" id="dd-xxx">
                           <option value="" disabled selected>Weiteres..</option>
                           <option value="ST.">Stundenzettel</option>
                           <option value="H">Hotel</option>
@@ -1050,8 +1046,64 @@
                   <div class="group-create">
                     <h3>Gruppe erstellen & zuweisen</h3>
                     <p>Wähle mehrere Mitarbeiter aus, um eine Gruppe zu erstellen.</p>
-                    <!-- Vielleicht eine Mehrfachauswahl-Liste implementieren? -->
                     <p>Wähle eine Farbe für diese Gruppe und anschließend das Projekt sowie weitere "Eigenschaften".</p>
+                    <form id="group-form" action="" method="POST">
+                      <select name="personal_nr_list" id="personal_nr_list" class="chosen-select" data-placeholder="Mitarbeiter auswählen.." multiple>
+                        {% for row in data %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
+                      </select>
+                      <label>Von-Bis-Datum:<input type="text" id="date-select" name="datefilter-g" value="" required /></label>
+                      <label>
+                        Projekt:<select name="project_id" id="dd-p-g" required>
+                          <option value="" disabled selected>Projekt</option>
+                          {% for row in project_table_data %}
+                            <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                          {% endfor %}
+                        </select>
+                      </label>
+                      <label>
+                        Auto:<select name="car_id" id="dd-car-g">
+                          <!-- Autos aus Datenbank auslesen -->
+                          <option value="" disabled selected>Auto</option>
+                          {% for row in car_table_data %}
+                            {% if row[0] != 0 %}
+                              <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                            {% endif %}
+                          {% endfor %}
+                        </select>
+                      </label>
+                      <label>
+                        Ort:<select name="ort" id="dd-l-g" required>
+                          <option value="vO">Vor-Ort</option>
+                          <option value="iF">In Firma</option>
+                        </select>
+                      </label>
+                      <label>
+                        Zusatz:<select name="extra1" id="dd-x-g">
+                          <option value="" disabled selected>Weiteres..</option>
+                          <option value="ST.">Stundenzettel</option>
+                          <option value="H">Hotel</option>
+                        </select>
+                      </label>
+                      <label>
+                        <select name="extra2" id="dd-xx-g">
+                          <option value="" disabled selected>Weiteres..</option>
+                          <option value="ST.">Stundenzettel</option>
+                          <option value="H">Hotel</option>
+                        </select>
+                      </label>
+                      <label>
+                        <select name="extra3" id="dd-xxx-g">
+                          <option value="" disabled selected>Weiteres..</option>
+                          <option value="ST.">Stundenzettel</option>
+                          <option value="H">Hotel</option>
+                        </select>
+                      </label>
+                      <label>Hinweis:<textarea name="hinweis" id="hinweis" cols="30" rows="5"></textarea></label>
+                      <br />
+                      <button class="confirm">Bestätigen</button>
+                    </form>
                   </div>
 
                   <div class="add-data">
@@ -1161,6 +1213,7 @@
       <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
       <script src="{{ url_for('static', filename = 'javascript.js') }}"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
       <script>
         document.addEventListener('DOMContentLoaded', function () {
           document.getElementById('login-form').addEventListener('submit', function (e) {
@@ -1195,8 +1248,8 @@
           })
         })
         /* var assignment_table_data = {{ assignment_table_data | tojson | safe }};
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        console.log('Assignment data:', assignment_table_data)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                console.log('Assignment data:', assignment_table_data)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
       </script>
 
       <script src="https://cdn.jsdelivr.net/npm/brython@3.9.1/brython.min.js"></script>

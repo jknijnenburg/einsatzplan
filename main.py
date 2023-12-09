@@ -4,7 +4,7 @@ from tkinter import ttk
 from tkinter import *
 from tkinter import Label
 import tkinter.font as tkFont
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from flask import g
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, validators
@@ -15,6 +15,7 @@ from datetime import datetime, timedelta
 import locale
 
 app = Flask(__name__)
+
 app.config["SECRET_KEY"] = "your_secret_key"
 
 app.config["DATABASE"] = "datenbank.db"
@@ -218,6 +219,113 @@ def get_assignment_hinweis():
         hinweis = ""
 
     return jsonify({"hinweis": hinweis})
+
+
+@app.route("/assign_group", methods=["POST"])
+def assign_group():
+    # Use getlist to retrieve a list of values for the "personal_nr_list" key
+    personal_nr_list = request.form.getlist("personal_nr_list")
+
+    # Convert user IDs to integers
+    numeric_user_ids = [
+        int(user_id) for user_id in ",".join(personal_nr_list).split(",")
+    ]
+
+    print("Numeric User IDs before list:", numeric_user_ids)
+
+    startDate = request.form.get("startDate")
+    endDate = request.form.get("endDate")
+    year = request.form.get("year")
+    location = request.form.get("ort")
+    extra1 = request.form.get("extra1")
+    extra2 = request.form.get("extra2")
+    extra3 = request.form.get("extra3")
+    hinweis = request.form.get("hinweis")
+    project_id = request.form.get("project_id")
+    car_id = request.form.get("car_id")
+
+    if not car_id:
+        car_id = 99
+
+    extra1 = request.form.get("extra1")
+
+    if not extra1:
+        extra1 = "no"
+
+    extra2 = request.form.get("extra2")
+
+    if not extra2:
+        extra2 = "no"
+
+    extra3 = request.form.get("extra3")
+
+    if not extra3:
+        extra3 = "no"
+
+    # Get the highest group_id from the database
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT MAX(group_id) FROM assignment_table")
+        max_group_id = cursor.fetchone()[0]
+        if max_group_id is None:
+            max_group_id = 0  # If there are no existing group_ids, start from 0
+
+        # Increment the highest group_id for the next assignment
+        next_group_id = max_group_id + 1
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+        next_group_id = (
+            None  # Handle the case where there's an error getting the group_id
+        )
+    finally:
+        conn.close()
+
+    if next_group_id is not None:
+        # Remove duplicate user IDs
+        numeric_user_ids = list(set(numeric_user_ids))
+
+        # Insert assignments for each user in numeric_user_ids
+        conn = sqlite3.connect("datenbank.db")
+        cursor = conn.cursor()
+
+        print(
+            f"Received values: startDate={startDate}, endDate={endDate}, year={year}"
+        )
+
+        try:
+            print("Numeric User IDs after list:", numeric_user_ids)
+            print("Next Group ID:", next_group_id)
+
+            for user_id in numeric_user_ids:
+                cursor.execute(
+                    "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, extra1, extra2, extra3, ort, group_id, hinweis) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        user_id,
+                        car_id,
+                        project_id,
+                        startDate,
+                        endDate,
+                        year,
+                        extra1,
+                        extra2,
+                        extra3,
+                        location,
+                        next_group_id,
+                        hinweis,
+                    ),
+                )
+
+            conn.commit()
+            print("Gruppen erfolgreich zugewiesen.")
+        except sqlite3.Error as e:
+            print(f"SQLite error: {e}")
+        finally:
+            conn.close()
+        return "Gruppe erfolgreich zugewiesen."
+    else:
+        return "Fehler beim Zuweisen der Gruppen."
 
 
 @app.route("/submit_m_add", methods=["POST"])

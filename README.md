@@ -15,23 +15,29 @@ Einsatzplan Management
 - Vor-Ort oder in der Firma (Buchstaben)
 - Personalnummer
 - Hinweisfeld zum Eintragen
-
-
-- Gruppenfunktion mit Verschiebung -> Farbige Hinterlegen
-
 - Detailansicht wenn man auf ein Feld draufklickt z.B. Ort/Hinweis
 	=> JS
-
 - Bei Gruppen jeweils Auto zuweisen bzw. mehrere Autos
 
 - Zwischen den Kalenderwochen wechseln können (vlt. mit Button für direkt zur derzeitigen KW)
-- Löschfunktion für Einträge
+
+- Löschfunktion für Einträge (Am besten anwählen und löschen)
 
 - Zeiten für 1 Jahr
 
 - FREI eintragen wodurch dann die restlichen Datenbanksachen auf "no" gesetzt werden und nur "FREI" angezeigt wird
 
-- 
+- 2 KW aufeinmal rest scrollen + Info icon, Feiertage automatisch, nur helle Farben bei den Gruppen
+
+- Nord und Südfeiertage
+
+- Aktuelle KW hervorheben
+
+- Neue Reihenfolge: Elektriker, Schlosser, Sinan, Büro, Dreher & Fräser, extern
+
+- Abwesendheit, Urlaub & Gleizeit, Schule mit Farbe (Schwarz oder Rot)
+
+- Besprechungsliste als QuickView oben rechts mit vlt. den heutigen 3 und dann als Button um die Liste aufzurufen woanders.
 
 - Legende
 

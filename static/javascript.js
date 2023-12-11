@@ -47,6 +47,8 @@ $(function () {
       data: extendedFormData,
       success: function (response) {
         // Handle the response from the Python backend
+        alert("Mitarbeiter erfolgreich zugewiesen!")
+        window.location.reload();
       },
       error: function (xhr, status, error) {
         // Handle the error
@@ -157,6 +159,7 @@ $(function () {
         console.log("Server response:", response);
 
         alert("Gruppe erfolgreich zugewiesen!");
+        window.location.reload();
       },
       error: function (xhr, status, error) {
         // Handle the error

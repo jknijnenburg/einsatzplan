@@ -33,6 +33,14 @@ body {
     display: none;
 }
 
+
+.week-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: rgb(233, 240, 232);
+}
+
 td {
     border: black 1px solid;
     height: 80px;
@@ -45,9 +53,15 @@ td {
 
 footer {
     margin-top: 200px;
+    width: 100vw;
 }
 
 /* Admin-Bereich */
+#assign-frame {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
 .assign-m {
     padding-bottom: 150px;
 }
@@ -91,6 +105,42 @@ footer {
 
 .group-create {
     padding-bottom: 150px;
+}
+
+#group-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    max-width: 500px;
+}
+
+#group-form label {
+    font-size: 20px;
+    font-family: "Roboto";
+    font-weight: 500;
+    padding-top: 20px;
+}
+
+#group-form input {
+    width: 400px;
+    max-width: 400px;
+    border-radius: 20px;
+    font-family: "Roboto";
+    font-size: 16px;
+    color: #000;
+    text-align: center;
+    border: 0;
+}
+
+#group-form button {
+    font-family: "Roboto";
+    font-size: 20px;
+    border-radius: 20px;
+    width: 400px;
+    max-width: 100%;
+    border: 0;
+    color: #000;
+    text-align: center;
 }
 
 .add-data {

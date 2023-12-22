@@ -425,6 +425,10 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Login")
 
 
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
 # class CompanyOverviewApp(tk.Tk):
 #     def __init__(self):
 #         super().__init__()
@@ -693,7 +697,3 @@ class LoginForm(FlaskForm):
 #                 self.master.table_frame.table.set(
 #                     item_id, day, self.master.user_assignments[user][day]
 #                 )
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

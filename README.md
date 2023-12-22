@@ -19,13 +19,14 @@ Einsatzplan Management
 	=> JS
 - Bei Gruppen jeweils Auto zuweisen bzw. mehrere Autos
 
+
 - Zwischen den Kalenderwochen wechseln können (vlt. mit Button für direkt zur derzeitigen KW)
 
 - Löschfunktion für Einträge (Am besten anwählen und löschen)
 
 - Zeiten für 1 Jahr
 
-- FREI eintragen wodurch dann die restlichen Datenbanksachen auf "no" gesetzt werden und nur "FREI" angezeigt wird
+- (FREI eintragen wodurch dann die restlichen Datenbanksachen auf "no" gesetzt werden und nur "FREI" angezeigt wird)
 
 - 2 KW aufeinmal rest scrollen + Info icon, Feiertage automatisch, nur helle Farben bei den Gruppen
 

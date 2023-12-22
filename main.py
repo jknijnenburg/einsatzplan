@@ -13,6 +13,7 @@ import uuid
 import json
 from datetime import datetime, timedelta
 import locale
+import math
 
 app = Flask(__name__)
 
@@ -43,40 +44,19 @@ def close_db(error):
         db.commit()
 
 
-def generate_week_dates1():
+def get_current_week_number():
     today_date = datetime.now()
-    today_day = today_date.weekday()
+    return today_date.isocalendar()[1]  # Extract the week number from the isocalendar tuple
 
-    week_dates = [today_date - timedelta(days=today_day - i) for i in range(0, 7)]
 
+def generate_week_dates(start_date):
+    week_dates = [start_date + timedelta(days=i) for i in range(7)]
     return [date.strftime("%Y-%m-%d") for date in week_dates]
 
 
-def generate_week_dates2():
-    today_date = datetime.now()
-    today_day = today_date.weekday()
-
-    week_dates = [today_date - timedelta(days=today_day - i) for i in range(7, 14)]
-
-    return [date.strftime("%Y-%m-%d") for date in week_dates]
-
-
-def generate_week_dates3():
-    today_date = datetime.now()
-    today_day = today_date.weekday()
-
-    week_dates = [today_date - timedelta(days=today_day - i) for i in range(14, 21)]
-
-    return [date.strftime("%Y-%m-%d") for date in week_dates]
-
-
-def generate_week_days():
+def generate_week_days(start_date):
     locale.setlocale(locale.LC_TIME, "de_DE")
-    today_date = datetime.now()
-    today_day = today_date.weekday()
-
-    week_days = [today_date - timedelta(days=today_day - i) for i in range(0, 7)]
-
+    week_days = [start_date + timedelta(days=i) for i in range(7)]
     return [date.strftime("%a") for date in week_days]
 
 
@@ -97,10 +77,52 @@ def index():
     user_role = request.args.get("user_role", "user")
 
     # Generate the week dates
-    weekDates1 = generate_week_dates1()
-    weekDates2 = generate_week_dates2()
-    weekDates3 = generate_week_dates3()
-    weekDays = generate_week_days()
+    # weekDates1 = generate_week_dates1()
+    # weekDates2 = generate_week_dates2()
+    # weekDates3 = generate_week_dates3()
+    # weekDays = generate_week_days()
+    current_week_number = get_current_week_number()
+
+    week_number1 = int(request.args.get("week_number1", 0))  # only for the assignments
+    week_number2 = int(request.args.get("week_number2", 1))
+
+    today_date = datetime.now()
+
+    # to show the right KW
+    kw_1 = int(request.args.get("kw_1", today_date.isocalendar()[1]))
+
+    iso_year = today_date.isocalendar()[0]
+    iso_week = kw_1
+
+    if iso_week == 53:
+        iso_week = 1
+        iso_year += 1
+
+    kw_2 = int(request.args.get("kw_2", iso_week + 1))
+
+    if kw_2 == 53:
+        kw_2 = 1
+        iso_year += 1
+
+    start_date1 = (
+        today_date
+        - timedelta(days=today_date.weekday())
+        + timedelta(weeks=week_number1)
+    )
+    end_date1 = start_date1 + timedelta(days=6)
+
+    start_date2 = (
+        today_date
+        - timedelta(days=today_date.weekday())
+        + timedelta(weeks=week_number2)
+    )
+    end_date2 = start_date2 + timedelta(days=6)
+
+    week_dates1 = generate_week_dates(start_date1)
+    week_dates2 = generate_week_dates(start_date2)
+
+    week_days1 = generate_week_days(start_date1)
+    week_days2 = generate_week_days(start_date2)
 
     return render_template(
         "index.html",
@@ -111,10 +133,23 @@ def index():
         car_table_data=car_rows,
         form=form,
         user_role=user_role,
-        weekDates1=weekDates1,
-        weekDates2=weekDates2,
-        weekDates3=weekDates3,
-        weekDays=weekDays,
+        # weekDates1=weekDates1,
+        # weekDates2=weekDates2,
+        # weekDates3=weekDates3,
+        # weekDays=weekDays,
+        current_week_number=current_week_number,
+        kw_1=kw_1,
+        kw_2=kw_2,
+        week_number1=week_number1,
+        week_number2=week_number2,
+        start_date1=start_date1.strftime("%Y-%m-%d"),
+        end_date1=end_date1.strftime("%Y-%m-%d"),
+        start_date2=start_date2.strftime("%Y-%m-%d"),
+        end_date2=end_date2.strftime("%Y-%m-%d"),
+        week_dates1=week_dates1,
+        week_dates2=week_dates2,
+        week_days1=week_days1,
+        week_days2=week_days2,
     )
 
 
@@ -290,9 +325,7 @@ def assign_group():
         conn = sqlite3.connect("datenbank.db")
         cursor = conn.cursor()
 
-        print(
-            f"Received values: startDate={startDate}, endDate={endDate}, year={year}"
-        )
+        print(f"Received values: startDate={startDate}, endDate={endDate}, year={year}")
 
         try:
             print("Numeric User IDs after list:", numeric_user_ids)

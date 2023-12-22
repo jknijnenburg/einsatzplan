@@ -19,6 +19,10 @@ body {
     height: auto;
 }
 
+#current-week-table {
+    border: 2px solid green;
+}
+
 .tables-container table {
     width: auto;
     border: black 1px solid;

@@ -44,13 +44,17 @@
         {% block content %}
           <div id="main-frame">
             <h1>Einsatzplan</h1>
+            <button onclick="prevWeek()">Vorherige Woche</button>
+            <button onclick="nextWeek()">Nächste Woche</button>
+            <button onclick="resetWeek()">HEUTE</button>
             <div class="tables-container">
-              <table class="week-table">
+              <p class="week-number">KW {{ kw_1 }}</p>
+              <table class="week-table" id="{% if kw_1 == current_week_number %}current-week-table{% endif %}">
                 <thead>
                   <tr>
                     <th>P-Nr.</th>
                     <th>Name</th>
-                    {% for date in weekDates1 %}
+                    {% for date in week_dates1 %}
                       <th>{{ date }}</th>
                     {% endfor %}
                   </tr>
@@ -61,7 +65,7 @@
                       <td colspan="2" style="border:0;">
                         <strong id="k-m">Schlosser</strong>
                       </td>
-                      {% for day in weekDays %}
+                      {% for day in week_days1 %}
                         <th colspan="1">{{ day }}</th>
                       {% endfor %}
                     </tr>
@@ -70,7 +74,7 @@
                         <tr>
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
-                          {% for date in weekDates1 %}
+                          {% for date in week_dates1 %}
                             <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
@@ -118,7 +122,7 @@
                         <tr>
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
-                          {% for date in weekDates1 %}
+                          {% for date in week_dates1 %}
                             <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
@@ -166,7 +170,7 @@
                         <tr>
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
-                          {% for date in weekDates1 %}
+                          {% for date in week_dates1 %}
                             <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
@@ -214,7 +218,7 @@
                         <tr>
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
-                          {% for date in weekDates1 %}
+                          {% for date in week_dates1 %}
                             <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
@@ -262,7 +266,7 @@
                         <tr>
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
-                          {% for date in weekDates1 %}
+                          {% for date in week_dates1 %}
                             <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
@@ -310,7 +314,7 @@
                         <tr>
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
-                          {% for date in weekDates1 %}
+                          {% for date in week_dates1 %}
                             <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
@@ -355,12 +359,13 @@
                   {% endif %}
                 </tbody>
               </table>
-              <table class="week-table">
+              <p class="week-number">KW {{ kw_2 }}</p>
+              <table class="week-table" id="{% if kw_2 == current_week_number %}current-week-table{% endif %}">
                 <thead>
                   <tr>
                     <th id="m-pc-row">P-Nr.</th>
                     <th id="m-pc-row">Name</th>
-                    {% for date in weekDates2 %}
+                    {% for date in week_dates2 %}
                       <th>{{ date }}</th>
                     {% endfor %}
                   </tr>
@@ -371,7 +376,7 @@
                       <td colspan="0" style="border: 0; display: none;">
                         <strong id="k-m">Schlosser</strong>
                       </td>
-                      {% for day in weekDays %}
+                      {% for day in week_days2 %}
                         <th colspan="1">{{ day }}</th>
                       {% endfor %}
                     </tr>
@@ -380,7 +385,7 @@
                         <tr>
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in weekDates2 %}
+                          {% for date in week_dates2 %}
                             <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
@@ -428,7 +433,7 @@
                         <tr>
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in weekDates2 %}
+                          {% for date in week_dates2 %}
                             <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
@@ -476,7 +481,7 @@
                         <tr>
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in weekDates2 %}
+                          {% for date in week_dates2 %}
                             <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
@@ -524,7 +529,7 @@
                         <tr>
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in weekDates2 %}
+                          {% for date in week_dates2 %}
                             <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
@@ -572,7 +577,7 @@
                         <tr>
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in weekDates2 %}
+                          {% for date in week_dates2 %}
                             <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
@@ -620,320 +625,7 @@
                         <tr>
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in weekDates2 %}
-                            <td class="assignment-cell" id="t-a-field">
-                              {% for assignment in assignment_table_data %}
-                                {% set assignment_found = false %}
-                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
-                                  {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
-                                    {{ assignment[3] }}
-                                    <br />
-                                    {% for car in car_table_data %}
-                                      {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
-                                          {{ car[1] }}
-                                          <br />
-                                        {% endif %}
-                                      {% endif %}
-                                    {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
-                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
-                                      {{ assignment[8] }}
-                                    {% endif %}
-                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
-                                      {{ assignment[9] }}
-                                    {% endif %}
-                                    {{ assignment[10] }}
-                                  </div>
-                                {% endif %}
-                              {% endfor %}
-                              {% if not assignment_found %}
-                                <!-- Create an empty td when no assignment is found -->
-                              {% endif %}
-                            </td>
-                          {% endfor %}
-                        </tr>
-                      {% endif %}
-                    {% endfor %}
-                  {% else %}
-                    <tr>
-                      <td colspan="5">No data available</td>
-                    </tr>
-                  {% endif %}
-                </tbody>
-              </table>
-              <table class="week-table">
-                <thead>
-                  <tr>
-                    <th id="m-pc-row">P-Nr.</th>
-                    <th id="m-pc-row">Name</th>
-                    {% for date in weekDates3 %}
-                      <th>{{ date }}</th>
-                    {% endfor %}
-                  </tr>
-                </thead>
-                <tbody>
-                  {% if data %}
-                    <tr>
-                      <td colspan="0" style="border: 0; display: none;">
-                        <strong id="k-m">Schlosser</strong>
-                      </td>
-                      {% for day in weekDays %}
-                        <th colspan="1">{{ day }}</th>
-                      {% endfor %}
-                    </tr>
-                    {% for row in data %}
-                      {% if row[3] == 'Schlosser' %}
-                        <tr>
-                          <td id="m-pc-row">{{ row[0] }}</td>
-                          <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in weekDates3 %}
-                            <td class="assignment-cell" id="t-a-field">
-                              {% for assignment in assignment_table_data %}
-                                {% set assignment_found = false %}
-                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
-                                  {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
-                                    {{ assignment[3] }}
-                                    <br />
-                                    {% for car in car_table_data %}
-                                      {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
-                                          {{ car[1] }}
-                                          <br />
-                                        {% endif %}
-                                      {% endif %}
-                                    {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
-                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
-                                      {{ assignment[8] }}
-                                    {% endif %}
-                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
-                                      {{ assignment[9] }}
-                                    {% endif %}
-                                    {{ assignment[10] }}
-                                  </div>
-                                {% endif %}
-                              {% endfor %}
-                              {% if not assignment_found %}
-                                <!-- Create an empty td when no assignment is found -->
-                              {% endif %}
-                            </td>
-                          {% endfor %}
-                        </tr>
-                      {% endif %}
-                    {% endfor %}
-                    <tr>
-                      <td colspan="2" style="border:0;">
-                        <strong id="k-m">Dreher & Fräser</strong>
-                      </td>
-                    </tr>
-                    {% for row in data %}
-                      {% if row[3] == 'Dreher & Fräser' %}
-                        <tr>
-                          <td id="m-pc-row">{{ row[0] }}</td>
-                          <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in weekDates3 %}
-                            <td class="assignment-cell" id="t-a-field">
-                              {% for assignment in assignment_table_data %}
-                                {% set assignment_found = false %}
-                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
-                                  {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
-                                    {{ assignment[3] }}
-                                    <br />
-                                    {% for car in car_table_data %}
-                                      {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
-                                          {{ car[1] }}
-                                          <br />
-                                        {% endif %}
-                                      {% endif %}
-                                    {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
-                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
-                                      {{ assignment[8] }}
-                                    {% endif %}
-                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
-                                      {{ assignment[9] }}
-                                    {% endif %}
-                                    {{ assignment[10] }}
-                                  </div>
-                                {% endif %}
-                              {% endfor %}
-                              {% if not assignment_found %}
-                                <!-- Create an empty td when no assignment is found -->
-                              {% endif %}
-                            </td>
-                          {% endfor %}
-                        </tr>
-                      {% endif %}
-                    {% endfor %}
-                    <tr>
-                      <td colspan="2" style="border:0;">
-                        <strong id="k-m">Elektriker</strong>
-                      </td>
-                    </tr>
-                    {% for row in data %}
-                      {% if row[3] == 'Elektriker' %}
-                        <tr>
-                          <td id="m-pc-row">{{ row[0] }}</td>
-                          <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in weekDates3 %}
-                            <td class="assignment-cell" id="t-a-field">
-                              {% for assignment in assignment_table_data %}
-                                {% set assignment_found = false %}
-                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
-                                  {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
-                                    {{ assignment[3] }}
-                                    <br />
-                                    {% for car in car_table_data %}
-                                      {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
-                                          {{ car[1] }}
-                                          <br />
-                                        {% endif %}
-                                      {% endif %}
-                                    {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
-                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
-                                      {{ assignment[8] }}
-                                    {% endif %}
-                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
-                                      {{ assignment[9] }}
-                                    {% endif %}
-                                    {{ assignment[10] }}
-                                  </div>
-                                {% endif %}
-                              {% endfor %}
-                              {% if not assignment_found %}
-                                <!-- Create an empty td when no assignment is found -->
-                              {% endif %}
-                            </td>
-                          {% endfor %}
-                        </tr>
-                      {% endif %}
-                    {% endfor %}
-                    <tr>
-                      <td colspan="2" style="border:0;">
-                        <strong id="k-m">Freie Mitarbeiter</strong>
-                      </td>
-                    </tr>
-                    {% for row in data %}
-                      {% if row[3] == 'Freie Mitarbeiter' %}
-                        <tr>
-                          <td id="m-pc-row">{{ row[0] }}</td>
-                          <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in weekDates3 %}
-                            <td id="t-a-field">
-                              {% set assignment_found = false %}
-                              {% for assignment in assignment_table_data %}
-                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
-                                  {% set assignment_found = true %}
-                                  <div>
-                                    {{ assignment[3] }}
-                                    <br />
-                                    {% for car in car_table_data %}
-                                      {% if car[0] == assignment[2] %}
-                                        {% if car[1] == 99 %}
-
-                                        {% else %}
-                                          {{ car[1] }}
-                                        {% endif %}
-                                      {% endif %}
-                                    {% endfor %}
-                                    <br />
-                                    {% if assignment[6] != 'no' and assignment[6] != 'null' %}
-                                      {{ assignment[6] }}
-                                    {% endif %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
-                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
-                                      {{ assignment[8] }}
-                                    {% endif %}
-                                    <br />
-                                    {{ assignment[9] }}
-                                  </div>
-                                {% endif %}
-                              {% endfor %}
-                              {% if not assignment_found %}
-                                <!-- Create an empty td when no assignment is found -->
-                              {% endif %}
-                            </td>
-                          {% endfor %}
-                        </tr>
-                      {% endif %}
-                    {% endfor %}
-                    <tr>
-                      <td colspan="2" style="border:0;">
-                        <strong id="k-m">Büro</strong>
-                      </td>
-                    </tr>
-                    {% for row in data %}
-                      {% if row[3] == 'Büro' %}
-                        <tr>
-                          <td id="m-pc-row">{{ row[0] }}</td>
-                          <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in weekDates3 %}
-                            <td class="assignment-cell" id="t-a-field">
-                              {% for assignment in assignment_table_data %}
-                                {% set assignment_found = false %}
-                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
-                                  {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
-                                    {{ assignment[3] }}
-                                    <br />
-                                    {% for car in car_table_data %}
-                                      {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
-                                          {{ car[1] }}
-                                          <br />
-                                        {% endif %}
-                                      {% endif %}
-                                    {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
-                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
-                                      {{ assignment[8] }}
-                                    {% endif %}
-                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
-                                      {{ assignment[9] }}
-                                    {% endif %}
-                                    {{ assignment[10] }}
-                                  </div>
-                                {% endif %}
-                              {% endfor %}
-                              {% if not assignment_found %}
-                                <!-- Create an empty td when no assignment is found -->
-                              {% endif %}
-                            </td>
-                          {% endfor %}
-                        </tr>
-                      {% endif %}
-                    {% endfor %}
-                    <tr>
-                      <td colspan="2" style="border:0;">
-                        <strong id="k-m">Hauswart</strong>
-                      </td>
-                    </tr>
-                    {% for row in data %}
-                      {% if row[3] == 'Hauswart' %}
-                        <tr>
-                          <td id="m-pc-row">{{ row[0] }}</td>
-                          <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in weekDates3 %}
+                          {% for date in week_dates2 %}
                             <td class="assignment-cell" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
@@ -1250,9 +942,18 @@
             maxDate: '2035-12-31'
           })
         })
-        /* var assignment_table_data = {{ assignment_table_data | tojson | safe }};
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        console.log('Assignment data:', assignment_table_data)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        */
+        
+        function prevWeek() {
+          window.location.href = '/?week_number1={{ week_number1 - 1 }}&week_number2={{ week_number2 - 1 }}&kw_1={{ kw_1 - 1}}&kw_2={{ kw_2 - 1}}'
+        }
+        
+        function nextWeek() {
+          window.location.href = '/?week_number1={{ week_number1 + 1 }}&week_number2={{ week_number2 + 1 }}&kw_1={{ kw_1 + 1}}&kw_2={{ kw_2 + 1}}'
+        }
+        
+        function resetWeek() {
+          window.location.href = '/'
+        }
       </script>
 
       <script src="https://cdn.jsdelivr.net/npm/brython@3.9.1/brython.min.js"></script>

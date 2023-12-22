@@ -18,9 +18,13 @@ Einsatzplan Management
 - Detailansicht wenn man auf ein Feld draufklickt z.B. Ort/Hinweis
 	=> JS
 - Bei Gruppen jeweils Auto zuweisen bzw. mehrere Autos
-
-
+- Aktuelle KW hervorheben
 - Zwischen den Kalenderwochen wechseln können (vlt. mit Button für direkt zur derzeitigen KW)
+- nur helle Farben bei den Gruppen
+- 2 KW aufeinmal rest scrollen
+
+
+
 
 - Löschfunktion für Einträge (Am besten anwählen und löschen)
 
@@ -28,11 +32,11 @@ Einsatzplan Management
 
 - (FREI eintragen wodurch dann die restlichen Datenbanksachen auf "no" gesetzt werden und nur "FREI" angezeigt wird)
 
-- 2 KW aufeinmal rest scrollen + Info icon, Feiertage automatisch, nur helle Farben bei den Gruppen
+- Info icon (Bei verfügbaren Hinweis), Feiertage automatisch
 
 - Nord und Südfeiertage
 
-- Aktuelle KW hervorheben
+- Auto pro Tag zuweisen und dann für die anderen nicht erlauben
 
 - Neue Reihenfolge: Elektriker, Schlosser, Sinan, Büro, Dreher & Fräser, extern
 

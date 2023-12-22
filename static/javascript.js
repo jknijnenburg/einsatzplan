@@ -252,12 +252,12 @@ $(document).ready(function () {
 
   // Function to generate a random color
   function getRandomColor() {
-    var letters = "0123456789ABCDEF";
+    var letters = "89ABCDEF";
     var color = "#";
 
     // Generate a 6-digit random hexadecimal color code
     for (var i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
+      color += letters[Math.floor(Math.random() * letters.length)];
     }
 
     return color;

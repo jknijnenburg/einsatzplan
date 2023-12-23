@@ -37,6 +37,7 @@ Flask-User==1.0.1.5
 Flask-WTF==0.14.2
 fonttools==4.43.1
 fqdn==1.5.1
+holidays==0.39
 idna==3.4
 Interface==2.11.1
 ipykernel==6.26.0

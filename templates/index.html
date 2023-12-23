@@ -10,6 +10,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css" />
 
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -44,6 +46,15 @@
         {% block content %}
           <div id="main-frame">
             <h1>Einsatzplan</h1>
+            <div class="legende">
+              <p>vO = vor Ort</p>
+              <p>iF = in der Firma</p>
+              <p>ST. = Stundenzettel</p>
+              <p>H = Hotel</p>
+              <p>Farbig = Gruppe</p>
+              <p>GRAU = Feiertag</p>
+              <p>B = Feiertag in Bayern/Süden</p>
+            </div>
             <button onclick="prevWeek()">Vorherige Woche</button>
             <button onclick="nextWeek()">Nächste Woche</button>
             <button onclick="resetWeek()">HEUTE</button>
@@ -63,107 +74,11 @@
                   {% if data %}
                     <tr>
                       <td colspan="2" style="border:0;">
-                        <strong id="k-m">Schlosser</strong>
+                        <strong id="k-m">Elektriker</strong>
                       </td>
                       {% for day in week_days1 %}
                         <th colspan="1">{{ day }}</th>
                       {% endfor %}
-                    </tr>
-                    {% for row in data %}
-                      {% if row[3] == 'Schlosser' %}
-                        <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
-                          {% for date in week_dates1 %}
-                            <td class="assignment-cell" id="t-a-field">
-                              {% for assignment in assignment_table_data %}
-                                {% set assignment_found = false %}
-                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
-                                  {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
-                                    {{ assignment[3] }}
-                                    <br />
-                                    {% for car in car_table_data %}
-                                      {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
-                                          {{ car[1] }}
-                                          <br />
-                                        {% endif %}
-                                      {% endif %}
-                                    {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
-                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
-                                      {{ assignment[8] }}
-                                    {% endif %}
-                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
-                                      {{ assignment[9] }}
-                                    {% endif %}
-                                    {{ assignment[10] }}
-                                  </div>
-                                {% endif %}
-                              {% endfor %}
-                              {% if not assignment_found %}
-                                <!-- Create an empty td when no assignment is found -->
-                              {% endif %}
-                            </td>
-                          {% endfor %}
-                        </tr>
-                      {% endif %}
-                    {% endfor %}
-                    <tr>
-                      <td colspan="2" style="border:0;">
-                        <strong id="k-m">Dreher & Fräser</strong>
-                      </td>
-                    </tr>
-                    {% for row in data %}
-                      {% if row[3] == 'Dreher & Fräser' %}
-                        <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
-                          {% for date in week_dates1 %}
-                            <td class="assignment-cell" id="t-a-field">
-                              {% for assignment in assignment_table_data %}
-                                {% set assignment_found = false %}
-                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
-                                  {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
-                                    {{ assignment[3] }}
-                                    <br />
-                                    {% for car in car_table_data %}
-                                      {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
-                                          {{ car[1] }}
-                                          <br />
-                                        {% endif %}
-                                      {% endif %}
-                                    {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
-                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
-                                      {{ assignment[8] }}
-                                    {% endif %}
-                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
-                                      {{ assignment[9] }}
-                                    {% endif %}
-                                    {{ assignment[10] }}
-                                  </div>
-                                {% endif %}
-                              {% endfor %}
-                              {% if not assignment_found %}
-                                <!-- Create an empty td when no assignment is found -->
-                              {% endif %}
-                            </td>
-                          {% endfor %}
-                        </tr>
-                      {% endif %}
-                    {% endfor %}
-                    <tr>
-                      <td colspan="2" style="border:0;">
-                        <strong id="k-m">Elektriker</strong>
-                      </td>
                     </tr>
                     {% for row in data %}
                       {% if row[3] == 'Elektriker' %}
@@ -171,7 +86,7 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in week_dates1 %}
-                            <td class="assignment-cell" id="t-a-field">
+                            <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
@@ -197,9 +112,15 @@
                                       {{ assignment[9] }}
                                     {% endif %}
                                     {{ assignment[10] }}
+                                    {% if user_role == "admin" %}
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                    {% endif %}
                                   </div>
                                 {% endif %}
                               {% endfor %}
+                              {% if date in s_holidays %}
+                                <div class="south-holiday-indicator">B</div>
+                              {% endif %}
                               {% if not assignment_found %}
                                 <!-- Create an empty td when no assignment is found -->
                               {% endif %}
@@ -210,16 +131,16 @@
                     {% endfor %}
                     <tr>
                       <td colspan="2" style="border:0;">
-                        <strong id="k-m">Freie Mitarbeiter</strong>
+                        <strong id="k-m">Schlosser</strong>
                       </td>
                     </tr>
                     {% for row in data %}
-                      {% if row[3] == 'Freie Mitarbeiter' %}
+                      {% if row[3] == 'Schlosser' %}
                         <tr>
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in week_dates1 %}
-                            <td class="assignment-cell" id="t-a-field">
+                            <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
@@ -248,54 +169,9 @@
                                   </div>
                                 {% endif %}
                               {% endfor %}
-                              {% if not assignment_found %}
-                                <!-- Create an empty td when no assignment is found -->
+                              {% if date in s_holidays %}
+                                <div class="south-holiday-indicator">B</div>
                               {% endif %}
-                            </td>
-                          {% endfor %}
-                        </tr>
-                      {% endif %}
-                    {% endfor %}
-                    <tr>
-                      <td colspan="2" style="border:0;">
-                        <strong id="k-m">Büro</strong>
-                      </td>
-                    </tr>
-                    {% for row in data %}
-                      {% if row[3] == 'Büro' %}
-                        <tr>
-                          <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
-                          {% for date in week_dates1 %}
-                            <td class="assignment-cell" id="t-a-field">
-                              {% for assignment in assignment_table_data %}
-                                {% set assignment_found = false %}
-                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
-                                  {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
-                                    {{ assignment[3] }}
-                                    <br />
-                                    {% for car in car_table_data %}
-                                      {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
-                                          {{ car[1] }}
-                                          <br />
-                                        {% endif %}
-                                      {% endif %}
-                                    {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
-                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
-                                      {{ assignment[8] }}
-                                    {% endif %}
-                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
-                                      {{ assignment[9] }}
-                                    {% endif %}
-                                    {{ assignment[10] }}
-                                  </div>
-                                {% endif %}
-                              {% endfor %}
                               {% if not assignment_found %}
                                 <!-- Create an empty td when no assignment is found -->
                               {% endif %}
@@ -315,7 +191,7 @@
                           <td>{{ row[0] }}</td>
                           <td>{{ row[1] }}</td>
                           {% for date in week_dates1 %}
-                            <td class="assignment-cell" id="t-a-field">
+                            <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
@@ -344,6 +220,162 @@
                                   </div>
                                 {% endif %}
                               {% endfor %}
+                              {% if date in s_holidays %}
+                                <div class="south-holiday-indicator">B</div>
+                              {% endif %}
+                              {% if not assignment_found %}
+                                <!-- Create an empty td when no assignment is found -->
+                              {% endif %}
+                            </td>
+                          {% endfor %}
+                        </tr>
+                      {% endif %}
+                    {% endfor %}
+                    <tr>
+                      <td colspan="2" style="border:0;">
+                        <strong id="k-m">Büro</strong>
+                      </td>
+                    </tr>
+                    {% for row in data %}
+                      {% if row[3] == 'Büro' %}
+                        <tr>
+                          <td>{{ row[0] }}</td>
+                          <td>{{ row[1] }}</td>
+                          {% for date in week_dates1 %}
+                            <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
+                              {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
+                                  {% set assignment_found = true %}
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                    {{ assignment[3] }}
+                                    <br />
+                                    {% for car in car_table_data %}
+                                      {% if car[0] == assignment[2] %}
+                                        {% if car[0] != 99 %}
+                                          {{ car[1] }}
+                                          <br />
+                                        {% endif %}
+                                      {% endif %}
+                                    {% endfor %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
+                                      {{ assignment[7] }}
+                                    {% endif %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
+                                      {{ assignment[8] }}
+                                    {% endif %}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
+                                  </div>
+                                {% endif %}
+                              {% endfor %}
+                              {% if date in s_holidays %}
+                                <div class="south-holiday-indicator">B</div>
+                              {% endif %}
+                              {% if not assignment_found %}
+                                <!-- Create an empty td when no assignment is found -->
+                              {% endif %}
+                            </td>
+                          {% endfor %}
+                        </tr>
+                      {% endif %}
+                    {% endfor %}
+                    <tr>
+                      <td colspan="2" style="border:0;">
+                        <strong id="k-m">Dreher & Fräser</strong>
+                      </td>
+                    </tr>
+                    {% for row in data %}
+                      {% if row[3] == 'Dreher & Fräser' %}
+                        <tr>
+                          <td>{{ row[0] }}</td>
+                          <td>{{ row[1] }}</td>
+                          {% for date in week_dates1 %}
+                            <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
+                              {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
+                                  {% set assignment_found = true %}
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                    {{ assignment[3] }}
+                                    <br />
+                                    {% for car in car_table_data %}
+                                      {% if car[0] == assignment[2] %}
+                                        {% if car[0] != 99 %}
+                                          {{ car[1] }}
+                                          <br />
+                                        {% endif %}
+                                      {% endif %}
+                                    {% endfor %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
+                                      {{ assignment[7] }}
+                                    {% endif %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
+                                      {{ assignment[8] }}
+                                    {% endif %}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
+                                  </div>
+                                {% endif %}
+                              {% endfor %}
+                              {% if date in s_holidays %}
+                                <div class="south-holiday-indicator">B</div>
+                              {% endif %}
+                              {% if not assignment_found %}
+                                <!-- Create an empty td when no assignment is found -->
+                              {% endif %}
+                            </td>
+                          {% endfor %}
+                        </tr>
+                      {% endif %}
+                    {% endfor %}                    
+                    <tr>
+                      <td colspan="2" style="border:0;">
+                        <strong id="k-m">Freie Mitarbeiter</strong>
+                      </td>
+                    </tr>
+                    {% for row in data %}
+                      {% if row[3] == 'Freie Mitarbeiter' %}
+                        <tr>
+                          <td>{{ row[0] }}</td>
+                          <td>{{ row[1] }}</td>
+                          {% for date in week_dates1 %}
+                            <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
+                              {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
+                                  {% set assignment_found = true %}
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                    {{ assignment[3] }}
+                                    <br />
+                                    {% for car in car_table_data %}
+                                      {% if car[0] == assignment[2] %}
+                                        {% if car[0] != 99 %}
+                                          {{ car[1] }}
+                                          <br />
+                                        {% endif %}
+                                      {% endif %}
+                                    {% endfor %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
+                                      {{ assignment[7] }}
+                                    {% endif %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
+                                      {{ assignment[8] }}
+                                    {% endif %}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
+                                  </div>
+                                {% endif %}
+                              {% endfor %}
+                              {% if date in s_holidays %}
+                                <div class="south-holiday-indicator">B</div>
+                              {% endif %}
                               {% if not assignment_found %}
                                 <!-- Create an empty td when no assignment is found -->
                               {% endif %}
@@ -374,107 +406,11 @@
                   {% if data %}
                     <tr>
                       <td colspan="0" style="border: 0; display: none;">
-                        <strong id="k-m">Schlosser</strong>
+                        <strong id="k-m">Elektriker</strong>
                       </td>
                       {% for day in week_days2 %}
                         <th colspan="1">{{ day }}</th>
                       {% endfor %}
-                    </tr>
-                    {% for row in data %}
-                      {% if row[3] == 'Schlosser' %}
-                        <tr>
-                          <td id="m-pc-row">{{ row[0] }}</td>
-                          <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in week_dates2 %}
-                            <td class="assignment-cell" id="t-a-field">
-                              {% for assignment in assignment_table_data %}
-                                {% set assignment_found = false %}
-                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
-                                  {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
-                                    {{ assignment[3] }}
-                                    <br />
-                                    {% for car in car_table_data %}
-                                      {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
-                                          {{ car[1] }}
-                                          <br />
-                                        {% endif %}
-                                      {% endif %}
-                                    {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
-                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
-                                      {{ assignment[8] }}
-                                    {% endif %}
-                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
-                                      {{ assignment[9] }}
-                                    {% endif %}
-                                    {{ assignment[10] }}
-                                  </div>
-                                {% endif %}
-                              {% endfor %}
-                              {% if not assignment_found %}
-                                <!-- Create an empty td when no assignment is found -->
-                              {% endif %}
-                            </td>
-                          {% endfor %}
-                        </tr>
-                      {% endif %}
-                    {% endfor %}
-                    <tr>
-                      <td colspan="2" style="border:0;">
-                        <strong id="k-m">Dreher & Fräser</strong>
-                      </td>
-                    </tr>
-                    {% for row in data %}
-                      {% if row[3] == 'Dreher & Fräser' %}
-                        <tr>
-                          <td id="m-pc-row">{{ row[0] }}</td>
-                          <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in week_dates2 %}
-                            <td class="assignment-cell" id="t-a-field">
-                              {% for assignment in assignment_table_data %}
-                                {% set assignment_found = false %}
-                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
-                                  {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
-                                    {{ assignment[3] }}
-                                    <br />
-                                    {% for car in car_table_data %}
-                                      {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
-                                          {{ car[1] }}
-                                          <br />
-                                        {% endif %}
-                                      {% endif %}
-                                    {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
-                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
-                                      {{ assignment[8] }}
-                                    {% endif %}
-                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
-                                      {{ assignment[9] }}
-                                    {% endif %}
-                                    {{ assignment[10] }}
-                                  </div>
-                                {% endif %}
-                              {% endfor %}
-                              {% if not assignment_found %}
-                                <!-- Create an empty td when no assignment is found -->
-                              {% endif %}
-                            </td>
-                          {% endfor %}
-                        </tr>
-                      {% endif %}
-                    {% endfor %}
-                    <tr>
-                      <td colspan="2" style="border:0;">
-                        <strong id="k-m">Elektriker</strong>
-                      </td>
                     </tr>
                     {% for row in data %}
                       {% if row[3] == 'Elektriker' %}
@@ -482,7 +418,7 @@
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in week_dates2 %}
-                            <td class="assignment-cell" id="t-a-field">
+                            <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
@@ -511,6 +447,9 @@
                                   </div>
                                 {% endif %}
                               {% endfor %}
+                              {% if date in s_holidays %}
+                                <div class="south-holiday-indicator">B</div>
+                              {% endif %}
                               {% if not assignment_found %}
                                 <!-- Create an empty td when no assignment is found -->
                               {% endif %}
@@ -521,16 +460,16 @@
                     {% endfor %}
                     <tr>
                       <td colspan="2" style="border:0;">
-                        <strong id="k-m">Freie Mitarbeiter</strong>
+                        <strong id="k-m">Schlosser</strong>
                       </td>
                     </tr>
                     {% for row in data %}
-                      {% if row[3] == 'Freie Mitarbeiter' %}
+                      {% if row[3] == 'Schlosser' %}
                         <tr>
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in week_dates2 %}
-                            <td class="assignment-cell" id="t-a-field">
+                            <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
@@ -559,54 +498,12 @@
                                   </div>
                                 {% endif %}
                               {% endfor %}
-                              {% if not assignment_found %}
-                                <!-- Create an empty td when no assignment is found -->
+                              {% if date in s_holidays %}
+                                <div class="south-holiday-indicator">B</div>
                               {% endif %}
-                            </td>
-                          {% endfor %}
-                        </tr>
-                      {% endif %}
-                    {% endfor %}
-                    <tr>
-                      <td colspan="2" style="border:0;">
-                        <strong id="k-m">Büro</strong>
-                      </td>
-                    </tr>
-                    {% for row in data %}
-                      {% if row[3] == 'Büro' %}
-                        <tr>
-                          <td id="m-pc-row">{{ row[0] }}</td>
-                          <td id="m-pc-row">{{ row[1] }}</td>
-                          {% for date in week_dates2 %}
-                            <td class="assignment-cell" id="t-a-field">
-                              {% for assignment in assignment_table_data %}
-                                {% set assignment_found = false %}
-                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
-                                  {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
-                                    {{ assignment[3] }}
-                                    <br />
-                                    {% for car in car_table_data %}
-                                      {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
-                                          {{ car[1] }}
-                                          <br />
-                                        {% endif %}
-                                      {% endif %}
-                                    {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
-                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
-                                      {{ assignment[8] }}
-                                    {% endif %}
-                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
-                                      {{ assignment[9] }}
-                                    {% endif %}
-                                    {{ assignment[10] }}
-                                  </div>
-                                {% endif %}
-                              {% endfor %}
+                              {% if date in s_holidays %}
+                                <div class="south-holiday-indicator">B</div>
+                              {% endif %}
                               {% if not assignment_found %}
                                 <!-- Create an empty td when no assignment is found -->
                               {% endif %}
@@ -626,7 +523,7 @@
                           <td id="m-pc-row">{{ row[0] }}</td>
                           <td id="m-pc-row">{{ row[1] }}</td>
                           {% for date in week_dates2 %}
-                            <td class="assignment-cell" id="t-a-field">
+                            <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
                               {% for assignment in assignment_table_data %}
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
@@ -655,6 +552,164 @@
                                   </div>
                                 {% endif %}
                               {% endfor %}
+                              {% if date in s_holidays %}
+                                <div class="south-holiday-indicator">B</div>
+                              {% endif %}
+                              {% if not assignment_found %}
+                                <!-- Create an empty td when no assignment is found -->
+                              {% endif %}
+                            </td>
+                          {% endfor %}
+                        </tr>
+                      {% endif %}
+                    {% endfor %}
+                    <tr>
+                      <td colspan="2" style="border:0;">
+                        <strong id="k-m">Büro</strong>
+                      </td>
+                    </tr>
+                    {% for row in data %}
+                      {% if row[3] == 'Büro' %}
+                        <tr>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
+                          {% for date in week_dates2 %}
+                            <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
+                              {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
+                                  {% set assignment_found = true %}
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                    {{ assignment[3] }}
+                                    <br />
+                                    {% for car in car_table_data %}
+                                      {% if car[0] == assignment[2] %}
+                                        {% if car[0] != 99 %}
+                                          {{ car[1] }}
+                                          <br />
+                                        {% endif %}
+                                      {% endif %}
+                                    {% endfor %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
+                                      {{ assignment[7] }}
+                                    {% endif %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
+                                      {{ assignment[8] }}
+                                    {% endif %}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
+                                  </div>
+                                {% endif %}
+                              {% endfor %}
+                              {% if date in s_holidays %}
+                                <div class="south-holiday-indicator">B</div>
+                              {% endif %}
+                              {% if not assignment_found %}
+                                <!-- Create an empty td when no assignment is found -->
+                              {% endif %}
+                            </td>
+                          {% endfor %}
+                        </tr>
+                      {% endif %}
+                    {% endfor %}
+                    <tr>
+                      <td colspan="2" style="border:0;">
+                        <strong id="k-m">Dreher & Fräser</strong>
+                      </td>
+                    </tr>
+                    {% for row in data %}
+                      {% if row[3] == 'Dreher & Fräser' %}
+                        <tr>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
+                          {% for date in week_dates2 %}
+                            <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
+                              {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
+                                  {% set assignment_found = true %}
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                    {{ assignment[3] }}
+                                    <br />
+                                    {% for car in car_table_data %}
+                                      {% if car[0] == assignment[2] %}
+                                        {% if car[0] != 99 %}
+                                          {{ car[1] }}
+                                          <br />
+                                        {% endif %}
+                                      {% endif %}
+                                    {% endfor %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
+                                      {{ assignment[7] }}
+                                    {% endif %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
+                                      {{ assignment[8] }}
+                                    {% endif %}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
+                                  </div>
+                                {% endif %}
+                              {% endfor %}
+                              {% if date in s_holidays %}
+                                <div class="south-holiday-indicator">B</div>
+                              {% endif %}
+                              {% if not assignment_found %}
+                                <!-- Create an empty td when no assignment is found -->
+                              {% endif %}
+                            </td>
+                          {% endfor %}
+                        </tr>
+                      {% endif %}
+                    {% endfor %}
+                    
+                    
+                    <tr>
+                      <td colspan="2" style="border:0;">
+                        <strong id="k-m">Freie Mitarbeiter</strong>
+                      </td>
+                    </tr>
+                    {% for row in data %}
+                      {% if row[3] == 'Freie Mitarbeiter' %}
+                        <tr>
+                          <td id="m-pc-row">{{ row[0] }}</td>
+                          <td id="m-pc-row">{{ row[1] }}</td>
+                          {% for date in week_dates2 %}
+                            <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
+                              {% for assignment in assignment_table_data %}
+                                {% set assignment_found = false %}
+                                {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
+                                  {% set assignment_found = true %}
+                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                    {{ assignment[3] }}
+                                    <br />
+                                    {% for car in car_table_data %}
+                                      {% if car[0] == assignment[2] %}
+                                        {% if car[0] != 99 %}
+                                          {{ car[1] }}
+                                          <br />
+                                        {% endif %}
+                                      {% endif %}
+                                    {% endfor %}
+                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
+                                      {{ assignment[7] }}
+                                    {% endif %}
+                                    {% if assignment[8] != 'no' and assignment[8] != 'null' %}
+                                      {{ assignment[8] }}
+                                    {% endif %}
+                                    {% if assignment[9] != 'no' and assignment[9] != 'null' %}
+                                      {{ assignment[9] }}
+                                    {% endif %}
+                                    {{ assignment[10] }}
+                                  </div>
+                                {% endif %}
+                              {% endfor %}
+                              {% if date in s_holidays %}
+                                <div class="south-holiday-indicator">B</div>
+                              {% endif %}
                               {% if not assignment_found %}
                                 <!-- Create an empty td when no assignment is found -->
                               {% endif %}

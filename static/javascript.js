@@ -47,7 +47,7 @@ $(function () {
       data: extendedFormData,
       success: function (response) {
         // Handle the response from the Python backend
-        alert("Mitarbeiter erfolgreich zugewiesen!")
+        alert("Mitarbeiter erfolgreich zugewiesen!");
         window.location.reload();
       },
       error: function (xhr, status, error) {
@@ -194,6 +194,47 @@ $(function () {
   );
 });
 
+function checkForHints() {
+  $(".assignment-cell").each(function () {
+    var assignmentId = $(this)
+      .find("div[data-assignment-id]")
+      .data("assignment-id");
+
+    if (assignmentId) {
+      var $cell = $(this);
+
+      $.ajax({
+        url: "/get_assignment_hinweis",
+        method: "POST",
+        data: { assignmentId: assignmentId },
+        success: function (response) {
+          var hinweis = response.hinweis;
+
+          // Remove existing icon
+          $cell.find(".hint-icon").remove();
+
+          if (hinweis) {
+            // Add information icon
+            var iconHtml = "<i class='bx bx-info-circle'></i>";
+            $cell.append(iconHtml);
+
+            // Set the flag to indicate that the icon has been added
+            $cell.data("icon-added", true);
+          } else {
+            // Set the flag to indicate that the icon has been removed
+            $cell.data("icon-added", false);
+          }
+        },
+        error: function (xhr, status, error) {
+          console.log("Kein Hinweis hinterlegt für dieses Assignment");
+        },
+      });
+    }
+  });
+}
+
+checkForHints();
+
 $(function () {
   $(".assignment-cell").click(function () {
     // Check if the clicked cell has data-assignment-id attribute
@@ -209,8 +250,12 @@ $(function () {
         success: function (response) {
           var hinweis = response.hinweis;
           // Display the hinweis information in a modal or tooltip
-          alert(hinweis);
-          // You can use a modal library like Bootstrap Modal for a better user experience
+          if (hinweis) {
+            alert(hinweis);
+
+            var iconHtml = "<i class='bx bx-info-circle'></i>";
+            $(this).append(iconHtml);
+          }
         },
         error: function (xhr, status, error) {
           console.log("Kein Hinweis hinterlegt für dieses Assignment");
@@ -262,4 +307,57 @@ $(document).ready(function () {
 
     return color;
   }
+});
+
+$(function () {
+  $(".assignment-cell .delete-btn").click(function () {
+    event.stopPropagation(); // Prevent the click event from propagating to the assignment-cell
+
+    var assignmentId = $(this).data("assignment-id");
+
+    if (assignmentId && confirm("Are you sure you want to delete this assignment?")) {
+      $.ajax({
+        url: "/delete_assignment",
+        method: "POST",
+        data: { assignmentId: assignmentId },
+        success: function (response) {
+          // Optionally, update the UI to reflect the deletion
+          alert("Assignment deleted successfully!");
+        },
+        error: function (xhr, status, error) {
+          console.log("Error deleting assignment");
+        },
+      });
+    }
+  });
+
+    $(".assignment-cell").click(function () {
+      // Check if the clicked cell has a delete button
+    var deleteButton = $(this).find(".delete-btn");
+
+    if (deleteButton.length) {
+      deleteButton.click(function () {
+        // Handle the delete action
+        var assignmentId = deleteButton.data("assignment-id");
+
+        if (
+          assignmentId &&
+          confirm("Are you sure you want to delete this assignment?")
+        ) {
+          $.ajax({
+            url: "/delete_assignment",
+            method: "POST",
+            data: { assignmentId: assignmentId },
+            success: function (response) {
+              // Optionally, update the UI to reflect the deletion
+              alert("Assignment deleted successfully!");
+            },
+            error: function (xhr, status, error) {
+              console.log("Error deleting assignment");
+            },
+          });
+        }
+      });
+    }
+  });
 });

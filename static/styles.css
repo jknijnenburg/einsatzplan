@@ -45,7 +45,27 @@ body {
     background-color: rgb(233, 240, 232);
 }
 
+.n_holiday {
+    background-color: grey;
+}
+
+.south-holiday-indicator {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    color: #000; /* Customize the text color as needed */
+    padding: 3px;
+    border-radius: 3px;
+}
+
+.bx-info-circle {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
 td {
+    position: relative;
     border: black 1px solid;
     height: 80px;
     width: 80px;

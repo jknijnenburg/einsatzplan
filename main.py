@@ -14,6 +14,7 @@ import json
 from datetime import datetime, timedelta
 import locale
 import math
+import holidays
 
 app = Flask(__name__)
 
@@ -46,7 +47,9 @@ def close_db(error):
 
 def get_current_week_number():
     today_date = datetime.now()
-    return today_date.isocalendar()[1]  # Extract the week number from the isocalendar tuple
+    return today_date.isocalendar()[
+        1
+    ]  # Extract the week number from the isocalendar tuple
 
 
 def generate_week_dates(start_date):
@@ -76,16 +79,9 @@ def index():
     form = LoginForm()
     user_role = request.args.get("user_role", "user")
 
-    # Generate the week dates
-    # weekDates1 = generate_week_dates1()
-    # weekDates2 = generate_week_dates2()
-    # weekDates3 = generate_week_dates3()
-    # weekDays = generate_week_days()
     current_week_number = get_current_week_number()
-
     week_number1 = int(request.args.get("week_number1", 0))  # only for the assignments
     week_number2 = int(request.args.get("week_number2", 1))
-
     today_date = datetime.now()
 
     # to show the right KW
@@ -98,11 +94,19 @@ def index():
         iso_week = 1
         iso_year += 1
 
+    if iso_week == 0:
+        iso_week = 52
+        iso_year -= 1
+
     kw_2 = int(request.args.get("kw_2", iso_week + 1))
 
     if kw_2 == 53:
         kw_2 = 1
         iso_year += 1
+
+    if kw_2 == 0:
+        kw_2 = 52
+        iso_year -= 1
 
     start_date1 = (
         today_date
@@ -124,6 +128,13 @@ def index():
     week_days1 = generate_week_days(start_date1)
     week_days2 = generate_week_days(start_date2)
 
+    n_holidays = holidays.country_holidays(
+        "DE", subdiv="HB", language="en_US", years=2024
+    )  # Feiertage in Bremen
+    s_holidays = holidays.country_holidays(
+        "DE", subdiv="BY", language="en_US", years=2024
+    )  # Bayern, da es die meisten Feiertage hat
+
     return render_template(
         "index.html",
         data=rows,
@@ -133,12 +144,8 @@ def index():
         car_table_data=car_rows,
         form=form,
         user_role=user_role,
-        # weekDates1=weekDates1,
-        # weekDates2=weekDates2,
-        # weekDates3=weekDates3,
-        # weekDays=weekDays,
         current_week_number=current_week_number,
-        kw_1=kw_1,
+        kw_1=iso_week,
         kw_2=kw_2,
         week_number1=week_number1,
         week_number2=week_number2,
@@ -150,6 +157,8 @@ def index():
         week_dates2=week_dates2,
         week_days1=week_days1,
         week_days2=week_days2,
+        n_holidays=n_holidays,
+        s_holidays=s_holidays,
     )
 
 
@@ -394,7 +403,7 @@ def create_new_customer():
     conn = sqlite3.connect("datenbank.db")
     cursor = conn.cursor()
 
-    # Perform database operation to create a new user with the provided inputs
+    # Perform database operation to create a new customer with the provided inputs
     try:
         cursor.execute(
             "INSERT INTO customers (customer_id, customer_name) VALUES (?, ?)",
@@ -418,7 +427,7 @@ def create_new_project():
     conn = sqlite3.connect("datenbank.db")
     cursor = conn.cursor()
 
-    # Perform database operation to create a new user with the provided inputs
+    # Perform database operation to create a new project with the provided inputs
     try:
         cursor.execute(
             "INSERT INTO projects (project_id, project_name, customer_id) VALUES (?, ?, ?)",
@@ -440,7 +449,6 @@ def delete_user():
     conn = sqlite3.connect("datenbank.db")
     cursor = conn.cursor()
 
-    # Perform database operation to create a new user with the provided inputs
     try:
         cursor.execute("DELETE FROM users WHERE user_id=?", (personal_nr,))
         conn.commit()
@@ -450,6 +458,81 @@ def delete_user():
         conn.close()
 
     return "Mitarbeiter erfolgreich entfernt."
+
+
+@app.route("/submit_c_delete", methods=["POST"])
+def delete_customer():
+    customer_id = request.form.get("kunden-delete")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("DELETE FROM customers WHERE customer_id=?", (customer_id,))
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        conn.close()
+
+    return "Kunde erfolgreich entfernt."
+
+
+@app.route("/submit_car_delete", methods=["POST"])
+def delete_car():
+    car_id = request.form.get("car-delete")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("DELETE FROM cars WHERE car_id=?", (car_id,))
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        conn.close()
+
+    return "Auto erfolgreich entfernt."
+
+
+@app.route("/submit_p_delete", methods=["POST"])
+def delete_project():
+    project_id = request.form.get("project-delete")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("DELETE FROM projects WHERE project_id=?", (project_id,))
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        conn.close()
+
+    return "Projekt erfolgreich entfernt."
+
+
+@app.route("/delete_assignment", methods=["POST"])
+def delete_assignment():
+    assignment_id = request.form.get("assignmentId")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            "DELETE FROM assignment_table WHERE assignment_id=?", (assignment_id,)
+        )
+        conn.commit()
+        result = {"status": "success"}
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+        result = {"status": "error"}
+
+    conn.close()
+    return jsonify(result)
 
 
 class LoginForm(FlaskForm):

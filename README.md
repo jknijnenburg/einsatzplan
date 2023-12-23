@@ -22,29 +22,27 @@ Einsatzplan Management
 - Zwischen den Kalenderwochen wechseln können (vlt. mit Button für direkt zur derzeitigen KW)
 - nur helle Farben bei den Gruppen
 - 2 KW aufeinmal rest scrollen
-
+- Feiertage Bremen
+- Nord und Südfeiertage
+- Info icon (Bei verfügbaren Hinweis)
+- Neue Reihenfolge: Elektriker, Schlosser, Sinan, Büro, Dreher & Fräser, extern
+- Legende
+- Zeiten für 1 Jahr
 
 
 
 - Löschfunktion für Einträge (Am besten anwählen und löschen)
-
-- Zeiten für 1 Jahr
+- Wechseln der Seiten und weiterhin in Admin-Bereich drinne bleiben ermöglichen
 
 - (FREI eintragen wodurch dann die restlichen Datenbanksachen auf "no" gesetzt werden und nur "FREI" angezeigt wird)
 
-- Info icon (Bei verfügbaren Hinweis), Feiertage automatisch
-
-- Nord und Südfeiertage
-
 - Auto pro Tag zuweisen und dann für die anderen nicht erlauben
-
-- Neue Reihenfolge: Elektriker, Schlosser, Sinan, Büro, Dreher & Fräser, extern
 
 - Abwesendheit, Urlaub & Gleizeit, Schule mit Farbe (Schwarz oder Rot)
 
 - Besprechungsliste als QuickView oben rechts mit vlt. den heutigen 3 und dann als Button um die Liste aufzurufen woanders.
 
-- Legende
+
 
 
 Zukunft:

@@ -162,7 +162,6 @@ def index():
     )
 
 
-# Add a new route for handling login requests
 @app.route("/login", methods=["POST"])
 def login():
     form = LoginForm(request.form)
@@ -188,39 +187,77 @@ def assign_mitarbeiter():
     year = request.form.get("year")
     location = request.form.get("ort")
 
-    project_id = request.form.get("project_id")
+    project_id = request.form.get("project_id", 0)
+
+    if project_id == "null":
+        project_id = 0
+
     car_id = request.form.get("car_id")
 
-    if not car_id:
+    if car_id == "null":
         car_id = 99
 
     extra1 = request.form.get("extra1")
 
-    if not extra1:
+    if extra1 == "null":
         extra1 = "no"
 
     extra2 = request.form.get("extra2")
 
-    if not extra2:
+    if extra2 == "null":
         extra2 = "no"
 
     extra3 = request.form.get("extra3")
 
-    if not extra3:
+    if extra3 == "null":
         extra3 = "no"
 
-    hinweis = request.form.get("hinweis")
+    hinweis = request.form.get("hinweis", "")
+
+    abw = request.form.get("checkedRadioButton")
 
     print(
-        f"Received values: personal_nr={personal_nr}, startDate={startDate}, endDate={endDate}, year={year}"
+        f"Received values: personal_nr={personal_nr}, startDate={startDate}, endDate={endDate}, year={year}, project_id={project_id}, car_id={car_id},extra={extra1, extra2, extra3}, checkboxValue={abw}"
     )
 
     conn = sqlite3.connect("datenbank.db")
     cursor = conn.cursor()
 
     try:
+        # Check if the user already has an entry between the startDate and endDate
         cursor.execute(
-            "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, extra1, extra2, extra3, ort, group_id, hinweis) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "SELECT COUNT(*) FROM assignment_table WHERE user_id = ? AND startDate <= ? AND endDate >= ?",
+            (personal_nr, endDate, startDate),
+        )
+        count = cursor.fetchone()[0]
+
+        if count > 0:
+            return "Der Mitarbeiter hat schon eine Zuteilung zwischen dem ausgewählten Datum."
+
+        # Check if the assignment already exists
+        cursor.execute(
+            "SELECT COUNT(*) FROM assignment_table WHERE user_id = ? AND startDate = ? AND endDate = ?",
+            (personal_nr, startDate, endDate),
+        )
+        count = cursor.fetchone()[0]
+
+        if count > 0:
+            return "Die Zuteilung existiert bereits."
+
+        if car_id != 99:
+            cursor.execute(
+                "SELECT COUNT(*) FROM assignment_table WHERE car_id = ? AND startDate <= ? AND endDate >= ?",
+                (car_id, endDate, startDate),
+            )
+
+            car_cnt = cursor.fetchone()[0]
+
+            if car_cnt > 0:
+                return "Auto ist bereits zugewiesen."
+
+        # Insert the assignment into the database
+        cursor.execute(
+            "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, extra1, extra2, extra3, ort, group_id, hinweis, abwesend) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 personal_nr,
                 car_id,
@@ -234,15 +271,17 @@ def assign_mitarbeiter():
                 location,
                 0,  # Weil nur ein einzelner Mitarbeiter hinzugefügt wird und er keine Gruppe hat
                 hinweis,
+                abw,
             ),
         )
         conn.commit()
+
+        return "Mitarbeiter erfolgreich zugewiesen."
     except sqlite3.Error as e:
         print(f"SQLite error: {e}")
+        return "An error occurred while assigning the employee."
     finally:
         conn.close()
-
-    return "Mitarbeiter erfolgreich zugewiesen."
 
 
 @app.route("/get_assignment_hinweis", methods=["POST"])
@@ -288,23 +327,19 @@ def assign_group():
     project_id = request.form.get("project_id")
     car_id = request.form.get("car_id")
 
-    if not car_id:
+    if car_id == "null":
         car_id = 99
 
-    extra1 = request.form.get("extra1")
-
-    if not extra1:
+    if extra1 == "null":
         extra1 = "no"
 
-    extra2 = request.form.get("extra2")
-
-    if not extra2:
+    if extra2 == "null":
         extra2 = "no"
 
-    extra3 = request.form.get("extra3")
-
-    if not extra3:
+    if extra3 == "null":
         extra3 = "no"
+
+    abw = 0
 
     # Get the highest group_id from the database
     conn = sqlite3.connect("datenbank.db")
@@ -340,9 +375,33 @@ def assign_group():
             print("Numeric User IDs after list:", numeric_user_ids)
             print("Next Group ID:", next_group_id)
 
+            if car_id != 99:
+                cursor.execute(
+                    "SELECT COUNT(*) FROM assignment_table WHERE car_id = ? AND startDate <= ? AND endDate >= ? AND group_id != ?",
+                    (car_id, endDate, startDate, next_group_id),
+                )
+
+                car_cnt = cursor.fetchone()[0]
+
+                if car_cnt > 0:
+                    return "Auto ist bereits in anderer Gruppe zugewiesen."
+
             for user_id in numeric_user_ids:
                 cursor.execute(
-                    "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, extra1, extra2, extra3, ort, group_id, hinweis) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "SELECT COUNT(*) FROM assignment_table WHERE user_id = ? AND startDate <= ? AND endDate >= ?",
+                    (user_id, endDate, startDate),
+                )
+                count = cursor.fetchone()[0]
+
+                if count > 0:
+                    return (
+                        "Der Mitarbeiter "
+                        + f"{user_id}"
+                        + " hat schon eine Zuteilung zwischen dem ausgewählten Datum."
+                    )
+
+                cursor.execute(
+                    "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, extra1, extra2, extra3, ort, group_id, hinweis, abwesend) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         user_id,
                         car_id,
@@ -356,6 +415,7 @@ def assign_group():
                         location,
                         next_group_id,
                         hinweis,
+                        abw,
                     ),
                 )
 

@@ -53,7 +53,8 @@ body {
     position: absolute;
     bottom: 0;
     right: 0;
-    color: #000; /* Customize the text color as needed */
+    color: #000;
+    /* Customize the text color as needed */
     padding: 3px;
     border-radius: 3px;
 }
@@ -101,7 +102,7 @@ footer {
     padding-top: 20px;
 }
 
-#assignForm input {
+#assignForm input:not(#none, #schule, #abwesend, #urlaub, #gleitzeit) {
     width: 400px;
     max-width: 100%;
     height: 50px;
@@ -111,6 +112,11 @@ footer {
     color: #000;
     text-align: center;
     border: 0;
+}
+
+.special {
+    display: flex;
+    max-width: 250px;
 }
 
 #assignForm button {

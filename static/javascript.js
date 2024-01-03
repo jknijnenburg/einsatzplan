@@ -37,8 +37,10 @@ $(function () {
     const extra3 = $('select[name="extra3"]').val();
     const hinweis = $('textarea[name="hinweis"]').val();
 
+    const checkedRadioButton = $("input[name='abw']:checked").val();
+
     // Extend the form data with additional fields
-    const extendedFormData = `${formData}&startDate=${startDate}&endDate=${endDate}&year=${year}&personal_nr=${personal_nr}&project_id=${project_id}&car_id=${car_id}&ort=${ort}&extra1=${extra1}&extra2=${extra2}&extra3=${extra3}&hinweis=${hinweis}`;
+    const extendedFormData = `${formData}&startDate=${startDate}&endDate=${endDate}&year=${year}&personal_nr=${personal_nr}&project_id=${project_id}&car_id=${car_id}&ort=${ort}&extra1=${extra1}&extra2=${extra2}&extra3=${extra3}&hinweis=${hinweis}&checkedRadioButton=${checkedRadioButton}`;
 
     // Send the extended form data to the Python backend using AJAX
     $.ajax({
@@ -47,11 +49,14 @@ $(function () {
       data: extendedFormData,
       success: function (response) {
         // Handle the response from the Python backend
-        alert("Mitarbeiter erfolgreich zugewiesen!");
+        alert(response);
         window.location.reload();
       },
       error: function (xhr, status, error) {
         // Handle the error
+        alert(
+          "An error occurred while processing your request. Please try again."
+        );
       },
     });
   });
@@ -82,6 +87,7 @@ $(function () {
   );
 });
 
+// DESIGN
 $(document).ready(function () {
   $("#personal_nr_list").chosen();
   $("#dd-m").chosen();
@@ -100,6 +106,7 @@ $(document).ready(function () {
   $("#dd-xxx-g").chosen();
 });
 
+// ASSIGN GROUP
 $(function () {
   $("#group-form").on("submit", function (event) {
     // Prevent the default form submission
@@ -158,7 +165,7 @@ $(function () {
       success: function (response) {
         console.log("Server response:", response);
 
-        alert("Gruppe erfolgreich zugewiesen!");
+        alert(response);
         window.location.reload();
       },
       error: function (xhr, status, error) {
@@ -194,6 +201,7 @@ $(function () {
   );
 });
 
+// ICON FÜR HINWEIS
 function checkForHints() {
   $(".assignment-cell").each(function () {
     var assignmentId = $(this)
@@ -235,6 +243,7 @@ function checkForHints() {
 
 checkForHints();
 
+// HINWEIS DARSTELLEN
 $(function () {
   $(".assignment-cell").click(function () {
     // Check if the clicked cell has data-assignment-id attribute
@@ -265,6 +274,7 @@ $(function () {
   });
 });
 
+// HIGHLIGHT GROUP
 $(document).ready(function () {
   highlightDuplicateGroups();
 
@@ -309,40 +319,90 @@ $(document).ready(function () {
   }
 });
 
+// HIGHLIGHT SPECIAL
+$(document).ready(function () {
+  highlightSpecialValues();
+
+  function highlightSpecialValues() {
+    var specialValues = {};
+    var valueColors = {
+      1: "#000", // Black color for "schule"
+      2: "#FFFF00", // Yellow color for "abwesend"
+      3: "#0000FF", // Blue color for "urlaub"
+      4: "#89CFF0", // Some specific color for "gleitzeit"
+    };
+
+    // Iterate through each assignment cell
+    $(".assignment-cell").each(function () {
+      var assignmentId = $(this)
+        .find("div[data-assignment-id]")
+        .data("assignment-id");
+      var abwesendValue = $(this).find("div[data-abw-id]").data("abw-id");
+
+      if (assignmentId) {
+        // Check values for each column
+        var color; // Default color
+
+        if (abwesendValue > 0) {
+          if (abwesendValue == 1) {
+            color = valueColors["1"]; // Black color for "schule"
+          } else if (abwesendValue == 2) {
+            color = valueColors["2"]; // Yellow color for "abwesend"
+          } else if (abwesendValue == 3) {
+            color = valueColors["3"]; // Blue color for "urlaub"
+          } else if (abwesendValue == 4) {
+            color = valueColors["4"]; // Specific color for "gleitzeit"
+          }
+        }
+
+        // Highlight the current assignment cell with the corresponding CSS class
+        $(this).css("background-color", color);
+        $(this).css("color", color);
+      }
+    });
+  }
+});
+
+// DELETE-BUTTON FOR ASSIGNMENT
 $(function () {
-  $(".assignment-cell .delete-btn").click(function () {
-    event.stopPropagation(); // Prevent the click event from propagating to the assignment-cell
+  $(".assignment-cell .delete-btn").click(function (e) {
+    e.stopPropagation(); // Prevent the click event from propagating to the assignment-cell
 
     var assignmentId = $(this).data("assignment-id");
 
-    if (assignmentId && confirm("Are you sure you want to delete this assignment?")) {
+    if (
+      assignmentId &&
+      confirm("Möchtest du wirklich diese Zuteilung löschen?")
+    ) {
       $.ajax({
         url: "/delete_assignment",
         method: "POST",
         data: { assignmentId: assignmentId },
         success: function (response) {
           // Optionally, update the UI to reflect the deletion
-          alert("Assignment deleted successfully!");
+          alert("Zuteilung erfolgreich gelöscht!");
+          window.location.reload();
         },
         error: function (xhr, status, error) {
-          console.log("Error deleting assignment");
+          console.log("Error beim Löschen der Zuteilung");
         },
       });
     }
   });
 
-    $(".assignment-cell").click(function () {
-      // Check if the clicked cell has a delete button
+  $(".assignment-cell").click(function () {
     var deleteButton = $(this).find(".delete-btn");
 
     if (deleteButton.length) {
+      var assignmentId = deleteButton.data("assignment-id");
+      var startDate = deleteButton.data("start-date");
+
       deleteButton.click(function () {
         // Handle the delete action
-        var assignmentId = deleteButton.data("assignment-id");
-
         if (
           assignmentId &&
-          confirm("Are you sure you want to delete this assignment?")
+          startDate &&
+          confirm("Möchtest du wirklich diese Zuteilung löschen?")
         ) {
           $.ajax({
             url: "/delete_assignment",
@@ -350,10 +410,11 @@ $(function () {
             data: { assignmentId: assignmentId },
             success: function (response) {
               // Optionally, update the UI to reflect the deletion
-              alert("Assignment deleted successfully!");
+              alert("Zuteilung erfolgreich gelöscht!");
+              window.location.reload();
             },
             error: function (xhr, status, error) {
-              console.log("Error deleting assignment");
+              console.log("Error beim Löschen der Zuteilung");
             },
           });
         }

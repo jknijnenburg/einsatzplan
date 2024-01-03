@@ -54,6 +54,10 @@
               <p>Farbig = Gruppe</p>
               <p>GRAU = Feiertag</p>
               <p>B = Feiertag in Bayern/Süden</p>
+              <p style="color: #000;">Schule</p>
+              <p style="color: #FFFF00;">Abwesend</p>
+              <p style="color: #0000FF;">Urlaub</p>
+              <p style="color: #89CFF0;">Gleitzeit</p>
             </div>
             <button onclick="prevWeek()">Vorherige Woche</button>
             <button onclick="nextWeek()">Nächste Woche</button>
@@ -91,7 +95,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -112,7 +116,7 @@
                                       {{ assignment[9] }}
                                     {% endif %}
                                     {{ assignment[10] }}
-                                    {% if user_role == "admin" %}
+                                    {% if user_role == "admin" and date == assignment[4] %}
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
                                     {% endif %}
                                   </div>
@@ -145,7 +149,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -166,6 +170,9 @@
                                       {{ assignment[9] }}
                                     {% endif %}
                                     {{ assignment[10] }}
+                                    {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                    {% endif %}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -196,7 +203,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -217,6 +224,9 @@
                                       {{ assignment[9] }}
                                     {% endif %}
                                     {{ assignment[10] }}
+                                    {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                    {% endif %}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -247,7 +257,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -268,6 +278,9 @@
                                       {{ assignment[9] }}
                                     {% endif %}
                                     {{ assignment[10] }}
+                                    {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                    {% endif %}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -298,7 +311,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -319,6 +332,9 @@
                                       {{ assignment[9] }}
                                     {% endif %}
                                     {{ assignment[10] }}
+                                    {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                    {% endif %}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -349,7 +365,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -370,6 +386,9 @@
                                       {{ assignment[9] }}
                                     {% endif %}
                                     {{ assignment[10] }}
+                                    {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                    {% endif %}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -423,7 +442,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -444,6 +463,9 @@
                                       {{ assignment[9] }}
                                     {% endif %}
                                     {{ assignment[10] }}
+                                    {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                    {% endif %}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -474,7 +496,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -495,6 +517,9 @@
                                       {{ assignment[9] }}
                                     {% endif %}
                                     {{ assignment[10] }}
+                                    {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                    {% endif %}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -528,7 +553,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -549,6 +574,9 @@
                                       {{ assignment[9] }}
                                     {% endif %}
                                     {{ assignment[10] }}
+                                    {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                    {% endif %}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -579,7 +607,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -600,6 +628,9 @@
                                       {{ assignment[9] }}
                                     {% endif %}
                                     {{ assignment[10] }}
+                                    {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                    {% endif %}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -630,7 +661,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -651,6 +682,9 @@
                                       {{ assignment[9] }}
                                     {% endif %}
                                     {{ assignment[10] }}
+                                    {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                    {% endif %}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -683,7 +717,7 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-group-id="{{ assignment[11] }}" data-group-color="">
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
                                     {{ assignment[3] }}
                                     <br />
                                     {% for car in car_table_data %}
@@ -704,6 +738,9 @@
                                       {{ assignment[9] }}
                                     {% endif %}
                                     {{ assignment[10] }}
+                                    {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                    {% endif %}
                                   </div>
                                 {% endif %}
                               {% endfor %}
@@ -744,8 +781,8 @@
                       </label>
                       <label>Von-Bis-Datum:<input type="text" id="date-select" name="datefilter" value="" required /></label>
                       <label>
-                        Projekt:<select name="project_id" id="dd-p" required>
-                          <option value="" disabled selected>Projekt</option>
+                        Projekt:<select name="project_id" id="dd-p">
+                          <option value="0" disabled selected>Projekt</option>
                           {% for row in project_table_data %}
                             <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                           {% endfor %}
@@ -754,7 +791,7 @@
                       <label>
                         Auto:<select name="car_id" id="dd-car">
                           <!-- Autos aus Datenbank auslesen -->
-                          <option value="" disabled selected>Auto</option>
+                          <option value="99" disabled selected>Auto</option>
                           {% for row in car_table_data %}
                             {% if row[0] != 0 %}
                               <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
@@ -770,25 +807,38 @@
                       </label>
                       <label>
                         Zusatz:<select name="extra1" id="dd-x">
-                          <option value="" disabled selected>Weiteres..</option>
+                          <option value="no" disabled selected>Weiteres..</option>
                           <option value="ST.">Stundenzettel</option>
                           <option value="H">Hotel</option>
                           <option value="T">Telefon</option>
                         </select>
                         <select name="extra2" id="dd-xx">
-                          <option value="" disabled selected>Weiteres..</option>
+                          <option value="no" disabled selected>Weiteres..</option>
                           <option value="ST.">Stundenzettel</option>
                           <option value="H">Hotel</option>
                           <option value="T">Telefon</option>
                         </select>
                         <select name="extra3" id="dd-xxx">
-                          <option value="" disabled selected>Weiteres..</option>
+                          <option value="no" disabled selected>Weiteres..</option>
                           <option value="ST.">Stundenzettel</option>
                           <option value="H">Hotel</option>
                           <option value="T">Telefon</option>
                         </select>
                       </label>
                       <label>Hinweis:<textarea name="hinweis" id="hinweis" cols="30" rows="5"></textarea></label>
+                      <br>
+                      <div class="special">
+                        <input type="radio" id="none" name="abw" value="0" checked>
+                        <p>Keine</p>
+                        <input type="radio" id="schule" name="abw" value="1">
+                        <p>Schule</p>
+                        <input type="radio" id="abwesend" name="abw" value="2">
+                        <p>Abwesend</p>
+                        <input type="radio" id="urlaub" name="abw" value="3">
+                        <p>Urlaub</p>
+                        <input type="radio" id="gleitzeit" name="abw" value="4">
+                        <p>Gleitzeit</p>
+                      </div>
                       <br />
                       <button class="confirm">Bestätigen</button>
                     </form>
@@ -965,29 +1015,33 @@
       <script src="{{ url_for('static', filename = 'javascript.js') }}"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
       <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          document.getElementById('login-form').addEventListener('submit', function (e) {
-            e.preventDefault()
-            var formData = new FormData(this)
-            fetch('/login', {
-              method: 'POST',
-              body: formData
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                console.log('Login Response:', data) // Log the response to the console
-                if (data.status === 'success') {
-                  console.log('User Role:', data.user_role) // Log the user role to the console
-                  window.location.href = '/?user_role=' + (data.user_role || 'user')
-                } else {
-                  alert('Invalid username or password. Please try again.')
-                }
+        document.addEventListener("DOMContentLoaded", function () {
+          document
+            .getElementById("login-form")
+            .addEventListener("submit", function (e) {
+              e.preventDefault();
+              var formData = new FormData(this);
+              fetch("/login", {
+                method: "POST",
+                body: formData,
               })
-              .catch((error) => {
-                console.error('Error:', error)
-              })
-          })
-        })
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log("Login Response:", data); // Log the response to the console
+                  if (data.status === "success") {
+                    console.log("User Role:", data.user_role); // Log the user role to the console
+                    const userRole = data.user_role || "user";
+                    updateWeekURL(userRole);
+                    window.location.href = `/?user_role=${userRole}`;
+                  } else {
+                    alert("Falscher username oder password. Versuche es erneut.");
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error:", error);
+                });
+            });
+        });
         
         $(document).ready(function () {
           $('#date-range').daterangepicker({
@@ -997,17 +1051,43 @@
             maxDate: '2035-12-31'
           })
         })
+
+        function navigateWeeks(offset) {
+          const userRole = getUrlParameter('user_role') || 'user';
+          const currentWeek1 = parseInt('{{ week_number1 }}');
+          const currentWeek2 = parseInt('{{ week_number2 }}');
+          const kw1 = parseInt('{{ kw_1 }}');
+          const kw2 = parseInt('{{ kw_2 }}');
+          const newWeek1 = currentWeek1 + offset;
+          const newWeek2 = currentWeek2 + offset;
+          const newKW1 = kw1 + offset;
+          const newKW2 = kw2 + offset;
+        
+          window.location.href = `/?user_role=${userRole}&week_number1=${newWeek1}&week_number2=${newWeek2}&kw_1=${newKW1}&kw_2=${newKW2}`;
+        }
+
+        function updateWeekURL(userRole) {
+          const currentURL = new URL(window.location.href);
+          currentURL.searchParams.set('user_role', userRole);
+          window.history.replaceState({}, document.title, currentURL.href);
+        }
         
         function prevWeek() {
-          window.location.href = '/?week_number1={{ week_number1 - 1 }}&week_number2={{ week_number2 - 1 }}&kw_1={{ kw_1 - 1}}&kw_2={{ kw_2 - 1}}'
+          navigateWeeks(-1);
         }
         
         function nextWeek() {
-          window.location.href = '/?week_number1={{ week_number1 + 1 }}&week_number2={{ week_number2 + 1 }}&kw_1={{ kw_1 + 1}}&kw_2={{ kw_2 + 1}}'
+          navigateWeeks(1);
         }
         
         function resetWeek() {
-          window.location.href = '/'
+          const userRole = getUrlParameter('user_role') || 'user';
+          window.location.href = `/?user_role=${userRole}`;
+        }
+        
+        function getUrlParameter(name) {
+          const urlParams = new URLSearchParams(window.location.search);
+          return urlParams.get(name);
         }
       </script>
 

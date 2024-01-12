@@ -45,24 +45,29 @@
 
         {% block content %}
           <div id="main-frame">
+            <a href="/belegungsplan?user_role={{ user_role }}">Belegungsplan</a>
             <h1>Einsatzplan</h1>
             <div class="legende">
-              <p>vO = vor Ort</p>
-              <p>iF = in der Firma</p>
-              <p>ST. = Stundenzettel</p>
-              <p>H = Hotel</p>
-              <p>Farbig = Gruppe</p>
-              <p>GRAU = Feiertag</p>
-              <p>B = Feiertag in Bayern/Süden</p>
-              <p style="color: #000;">Schule</p>
-              <p style="color: #FFFF00;">Abwesend</p>
-              <p style="color: #0000FF;">Urlaub</p>
-              <p style="color: #89CFF0;">Gleitzeit</p>
+              <table>
+                <tr>
+                  <td style="background-color: #fff;"><b>vO</b> = vor Ort</td>
+                  <td style="background-color: #fff;"><b>iF</b> = i.d. Firma</td>
+                  <td style="background-color: #fff;"><b>ST.</b> = Stundenzettel</td>
+                  <td style="background-color: #fff;"><b>H</b> = Hotel</td>
+                  <td style="background-color: chartreuse;">Farbig = Gruppe</td>
+                  <td style="background-color: grey;">Feiertag</td>
+                  <td style="background-color: grey;"><b>B</b><br>= Feiertag in Bayern/Süden</td>
+                  <td style="background-color: #000; color: #fff;">Schule</td>
+                  <td style="background-color: #FFFF00;">Abwesend</td>
+                  <td style="background-color: #0000FF; color: #fff;">Urlaub</td>
+                  <td style="background-color: #89CFF0;">Gleitzeit</td>
+                </tr>
+              </table>
             </div>
             <button onclick="prevWeek()">Vorherige Woche</button>
             <button onclick="nextWeek()">Nächste Woche</button>
             <button onclick="resetWeek()">HEUTE</button>
-            <div class="tables-container">
+            <div class="tables-container" style="padding-top: 10px;">
               <p class="week-number">KW {{ kw_1 }}</p>
               <table class="week-table" id="{% if kw_1 == current_week_number %}current-week-table{% endif %}">
                 <thead>

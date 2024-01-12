@@ -176,6 +176,7 @@ def login():
         return jsonify({"status": "error", "user_role": "user"})
 
     return redirect(url_for("index"))
+    return redirect(url_for("belegungsplan", user_role=user_role))
 
 
 @app.route("/assign_mitarbeiter", methods=["POST"])
@@ -593,6 +594,132 @@ def delete_assignment():
 
     conn.close()
     return jsonify(result)
+
+
+@app.route("/belegungsplan")
+def belegungsplan():
+    db = get_db()
+    form = LoginForm()
+    user_role = request.args.get("user_role", "user")
+    cursor = db.execute("SELECT * FROM users ORDER BY user_id")
+    users = cursor.fetchall()
+
+    # Fetch meetings with distinct m_group and associated user_ids
+    meetings_data = db.execute(
+        "SELECT m.m_group, m.date, m.startTime, m.endTime, m.room, m.service, GROUP_CONCAT(u.user_id) as user_ids FROM meetings m JOIN users u ON m.user_id = u.user_id GROUP BY m.m_group, m.date, m.startTime, m.endTime, m.room, m.service ORDER BY m.m_group, m.date"
+    ).fetchall()
+
+    current_week_number = get_current_week_number()
+    today_date = datetime.now()
+
+    return render_template(
+        "belegungsplan.html",
+        form=form,
+        user_role=user_role,
+        current_week_number=current_week_number,
+        today_date=today_date,
+        users=users,
+        meetings_data=meetings_data,
+    )
+
+
+@app.route("/reserve_meeting", methods=["POST"])
+def reserve_meeting():
+    try:
+        # Extract form data
+        date = request.form.get("date")
+        start_time = request.form.get("startTime")
+        end_time = request.form.get("endTime")
+        room = request.form.get("room")
+        services = request.form.getlist("services")
+
+        personal_nr_list = request.form.getlist("personal_nr_list")
+
+        participants_list = [
+            int(user_id) for user_id in ",".join(personal_nr_list).split(",")
+        ]
+
+        # Insert data into the database
+        conn = sqlite3.connect("datenbank.db")
+        cursor = conn.cursor()
+
+        print(
+            f"Received values: participants_list={participants_list}, date={date}, startTime={start_time}, endTime={end_time}, room={room}, services={services}"
+        )
+
+        try:
+            cursor.execute("SELECT MAX(m_group) FROM meetings")
+            max_meeting_id = cursor.fetchone()[0]
+            if max_meeting_id is None:
+                max_meeting_id = 0  # If there are no existing group_ids, start from 0
+
+            # Increment the highest group_id for the next assignment
+            next_meeting_id = max_meeting_id + 1
+        except sqlite3.Error as e:
+            print(f"SQLite error: {e}")
+            next_meeting_id = (
+                None  # Handle the case where there's an error getting the group_id
+            )
+        finally:
+            conn.close()
+
+            if next_meeting_id is not None:
+                # Remove duplicate user IDs
+                participants_list = list(set(participants_list))
+
+                # Insert meeting for each user in participants_list
+                conn = sqlite3.connect("datenbank.db")
+                cursor = conn.cursor()
+                try:
+                    print("Participants IDs after list:", participants_list)
+                    print("Next Meeting ID:", next_meeting_id)
+
+                    for participant in participants_list:
+                        cursor.execute(
+                            "INSERT INTO meetings (user_id, date, startTime, endTime, room, service, m_group) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                            (
+                                participant,
+                                date,
+                                start_time,
+                                end_time,
+                                room,
+                                ", ".join(services),
+                                next_meeting_id,
+                            ),
+                        )
+
+                    conn.commit()
+                    print("Meeting erfolgreich erstellt.")
+                except sqlite3.Error as e:
+                    print(f"SQLite error: {e}")
+                finally:
+                    conn.close()
+                    return jsonify(
+                        {
+                            "status": "success",
+                            "message": "Meeting reserved successfully",
+                        }
+                    )
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+
+
+@app.route("/delete_meeting", methods=["POST"])
+def delete_meeting():
+    m_group = request.json.get("m_group")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("DELETE FROM meetings WHERE m_group=?", (m_group,))
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        conn.close()
+
+    return jsonify({"status": "success"})
 
 
 class LoginForm(FlaskForm):

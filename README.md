@@ -35,13 +35,14 @@ Einsatzplan Management
 - Auto pro Tag zuweisen und dann für die anderen nicht erlauben
 - Check if car is assigned to another group_id between the dates
 - Löschfunktion für Einträge (Am besten anwählen und löschen)
+- Extra Besprechungsliste als Seite wo man Manuell den Raum Auswählen kann und die Bewirtung anklicken sowie Die Teilnehmer, Uhrzeit + Datum
 
 
 - Löschfunktion für Gruppen?
 
 - Besprechungsliste als QuickView oben rechts mit vlt. den heutigen 3 und dann als Button um die Liste aufzurufen woanders.
 
-- Extra Besprechungsliste als Seite wo man Manuell den Raum Auswählen kann und die Bewirtung anklicken sowie Die Teilnehmer, Uhrzeit + Datum
+
 
 Zukunft:
 

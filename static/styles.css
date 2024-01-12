@@ -19,6 +19,14 @@ body {
     height: auto;
 }
 
+.legende {
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    margin: 0 auto;
+    padding: 20px;
+}
+
 #current-week-table {
     border: 2px solid green;
 }
@@ -27,6 +35,7 @@ body {
     width: auto;
     border: black 1px solid;
     border-radius: 10px;
+    border-collapse: collapse;
 }
 
 .tables-container table tbody tr:nth-child(odd) {
@@ -37,12 +46,28 @@ body {
     display: none;
 }
 
+.week-table thead th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #045b04;
+    color: white;
+}
 
 .week-table thead {
     position: sticky;
     top: 0;
     z-index: 1;
     background-color: rgb(233, 240, 232);
+}
+
+.week-table tbody tr th {
+    border: 1px solid #000;
+    padding: 8px;
+}
+
+.week-table tbody tr:hover {
+    background-color: #ddd !important;
 }
 
 .n_holiday {

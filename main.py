@@ -135,6 +135,10 @@ def index():
         "DE", subdiv="BY", language="en_US", years=2024
     )  # Bayern, da es die meisten Feiertage hat
 
+    meetings_data = db.execute(
+        "SELECT m.m_group, m.date, m.startTime, m.endTime, m.room, m.service, GROUP_CONCAT(u.user_id) as user_ids FROM meetings m JOIN users u ON m.user_id = u.user_id GROUP BY m.m_group, m.date, m.startTime, m.endTime, m.room, m.service ORDER BY m.m_group, m.date LIMIT 3"
+    ).fetchall()
+
     return render_template(
         "index.html",
         data=rows,
@@ -159,6 +163,7 @@ def index():
         week_days2=week_days2,
         n_holidays=n_holidays,
         s_holidays=s_holidays,
+        meetings_data=meetings_data,
     )
 
 

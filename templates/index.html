@@ -41,6 +41,28 @@
           <div class="logo">
             <img src="https://www.slt-technologies.com/images/main_header_left-slt.jpg" alt="" />
           </div>
+          <div class="next-meetings">
+            <table class="n-meetings-t">
+              <thead>
+                <tr>
+                  <th>Datum</th>
+                  <th>Uhrzeit</th>
+                  <th>Raum</th>
+                  <th>Teilnehmer</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for meeting in meetings_data %}
+                <tr>
+                  <td>{{ meeting[1] }}</td>
+                  <td>Von: {{ meeting[2] }} Bis: {{ meeting[3] }}</td>
+                  <td>{{ meeting[4] }}</td>
+                  <td>{{ meeting[6] }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table> 
+          </div>
         </div>
 
         {% block content %}

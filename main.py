@@ -136,7 +136,8 @@ def index():
     )  # Bayern, da es die meisten Feiertage hat
 
     meetings_data = db.execute(
-        "SELECT m.m_group, m.date, m.startTime, m.endTime, m.room, m.service, GROUP_CONCAT(u.user_id) as user_ids FROM meetings m JOIN users u ON m.user_id = u.user_id GROUP BY m.m_group, m.date, m.startTime, m.endTime, m.room, m.service ORDER BY m.m_group, m.date LIMIT 3"
+        "SELECT m.m_group, m.date, m.startTime, m.endTime, m.room, m.service, GROUP_CONCAT(u.user_id) as user_ids FROM meetings m JOIN users u ON m.user_id = u.user_id WHERE m.date >= ? GROUP BY m.m_group, m.date, m.startTime, m.endTime, m.room, m.service ORDER BY m.date ASC LIMIT 4",
+        (today_date,),
     ).fetchall()
 
     return render_template(
@@ -611,7 +612,7 @@ def belegungsplan():
 
     # Fetch meetings with distinct m_group and associated user_ids
     meetings_data = db.execute(
-        "SELECT m.m_group, m.date, m.startTime, m.endTime, m.room, m.service, GROUP_CONCAT(u.user_id) as user_ids FROM meetings m JOIN users u ON m.user_id = u.user_id GROUP BY m.m_group, m.date, m.startTime, m.endTime, m.room, m.service ORDER BY m.m_group, m.date"
+        "SELECT m.m_group, m.date, m.startTime, m.endTime, m.room, m.service, GROUP_CONCAT(u.user_id) as user_ids FROM meetings m JOIN users u ON m.user_id = u.user_id GROUP BY m.m_group, m.date, m.startTime, m.endTime, m.room, m.service ORDER BY m.date DESC"
     ).fetchall()
 
     current_week_number = get_current_week_number()

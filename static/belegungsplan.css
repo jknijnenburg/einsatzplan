@@ -2,6 +2,14 @@
     box-sizing: border-box;
 }
 
+#reservation-form input {
+    font-size: 18px;
+}
+
+#reservation-form label {
+    font-size: 18px;
+}
+
 body:not(#datepicker) {
     margin: 0;
     padding: 10px 20px 0;
@@ -9,14 +17,14 @@ body:not(#datepicker) {
     font-family: "Roboto", Arial, Helvetica, sans-serif;
 }
 
-table:not(#datepicker) {
-    width: auto;
+#belegungsplan-table {
+    width: 90vw;
     border: black 1px solid;
     border-radius: 10px;
     border-collapse: collapse;
 }
 
-td:not(#datepicker) {
+#belegungsplan-table td {
     position: relative;
     border: black 1px solid;
     height: 80px;

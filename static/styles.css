@@ -11,24 +11,82 @@ body {
 
 .top-container {
     display: flex;
+    justify-content: space-between;
+    width: 95vw;
 }
 
-.tables-container {
-    display: flex;
-    width: auto;
-    height: auto;
+#link-belegungsplan {
+    font-size: 18px;
 }
 
 .legende {
+    display: flex;
     align-items: center;
     align-content: center;
     text-align: center;
     margin: 0 auto;
-    padding: 20px;
+    padding-bottom: 20px;
+}
+
+.next-meetings {
+    width: 50%;
+}
+
+.n-meetings-t {
+    width: 100%;
+}
+
+#b-week-c {
+    font-size: 18px;
+    justify-content: space-evenly;
+    padding: 10px;
+
+}
+
+.week-number {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#w-n-1 {
+    width: 55%;
+}
+
+#w-n-2 {
+    width: 45%;
+}
+
+.tables-container {
+    display: grid;
+    grid-template-columns: 47vw 1vw 47vw;
+    grid-template-rows: auto;
+    grid-template-areas:
+        "n1 . n2"
+        "wt1 . wt2";
+    width: 95vw;
+    height: auto;
+}
+
+#w-n-1 {
+    grid-area: n1;
+}
+
+#w-n-2 {
+    grid-area: n2;
+}
+
+.week-table1 {
+    flex-grow: 1;
+    grid-area: wt1;
+}
+
+.week-table2 {
+    flex-grow: 1;
+    grid-area: wt2;
 }
 
 #current-week-table {
-    border: 2px solid green;
+    border: 3px solid green;
 }
 
 .tables-container table {
@@ -46,7 +104,8 @@ body {
     display: none;
 }
 
-.week-table thead th {
+.week-table1 thead th,
+.week-table2 thead th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
@@ -54,19 +113,22 @@ body {
     color: white;
 }
 
-.week-table thead {
+.week-table1 thead,
+.week-table2 thead {
     position: sticky;
     top: 0;
     z-index: 1;
     background-color: rgb(233, 240, 232);
 }
 
-.week-table tbody tr th {
+.week-table1 tbody tr th,
+.week-table2 tbody tr th {
     border: 1px solid #000;
     padding: 8px;
 }
 
-.week-table tbody tr:hover {
+.week-table1 tbody tr:hover,
+.week-table2 tbody tr:hover {
     background-color: #ddd !important;
 }
 
@@ -106,37 +168,47 @@ footer {
     width: 100vw;
 }
 
+footer tr {
+    width: 100vw;
+}
+
+footer td {
+    width: 100vw;
+}
+
 /* Admin-Bereich */
 #assign-frame {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    width: 70vw;
+}
+
+#assing-frame select {
+    font-size: 16px;
 }
 
 .assign-m {
-    padding-bottom: 150px;
+    padding-bottom: 75px;
 }
 
 #assignForm {
     display: grid;
+    max-width: 150px;
 }
 
 #assignForm label {
-    font-size: 20px;
+    font-size: 16px;
     font-family: "Roboto";
-    font-weight: 500;
+    font-weight: 400;
     padding-top: 20px;
 }
 
 #assignForm input:not(#none, #schule, #abwesend, #urlaub, #gleitzeit) {
-    width: 400px;
     max-width: 100%;
-    height: 50px;
-    border-radius: 20px;
     font-family: "Roboto";
     font-size: 16px;
     color: #000;
     text-align: center;
-    border: 0;
 }
 
 .special {
@@ -147,7 +219,6 @@ footer {
 #assignForm button {
     font-family: "Roboto";
     font-size: 20px;
-    border-radius: 20px;
     width: 400px;
     max-width: 100%;
     border: 0;
@@ -155,43 +226,44 @@ footer {
     text-align: center;
 }
 
+textarea {
+    font-size: 16px;
+}
 
+.chosen-container span {
+    font-size: 16px;
+}
 
 
 .group-create {
-    padding-bottom: 150px;
+    padding-bottom: 75px;
 }
 
 #group-form {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 10px;
-    max-width: 500px;
+    max-width: 150px;
 }
 
 #group-form label {
-    font-size: 20px;
+    font-size: 15px;
     font-family: "Roboto";
-    font-weight: 500;
+    font-weight: 400;
     padding-top: 20px;
 }
 
 #group-form input {
     width: 400px;
     max-width: 400px;
-    border-radius: 20px;
     font-family: "Roboto";
     font-size: 16px;
     color: #000;
-    text-align: center;
-    border: 0;
+    text-align: left;
 }
 
 #group-form button {
     font-family: "Roboto";
     font-size: 20px;
-    border-radius: 20px;
-    width: 400px;
     max-width: 100%;
     border: 0;
     color: #000;
@@ -200,4 +272,12 @@ footer {
 
 .add-data {
     padding-bottom: 50px;
+}
+
+.add-data input,
+.add-data select,
+.add-data button,
+.delete-data select,
+.delete-data button {
+    font-size: 16px;
 }

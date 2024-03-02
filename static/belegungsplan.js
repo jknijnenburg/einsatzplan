@@ -63,7 +63,7 @@ $(function () {
         formToken,
 
       success: function (response) {
-        alert(response);
+        alert("Meeting wurde erfolgreich erstellt!");
         window.location.reload();
       },
 

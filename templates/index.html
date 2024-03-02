@@ -38,9 +38,6 @@
               <button type="submit" id="login-button">Login</button>
             </form>
           </div>
-          <div class="logo">
-            <img src="https://www.slt-technologies.com/images/main_header_left-slt.jpg" alt="" />
-          </div>
           <div class="next-meetings">
             <table class="n-meetings-t">
               <thead>
@@ -52,22 +49,283 @@
                 </tr>
               </thead>
               <tbody>
-                {% for meeting in meetings_data %}
-                <tr>
-                  <td>{{ meeting[1] }}</td>
-                  <td>Von: {{ meeting[2] }} Bis: {{ meeting[3] }}</td>
-                  <td>{{ meeting[4] }}</td>
-                  <td>{{ meeting[6] }}</td>
-                </tr>
-                {% endfor %}
+                {% if meetings_data %}
+                  {% set meeting_found = false %}
+                  {% for meeting in meetings_data %}
+                      {% if meeting != None %}
+                          {% set meeting_found = true %}
+                          <tr>
+                              <td>{{ meeting[1] }}</td>
+                              <td>Von: {{ meeting[2] }} Bis: {{ meeting[3] }}</td>
+                              <td>{{ meeting[4] }}</td>
+                              <td>{{ meeting[6] }}</td>
+                          </tr>
+                      {% endif %}
+                  {% endfor %}
+                {% else %}
+                    <!-- Create an empty table when no meetings_data is available -->
+                    <tr>
+                        <td colspan="4">Kein Meeting geplant..</td>
+                    </tr>
+                {% endif %}
               </tbody>
             </table> 
+          </div>
+          <div class="logo">
+            <img src="https://www.slt-technologies.com/images/main_header_left-slt.jpg" alt="" />
           </div>
         </div>
 
         {% block content %}
           <div id="main-frame">
-            <a href="/belegungsplan?user_role={{ user_role }}">Belegungsplan</a>
+            <a href="/belegungsplan?user_role={{ user_role }}" id="link-belegungsplan">Belegungsplan</a>
+
+            {% if user_role == 'admin' %}
+            <div id="assign-frame">
+              {% block assign_frame %}
+                <div class="assign-m">
+                  <h3>Einzelne Mitarbeiter zuweisen</h3>
+                  <form id="assignForm" action="" method="POST">
+                    <label id="a">
+                      Mitarbeiter:</label>
+                    <select name="personal_nr" id="dd-m" required>
+                      <option value="" disabled selected>Mitarbeiter</option>
+                      {% for row in data %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                      {% endfor %}
+                    </select>
+                    <label>Von-Bis-Datum:</label>
+                    <input type="text" id="date-select" name="datefilter" value="" required />
+                    <label>
+                      Projekt:</label>
+                    <select name="project_id" id="dd-p">
+                      <option value="0" disabled selected>Projekt</option>
+                      {% for row in project_table_data %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                      {% endfor %}
+                    </select>
+                    <label>
+                      Auto:</label>
+                    <select name="car_id" id="dd-car">
+                      <!-- Autos aus Datenbank auslesen -->
+                      <option value="99" disabled selected>Auto</option>
+                      {% for row in car_table_data %}
+                        {% if row[0] != 0 %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                    <label>
+                      Ort:</label>
+                      <select name="ort" id="dd-l" required>
+                        <option value="vO">Vor-Ort</option>
+                        <option value="iF">In Firma</option>
+                      </select>
+                    <label>
+                      Zusatz:</label>
+                    <select name="extra1" id="dd-x">
+                      <option value="no" disabled selected>Weiteres..</option>
+                      <option value="ST.">Stundenzettel</option>
+                      <option value="H">Hotel</option>
+                      <option value="T">Telefon</option>
+                    </select>
+                    <select name="extra2" id="dd-xx">
+                      <option value="no" disabled selected>Weiteres..</option>
+                      <option value="ST.">Stundenzettel</option>
+                      <option value="H">Hotel</option>
+                      <option value="T">Telefon</option>
+                    </select>
+                    <select name="extra3" id="dd-xxx">
+                      <option value="no" disabled selected>Weiteres..</option>
+                      <option value="ST.">Stundenzettel</option>
+                      <option value="H">Hotel</option>
+                      <option value="T">Telefon</option>
+                    </select>
+                    <label>Hinweis:</label><textarea name="hinweis" id="hinweis" cols="30" rows="3"></textarea>
+                    <br>
+                    <div class="special">
+                      <input type="radio" id="none" name="abw" value="0" checked>
+                      <p>Keine</p>
+                      <input type="radio" id="schule" name="abw" value="1">
+                      <p>Schule</p>
+                      <input type="radio" id="abwesend" name="abw" value="2">
+                      <p>Abwesend</p>
+                      <input type="radio" id="urlaub" name="abw" value="3">
+                      <p>Urlaub</p>
+                      <input type="radio" id="gleitzeit" name="abw" value="4">
+                      <p>Gleitzeit</p>
+                    </div>
+                    <br />
+                    <button class="confirm">Bestätigen</button>
+                  </form>
+                </div>
+                <div class="group-create">
+                  <h3>Gruppe erstellen & zuweisen</h3>
+                  <p>Wähle mehrere Mitarbeiter aus, um eine Gruppe zu erstellen.</p>
+                  <form id="group-form" action="" method="POST">
+                    <select name="personal_nr_list" id="personal_nr_list" class="chosen-select" data-placeholder="Mitarbeiter auswählen.." multiple>
+                      {% for row in data %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                      {% endfor %}
+                    </select>
+                    <label>Von-Bis-Datum:</label>
+                    <input type="text" id="date-select" name="datefilter-g" value="" required />
+                    <label>
+                      Projekt:</label>
+                      <select name="project_id" id="dd-p-g" required>
+                        <option value="" disabled selected>Projekt</option>
+                        {% for row in project_table_data %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
+                      </select>
+                    <label>
+                      Auto:</label>
+                    <select name="car_id" id="dd-car-g">
+                      <!-- Autos aus Datenbank auslesen -->
+                      <option value="" disabled selected>Auto</option>
+                      {% for row in car_table_data %}
+                        {% if row[0] != 0 %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                    <label>Ort:</label>
+                    <select name="ort" id="dd-l-g" required>
+                      <option value="vO">Vor-Ort</option>
+                      <option value="iF">In Firma</option>
+                    </select>
+                    <label>
+                      Zusatz:</label><select name="extra1" id="dd-x-g">
+                        <option value="" disabled selected>Weiteres..</option>
+                        <option value="ST.">Stundenzettel</option>
+                        <option value="H">Hotel</option>
+                        <option value="T">Telefon</option>
+                      </select>
+
+                      <select name="extra2" id="dd-xx-g">
+                        <option value="" disabled selected>Weiteres..</option>
+                        <option value="ST.">Stundenzettel</option>
+                        <option value="H">Hotel</option>
+                        <option value="T">Telefon</option>
+                      </select>
+
+                      <select name="extra3" id="dd-xxx-g">
+                        <option value="" disabled selected>Weiteres..</option>
+                        <option value="ST.">Stundenzettel</option>
+                        <option value="H">Hotel</option>
+                        <option value="T">Telefon</option>
+                      </select>
+                    <label>Hinweis:</label>
+                    <textarea name="hinweis" id="hinweis" cols="30" rows="3"></textarea>
+                    <br />
+                    <button class="confirm">Bestätigen</button>
+                  </form>
+                </div>
+
+                <div class="add-data">
+                  <h3>Füge Daten zu der Datenbank hinzu.</h3>
+                  <form action="/submit_m_add" method="POST">
+                    <label>
+                      Neuen Mitarbeiter:<br />
+                      <input type="number" name="personal_nr" placeholder="Personal-Nr." />
+                      <input type="text" name="vorname" placeholder="Vorname" />
+                      <input type="text" name="nachname" placeholder="Nachname" />
+                      <select name="bereich" id="">
+                        <option value="" disabled selected>Bereich</option>
+                        <option value="Schlosser">Schlosser</option>
+                        <option value="Dreher & Fräser">Dreher & Fräser</option>
+                        <option value="Elektriker">Elektriker</option>
+                        <option value="Freie Mitarbeiter">Freie Mitarbeiter</option>
+                        <option value="Büro">Büro</option>
+                        <option value="Hauswart">Hauswart</option>
+                      </select>
+                    </label>
+                    <button type="submit">Erstellen</button>
+                  </form>
+                  <br />
+                  <label>Neuen Kunden:</label>
+                  <form action="/submit_c_add" method="POST">
+                    <input type="number" name="customer_id" placeholder="Kunden-Nr." />
+                    <input type="text" name="customer_name" placeholder="Kunden-Name" />
+                    <button type="submit">Erstellen</button>
+                  </form>
+                  <br />
+                  <label>Neues Projekt:</label>
+                  <br />
+                  <form action="/submit_p_add" method="POST">
+                    <input type="number" name="project_id" placeholder="Projekt-Nr." />
+                    <input type="text" name="project_name" placeholder="Projekt-Name" />
+                    <select name="customer_id" id="dd-c">
+                      <option value="" disabled selected>Kunde</option>
+                      {% for row in customer_table_data %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                      {% endfor %}
+                    </select>
+                    <button type="submit">Erstellen</button>
+                  </form>
+                  <br />
+                  <label>Neues Auto:</label>
+                  <br />
+                  <form action="/submit_car_add" method="POST">
+                    <input type="text" name="car_id" placeholder="Kennzeichen.." />
+                    <button type="submit">Erstellen</button>
+                  </form>
+                  <br />
+                </div>
+                <div class="delete-data">
+                  <h3>Lösche Daten aus der Datenbank.</h3>
+
+                  <label>Mitarbeiter löschen:</label>
+                  <form action="/submit_m_delete" method="POST">
+                    <select name="personal_nr" id="">
+                      <option value="" disabled selected>Mitarbeiter</option>
+                      {% for row in data %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                      {% endfor %}
+                    </select>
+                    <button type="submit">Löschen</button>
+                  </form>
+
+                  <br />
+                  <label>Kunden löschen:</label>
+                  <form action="/submit_c_delete" method="POST">
+                    <select name="kunden-delete" id="">
+                      <option value="" disabled selected>Kunde</option>
+                      {% for row in customer_table_data %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                      {% endfor %}
+                    </select>
+                    <button type="submit">Löschen</button>
+                  </form>
+
+                  <br />
+                  <label>Auto löschen:</label>
+                  <form action="/submit_car_delete" method="POST">
+                    <select name="car-delete" id="">
+                      <option value="" disabled selected>Auto</option>
+                      {% for row in car_table_data %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                      {% endfor %}
+                    </select>
+                    <button type="submit">Löschen</button>
+                  </form>
+
+                  <br />
+                  <label>Projekt löschen:</label>
+                  <form action="/submit_p_delete" method="POST">
+                    <select name="project-delete" id="">
+                      <option value="" disabled selected>Projekt</option>
+                      {% for row in project_table_data %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                      {% endfor %}
+                    </select>
+                    <button type="submit">Löschen</button>
+                  </form>
+                </div>
+              {% endblock %}
+            </div>
+          {% endif %}
+
             <h1>Einsatzplan</h1>
             <div class="legende">
               <table>
@@ -86,12 +344,13 @@
                 </tr>
               </table>
             </div>
-            <button onclick="prevWeek()">Vorherige Woche</button>
-            <button onclick="nextWeek()">Nächste Woche</button>
-            <button onclick="resetWeek()">HEUTE</button>
+            <button onclick="prevWeek()" id="b-week-c">Vorherige Woche</button>
+            <button onclick="nextWeek()" id="b-week-c">Nächste Woche</button>
+            <button onclick="resetWeek()" id="b-week-c">HEUTE</button>
             <div class="tables-container" style="padding-top: 10px;">
-              <p class="week-number">KW {{ kw_1 }}</p>
-              <table class="week-table" id="{% if kw_1 == current_week_number %}current-week-table{% endif %}">
+              <p class="week-number" id="w-n-1">KW {{ kw_1 }}</p>
+              <p class="week-number" id="w-n-2">KW {{ kw_2 }}</p>
+              <table class="week-table1" id="{% if kw_1 == current_week_number %}current-week-table{% endif %}">
                 <thead>
                   <tr>
                     <th>P-Nr.</th>
@@ -144,7 +403,7 @@
                                     {% endif %}
                                     {{ assignment[10] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
-                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
                                 {% endif %}
@@ -198,7 +457,7 @@
                                     {% endif %}
                                     {{ assignment[10] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
-                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
                                 {% endif %}
@@ -252,7 +511,7 @@
                                     {% endif %}
                                     {{ assignment[10] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
-                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
                                 {% endif %}
@@ -306,7 +565,7 @@
                                     {% endif %}
                                     {{ assignment[10] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
-                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
                                 {% endif %}
@@ -360,7 +619,7 @@
                                     {% endif %}
                                     {{ assignment[10] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
-                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
                                 {% endif %}
@@ -414,7 +673,7 @@
                                     {% endif %}
                                     {{ assignment[10] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
-                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
                                 {% endif %}
@@ -437,8 +696,7 @@
                   {% endif %}
                 </tbody>
               </table>
-              <p class="week-number">KW {{ kw_2 }}</p>
-              <table class="week-table" id="{% if kw_2 == current_week_number %}current-week-table{% endif %}">
+              <table class="week-table2" id="{% if kw_2 == current_week_number %}current-week-table{% endif %}">
                 <thead>
                   <tr>
                     <th id="m-pc-row">P-Nr.</th>
@@ -491,7 +749,7 @@
                                     {% endif %}
                                     {{ assignment[10] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
-                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
                                 {% endif %}
@@ -545,7 +803,7 @@
                                     {% endif %}
                                     {{ assignment[10] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
-                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
                                 {% endif %}
@@ -602,7 +860,7 @@
                                     {% endif %}
                                     {{ assignment[10] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
-                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
                                 {% endif %}
@@ -656,7 +914,7 @@
                                     {% endif %}
                                     {{ assignment[10] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
-                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
                                 {% endif %}
@@ -710,7 +968,7 @@
                                     {% endif %}
                                     {{ assignment[10] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
-                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
                                 {% endif %}
@@ -766,7 +1024,7 @@
                                     {% endif %}
                                     {{ assignment[10] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
-                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Delete</button>
+                                      <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
                                 {% endif %}
@@ -791,247 +1049,6 @@
               </table>
             </div>
             <br />
-
-            {% if user_role == 'admin' %}
-              <div id="assign-frame">
-                {% block assign_frame %}
-                  <div class="assign-m">
-                    <h3>Einzelne Mitarbeiter zuweisen</h3>
-                    <form id="assignForm" action="" method="POST">
-                      <label id="a">
-                        Mitarbeiter:<select name="personal_nr" id="dd-m" required>
-                          <option value="" disabled selected>Mitarbeiter</option>
-                          {% for row in data %}
-                            <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                          {% endfor %}
-                        </select>
-                      </label>
-                      <label>Von-Bis-Datum:<input type="text" id="date-select" name="datefilter" value="" required /></label>
-                      <label>
-                        Projekt:<select name="project_id" id="dd-p">
-                          <option value="0" disabled selected>Projekt</option>
-                          {% for row in project_table_data %}
-                            <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                          {% endfor %}
-                        </select>
-                      </label>
-                      <label>
-                        Auto:<select name="car_id" id="dd-car">
-                          <!-- Autos aus Datenbank auslesen -->
-                          <option value="99" disabled selected>Auto</option>
-                          {% for row in car_table_data %}
-                            {% if row[0] != 0 %}
-                              <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                            {% endif %}
-                          {% endfor %}
-                        </select>
-                      </label>
-                      <label>
-                        Ort:<select name="ort" id="dd-l" required>
-                          <option value="vO">Vor-Ort</option>
-                          <option value="iF">In Firma</option>
-                        </select>
-                      </label>
-                      <label>
-                        Zusatz:<select name="extra1" id="dd-x">
-                          <option value="no" disabled selected>Weiteres..</option>
-                          <option value="ST.">Stundenzettel</option>
-                          <option value="H">Hotel</option>
-                          <option value="T">Telefon</option>
-                        </select>
-                        <select name="extra2" id="dd-xx">
-                          <option value="no" disabled selected>Weiteres..</option>
-                          <option value="ST.">Stundenzettel</option>
-                          <option value="H">Hotel</option>
-                          <option value="T">Telefon</option>
-                        </select>
-                        <select name="extra3" id="dd-xxx">
-                          <option value="no" disabled selected>Weiteres..</option>
-                          <option value="ST.">Stundenzettel</option>
-                          <option value="H">Hotel</option>
-                          <option value="T">Telefon</option>
-                        </select>
-                      </label>
-                      <label>Hinweis:<textarea name="hinweis" id="hinweis" cols="30" rows="5"></textarea></label>
-                      <br>
-                      <div class="special">
-                        <input type="radio" id="none" name="abw" value="0" checked>
-                        <p>Keine</p>
-                        <input type="radio" id="schule" name="abw" value="1">
-                        <p>Schule</p>
-                        <input type="radio" id="abwesend" name="abw" value="2">
-                        <p>Abwesend</p>
-                        <input type="radio" id="urlaub" name="abw" value="3">
-                        <p>Urlaub</p>
-                        <input type="radio" id="gleitzeit" name="abw" value="4">
-                        <p>Gleitzeit</p>
-                      </div>
-                      <br />
-                      <button class="confirm">Bestätigen</button>
-                    </form>
-                  </div>
-                  <div class="group-create">
-                    <h3>Gruppe erstellen & zuweisen</h3>
-                    <p>Wähle mehrere Mitarbeiter aus, um eine Gruppe zu erstellen.</p>
-                    <form id="group-form" action="" method="POST">
-                      <select name="personal_nr_list" id="personal_nr_list" class="chosen-select" data-placeholder="Mitarbeiter auswählen.." multiple>
-                        {% for row in data %}
-                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                        {% endfor %}
-                      </select>
-                      <label>Von-Bis-Datum:<input type="text" id="date-select" name="datefilter-g" value="" required /></label>
-                      <label>
-                        Projekt:<select name="project_id" id="dd-p-g" required>
-                          <option value="" disabled selected>Projekt</option>
-                          {% for row in project_table_data %}
-                            <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                          {% endfor %}
-                        </select>
-                      </label>
-                      <label>
-                        Auto:<select name="car_id" id="dd-car-g">
-                          <!-- Autos aus Datenbank auslesen -->
-                          <option value="" disabled selected>Auto</option>
-                          {% for row in car_table_data %}
-                            {% if row[0] != 0 %}
-                              <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                            {% endif %}
-                          {% endfor %}
-                        </select>
-                      </label>
-                      <label>
-                        Ort:<select name="ort" id="dd-l-g" required>
-                          <option value="vO">Vor-Ort</option>
-                          <option value="iF">In Firma</option>
-                        </select>
-                      </label>
-                      <label>
-                        Zusatz:<select name="extra1" id="dd-x-g">
-                          <option value="" disabled selected>Weiteres..</option>
-                          <option value="ST.">Stundenzettel</option>
-                          <option value="H">Hotel</option>
-                          <option value="T">Telefon</option>
-                        </select>
-
-                        <select name="extra2" id="dd-xx-g">
-                          <option value="" disabled selected>Weiteres..</option>
-                          <option value="ST.">Stundenzettel</option>
-                          <option value="H">Hotel</option>
-                          <option value="T">Telefon</option>
-                        </select>
-
-                        <select name="extra3" id="dd-xxx-g">
-                          <option value="" disabled selected>Weiteres..</option>
-                          <option value="ST.">Stundenzettel</option>
-                          <option value="H">Hotel</option>
-                          <option value="T">Telefon</option>
-                        </select>
-                      </label>
-                      <label>Hinweis:<textarea name="hinweis" id="hinweis" cols="30" rows="5"></textarea></label>
-                      <br />
-                      <button class="confirm">Bestätigen</button>
-                    </form>
-                  </div>
-
-                  <div class="add-data">
-                    <h3>Füge Daten zu der Datenbank hinzu.</h3>
-                    <form action="/submit_m_add" method="POST">
-                      <label>
-                        Neuen Mitarbeiter:<br />
-                        <input type="number" name="personal_nr" placeholder="Personal-Nr." />
-                        <input type="text" name="vorname" placeholder="Vorname" />
-                        <input type="text" name="nachname" placeholder="Nachname" />
-                        <select name="bereich" id="">
-                          <option value="" disabled selected>Bereich</option>
-                          <option value="Schlosser">Schlosser</option>
-                          <option value="Dreher & Fräser">Dreher & Fräser</option>
-                          <option value="Elektriker">Elektriker</option>
-                          <option value="Freie Mitarbeiter">Freie Mitarbeiter</option>
-                          <option value="Büro">Büro</option>
-                          <option value="Hauswart">Hauswart</option>
-                        </select>
-                      </label>
-                      <button type="submit">Erstellen</button>
-                    </form>
-                    <br />
-                    <label>Neuen Kunden:</label>
-                    <form action="/submit_c_add" method="POST">
-                      <input type="number" name="customer_id" placeholder="Kunden-Nr." />
-                      <input type="text" name="customer_name" placeholder="Kunden-Name" />
-                      <button type="submit">Erstellen</button>
-                    </form>
-                    <br />
-                    <label>Neues Projekt:</label>
-                    <br />
-                    <form action="/submit_p_add" method="POST">
-                      <input type="number" name="project_id" placeholder="Projekt-Nr." />
-                      <input type="text" name="project_name" placeholder="Projekt-Name" />
-                      <select name="customer_id" id="dd-c">
-                        <option value="" disabled selected>Kunde</option>
-                        {% for row in customer_table_data %}
-                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                        {% endfor %}
-                      </select>
-                      <button type="submit">Erstellen</button>
-                    </form>
-                    <label>Neues Auto:</label>
-                    <br />
-                    <form action="/submit_car_add" method="POST">
-                      <input type="text" name="car_id" placeholder="Kennzeichen.." />
-                      <button type="submit">Erstellen</button>
-                    </form>
-                    <br />
-                  </div>
-                  <div class="delete-data">
-                    <h3>Lösche Daten aus der Datenbank.</h3>
-
-                    <h4>Mitarbeiter löschen:</h4>
-                    <form action="/submit_m_delete" method="POST">
-                      <select name="personal_nr" id="">
-                        <option value="" disabled selected>Auto</option>
-                        {% for row in data %}
-                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                        {% endfor %}
-                      </select>
-                      <button type="submit">Löschen</button>
-                    </form>
-
-                    <br />
-                    <h4>Kunden löschen:</h4>
-                    <form action="/submit_c_delete" method="POST">
-                      <select name="kunden-delete" id="">
-                        <option value="" disabled selected>Kunde</option>
-                        {% for row in customer_table_data %}
-                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                        {% endfor %}
-                      </select>
-                      <button type="submit">Löschen</button>
-                    </form>
-
-                    <h4>Auto löschen:</h4>
-                    <form action="/submit_car_delete" method="POST">
-                      <select name="car-delete" id="">
-                        <option value="" disabled selected>Auto</option>
-                        {% for row in car_table_data %}
-                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                        {% endfor %}
-                      </select>
-                      <button type="submit">Löschen</button>
-                    </form>
-                    <h4>Projekt löschen:</h4>
-                    <form action="/submit_p_delete" method="POST">
-                      <select name="project-delete" id="">
-                        <option value="" disabled selected>Projekt</option>
-                        {% for row in project_table_data %}
-                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                        {% endfor %}
-                      </select>
-                      <button type="submit">Löschen</button>
-                    </form>
-                  </div>
-                {% endblock %}
-              </div>
-            {% endif %}
           </div>
         {% endblock %}
       </main>
@@ -1126,7 +1143,7 @@
               <tbody>
                 <tr>
                   <td width="100%" height="30" align="center" valign="center" style="font-size:10px;">
-                    © 2023 SLT-Technologies GmbH &amp; Co. KG • Telefon +49 (421) 66 05 8-0 • Fax +49 (421) 66 05 8-40 • Email
+                    © 2024 SLT-Technologies GmbH &amp; Co. KG • Telefon +49 (421) 66 05 8-0 • Fax +49 (421) 66 05 8-40 • Email
                     <a href="mailto:info@slt-technologies.com">info@slt-technologies.com</a>
                   </td>
                 </tr>

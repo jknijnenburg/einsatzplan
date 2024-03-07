@@ -5,8 +5,24 @@
 body {
     margin: 0;
     padding: 10px 20px 0;
-    background-color: rgb(233, 240, 232);
+    background-color: #003e29;
     font-family: "Roboto", Arial, Helvetica, sans-serif;
+}
+
+label,
+h1,
+h2,
+h3,
+h4,
+p,
+strong,
+th {
+    color: #fff;
+}
+
+.week-table1 td,
+.week-table2 td, tbody th, tbody strong {
+    color: #000;
 }
 
 .top-container {
@@ -17,6 +33,11 @@ body {
 
 #link-belegungsplan {
     font-size: 18px;
+    color: #fff;
+}
+
+#link-belegungsplan:hover {
+    color: #9a9797;
 }
 
 .legende {
@@ -34,6 +55,16 @@ body {
 
 .n-meetings-t {
     width: 100%;
+}
+
+.n-meetings-t th {
+    background-color: green;
+}
+
+.n-meetings-t td {
+    border-color: #fff;
+    color: #000;
+    background-color: #fff;
 }
 
 #b-week-c {
@@ -94,10 +125,11 @@ body {
     border: black 1px solid;
     border-radius: 10px;
     border-collapse: collapse;
+    background-color: #fff;
 }
 
 .tables-container table tbody tr:nth-child(odd) {
-    background-color: #fff;
+    background-color: #f1f1f1;
 }
 
 #m-pc-row {
@@ -109,8 +141,7 @@ body {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
-    background-color: #045b04;
-    color: white;
+    background-color: green;
 }
 
 .week-table1 thead,
@@ -129,7 +160,7 @@ body {
 
 .week-table1 tbody tr:hover,
 .week-table2 tbody tr:hover {
-    background-color: #ddd !important;
+    background-color: #8a9f98 !important;
 }
 
 .n_holiday {
@@ -160,20 +191,24 @@ td {
 }
 
 #t-a-field {
-    font-size: 12px;
+    font-size: 13px;
 }
 
-footer {
+footer table {
     margin-top: 200px;
     width: 100vw;
+    color: #fff;
+    border: 0;
 }
 
 footer tr {
     width: 100vw;
+    border: 0;
 }
 
 footer td {
     width: 100vw;
+    border: 0;
 }
 
 /* Admin-Bereich */
@@ -223,7 +258,12 @@ footer td {
     max-width: 100%;
     border: 0;
     color: #000;
+    background-color: #fee46d;
     text-align: center;
+}
+
+#assignForm button:hover {
+    background-color: #85773a;
 }
 
 textarea {
@@ -267,7 +307,12 @@ textarea {
     max-width: 100%;
     border: 0;
     color: #000;
+    background-color: #fee46d;
     text-align: center;
+}
+
+#group-form button:hover {
+    background-color: #85773a;
 }
 
 .add-data {

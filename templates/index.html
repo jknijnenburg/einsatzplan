@@ -37,6 +37,7 @@
               <br /><br />
               <button type="submit" id="login-button">Login</button>
             </form>
+            <a href="/?user_role=user"><button type="" id="logout-button">Logout</button></a>
           </div>
           <div class="next-meetings">
             <table class="n-meetings-t">
@@ -50,10 +51,8 @@
               </thead>
               <tbody>
                 {% if meetings_data %}
-                  {% set meeting_found = false %}
                   {% for meeting in meetings_data %}
                       {% if meeting != None %}
-                          {% set meeting_found = true %}
                           <tr>
                               <td>{{ meeting[1] }}</td>
                               <td>Von: {{ meeting[2] }} Bis: {{ meeting[3] }}</td>
@@ -99,7 +98,7 @@
                     <label>
                       Projekt:</label>
                     <select name="project_id" id="dd-p">
-                      <option value="0" disabled selected>Projekt</option>
+                      <option value="" disabled selected>Projekt</option>
                       {% for row in project_table_data %}
                         <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                       {% endfor %}
@@ -108,11 +107,9 @@
                       Auto:</label>
                     <select name="car_id" id="dd-car">
                       <!-- Autos aus Datenbank auslesen -->
-                      <option value="99" disabled selected>Auto</option>
+                      <option value="0" disabled selected>Auto</option>
                       {% for row in car_table_data %}
-                        {% if row[0] != 0 %}
-                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                        {% endif %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                       {% endfor %}
                     </select>
                     <label>
@@ -182,11 +179,9 @@
                       Auto:</label>
                     <select name="car_id" id="dd-car-g">
                       <!-- Autos aus Datenbank auslesen -->
-                      <option value="" disabled selected>Auto</option>
+                      <option value="0" disabled selected>Auto</option>
                       {% for row in car_table_data %}
-                        {% if row[0] != 0 %}
-                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
-                        {% endif %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                       {% endfor %}
                     </select>
                     <label>Ort:</label>
@@ -224,13 +219,13 @@
 
                 <div class="add-data">
                   <h3>Füge Daten zu der Datenbank hinzu.</h3>
-                  <form action="/submit_m_add" method="POST">
+                  <form id="submit_m_add" action="" method="POST">
                     <label>
                       Neuen Mitarbeiter:<br />
-                      <input type="number" name="personal_nr" placeholder="Personal-Nr." />
-                      <input type="text" name="vorname" placeholder="Vorname" />
-                      <input type="text" name="nachname" placeholder="Nachname" />
-                      <select name="bereich" id="">
+                      <input type="number" name="personal_nr" required placeholder="Personal-Nr." />
+                      <input type="text" name="vorname" required placeholder="Vorname" />
+                      <input type="text" name="nachname" required placeholder="Nachname" />
+                      <select name="bereich" required id="">
                         <option value="" disabled selected>Bereich</option>
                         <option value="Schlosser">Schlosser</option>
                         <option value="Dreher & Fräser">Dreher & Fräser</option>
@@ -244,18 +239,18 @@
                   </form>
                   <br />
                   <label>Neuen Kunden:</label>
-                  <form action="/submit_c_add" method="POST">
-                    <input type="number" name="customer_id" placeholder="Kunden-Nr." />
-                    <input type="text" name="customer_name" placeholder="Kunden-Name" />
+                  <form id="submit_c_add" action="" method="POST">
+                    <input type="number" name="customer_id" required placeholder="Kunden-Nr." />
+                    <input type="text" name="customer_name" required placeholder="Kunden-Name" />
                     <button type="submit">Erstellen</button>
                   </form>
                   <br />
                   <label>Neues Projekt:</label>
                   <br />
-                  <form action="/submit_p_add" method="POST">
-                    <input type="number" name="project_id" placeholder="Projekt-Nr." />
-                    <input type="text" name="project_name" placeholder="Projekt-Name" />
-                    <select name="customer_id" id="dd-c">
+                  <form id="submit_p_add" action="" method="POST">
+                    <input type="number" name="project_id" required placeholder="Projekt-Nr." />
+                    <input type="text" name="project_name" required placeholder="Projekt-Name" />
+                    <select name="customer_id" required id="dd-c">
                       <option value="" disabled selected>Kunde</option>
                       {% for row in customer_table_data %}
                         <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
@@ -266,8 +261,8 @@
                   <br />
                   <label>Neues Auto:</label>
                   <br />
-                  <form action="/submit_car_add" method="POST">
-                    <input type="text" name="car_id" placeholder="Kennzeichen.." />
+                  <form id="submit_car_add" action="" method="POST">
+                    <input type="text" name="car_id" required placeholder="Kennzeichen.." />
                     <button type="submit">Erstellen</button>
                   </form>
                   <br />
@@ -276,8 +271,8 @@
                   <h3>Lösche Daten aus der Datenbank.</h3>
 
                   <label>Mitarbeiter löschen:</label>
-                  <form action="/submit_m_delete" method="POST">
-                    <select name="personal_nr" id="">
+                  <form id="submit_m_delete" action="" method="POST">
+                    <select name="personal_nr" id="" required>
                       <option value="" disabled selected>Mitarbeiter</option>
                       {% for row in data %}
                         <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
@@ -288,8 +283,8 @@
 
                   <br />
                   <label>Kunden löschen:</label>
-                  <form action="/submit_c_delete" method="POST">
-                    <select name="kunden-delete" id="">
+                  <form id="submit_c_delete" action="" method="POST">
+                    <select name="kunden-delete" id="" required>
                       <option value="" disabled selected>Kunde</option>
                       {% for row in customer_table_data %}
                         <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
@@ -300,8 +295,8 @@
 
                   <br />
                   <label>Auto löschen:</label>
-                  <form action="/submit_car_delete" method="POST">
-                    <select name="car-delete" id="">
+                  <form id="submit_car_delete" action="" method="POST">
+                    <select name="car-delete" id="" required>
                       <option value="" disabled selected>Auto</option>
                       {% for row in car_table_data %}
                         <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
@@ -312,8 +307,8 @@
 
                   <br />
                   <label>Projekt löschen:</label>
-                  <form action="/submit_p_delete" method="POST">
-                    <select name="project-delete" id="">
+                  <form id="submit_p_delete" action="" method="POST">
+                    <select name="project-delete" id="" required>
                       <option value="" disabled selected>Projekt</option>
                       {% for row in project_table_data %}
                         <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
@@ -382,7 +377,8 @@
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    {{ assignment[3] }}
+                                    <b>{{ assignment[3] }}</b>
+                                    {{ assignment[14] }}                              
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -436,7 +432,8 @@
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    {{ assignment[3] }}
+                                    <b>{{ assignment[3] }}</b>
+                                    {{ assignment[14] }}                              
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -490,7 +487,8 @@
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    {{ assignment[3] }}
+                                    <b>{{ assignment[3] }}</b>
+                                    {{ assignment[14] }}                              
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -544,7 +542,8 @@
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    {{ assignment[3] }}
+                                    <b>{{ assignment[3] }}</b>
+                                    {{ assignment[14] }}                              
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -598,7 +597,8 @@
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    {{ assignment[3] }}
+                                    <b>{{ assignment[3] }}</b>
+                                    {{ assignment[14] }}                              
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -652,7 +652,8 @@
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    {{ assignment[3] }}
+                                    <b>{{ assignment[3] }}</b>
+                                    {{ assignment[14] }}                              
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -728,7 +729,8 @@
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    {{ assignment[3] }}
+                                    <b>{{ assignment[3] }}</b>
+                                    {{ assignment[14] }}                              
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -782,7 +784,8 @@
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    {{ assignment[3] }}
+                                    <b>{{ assignment[3] }}</b>
+                                    {{ assignment[14] }}                              
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -839,7 +842,8 @@
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    {{ assignment[3] }}
+                                    <b>{{ assignment[3] }}</b>
+                                    {{ assignment[14] }}                              
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -893,7 +897,8 @@
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    {{ assignment[3] }}
+                                    <b>{{ assignment[3] }}</b>
+                                    {{ assignment[14] }}                              
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -947,7 +952,8 @@
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    {{ assignment[3] }}
+                                    <b>{{ assignment[3] }}</b>
+                                    {{ assignment[14] }}                              
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -1003,7 +1009,8 @@
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
                                   <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    {{ assignment[3] }}
+                                    <b>{{ assignment[3] }}</b>
+                                    {{ assignment[14] }}                              
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -1155,5 +1162,5 @@
     </body>
   {% endblock %}
 
-  <!-- Jan Knijnenburg -->
+  <!-- Jan Knijnenburg - SLT Technologies GmbH & Co. KG -->
 </html>

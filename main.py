@@ -84,6 +84,8 @@ def index():
     week_number2 = int(request.args.get("week_number2", 1))
     today_date = datetime.now()
 
+    today_date_meetings = datetime.now().date()
+
     # to show the right KW
     kw_1 = int(request.args.get("kw_1", today_date.isocalendar()[1]))
 
@@ -137,7 +139,7 @@ def index():
 
     meetings_data = db.execute(
         "SELECT m.m_group, m.date, m.startTime, m.endTime, m.room, m.service, GROUP_CONCAT(u.user_id) as user_ids FROM meetings m JOIN users u ON m.user_id = u.user_id WHERE m.date >= ? GROUP BY m.m_group, m.date, m.startTime, m.endTime, m.room, m.service ORDER BY m.date ASC LIMIT 4",
-        (today_date,),
+        (today_date_meetings,),
     ).fetchall()
 
     return render_template(
@@ -196,13 +198,13 @@ def assign_mitarbeiter():
 
     project_id = request.form.get("project_id", 0)
 
-    if project_id == "null":
+    if project_id == "null" or project_id == 0 or project_id == "0":
         project_id = 0
 
     car_id = request.form.get("car_id")
 
     if car_id == "null":
-        car_id = 99
+        car_id = 0
 
     extra1 = request.form.get("extra1")
 
@@ -251,7 +253,7 @@ def assign_mitarbeiter():
         if count > 0:
             return "Die Zuteilung existiert bereits."
 
-        if car_id != 99:
+        if car_id != 0 and car_id != "0":
             cursor.execute(
                 "SELECT COUNT(*) FROM assignment_table WHERE car_id = ? AND startDate <= ? AND endDate >= ?",
                 (car_id, endDate, startDate),
@@ -262,9 +264,16 @@ def assign_mitarbeiter():
             if car_cnt > 0:
                 return "Auto ist bereits zugewiesen."
 
+        cursor.execute(
+            "SELECT project_name FROM projects WHERE project_id = ?",
+            (project_id,),
+        )
+
+        project_name = cursor.fetchone()[0]
+
         # Insert the assignment into the database
         cursor.execute(
-            "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, extra1, extra2, extra3, ort, group_id, hinweis, abwesend) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 personal_nr,
                 car_id,
@@ -279,6 +288,7 @@ def assign_mitarbeiter():
                 0,  # Weil nur ein einzelner Mitarbeiter hinzugefügt wird und er keine Gruppe hat
                 hinweis,
                 abw,
+                project_name,
             ),
         )
         conn.commit()
@@ -335,7 +345,7 @@ def assign_group():
     car_id = request.form.get("car_id")
 
     if car_id == "null":
-        car_id = 99
+        car_id = 0
 
     if extra1 == "null":
         extra1 = "no"
@@ -347,6 +357,9 @@ def assign_group():
         extra3 = "no"
 
     abw = 0
+
+    if project_id == "null" or project_id == 0 or project_id == "0":
+        project_id = 0
 
     # Get the highest group_id from the database
     conn = sqlite3.connect("datenbank.db")
@@ -382,7 +395,7 @@ def assign_group():
             print("Numeric User IDs after list:", numeric_user_ids)
             print("Next Group ID:", next_group_id)
 
-            if car_id != 99:
+            if car_id != 0 and car_id != "0":
                 cursor.execute(
                     "SELECT COUNT(*) FROM assignment_table WHERE car_id = ? AND startDate <= ? AND endDate >= ? AND group_id != ?",
                     (car_id, endDate, startDate, next_group_id),
@@ -392,6 +405,13 @@ def assign_group():
 
                 if car_cnt > 0:
                     return "Auto ist bereits in anderer Gruppe zugewiesen."
+
+            cursor.execute(
+                "SELECT project_name FROM projects WHERE project_id = ?",
+                (project_id,),
+            )
+
+            project_name = cursor.fetchone()[0]
 
             for user_id in numeric_user_ids:
                 cursor.execute(
@@ -408,7 +428,7 @@ def assign_group():
                     )
 
                 cursor.execute(
-                    "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, extra1, extra2, extra3, ort, group_id, hinweis, abwesend) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         user_id,
                         car_id,
@@ -423,6 +443,7 @@ def assign_group():
                         next_group_id,
                         hinweis,
                         abw,
+                        project_name,
                     ),
                 )
 
@@ -447,8 +468,16 @@ def create_new_user():
     conn = sqlite3.connect("datenbank.db")
     cursor = conn.cursor()
 
+    print(
+        f"Received values: personal_nr={personal_nr}, vorname={vorname}, nachname={nachname}, bereich={bereich}"
+    )
+
     # Perform database operation to create a new user with the provided inputs
     try:
+
+        if bereich == "null":
+            return "Bereich darf nicht leer sein."
+
         cursor.execute(
             "INSERT INTO users (user_id, first_name, last_name, work_field) VALUES (?, ?, ?, ?)",
             (personal_nr, vorname, nachname, bereich),
@@ -507,6 +536,36 @@ def create_new_project():
         conn.close()
 
     return "Projekt erfolgreich angelegt."
+
+
+@app.route("/submit_car_add", methods=["POST"])
+def create_new_car():
+    car_name = request.form.get("car_id")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    # Perform database operation to create a new project with the provided inputs
+    try:
+        cursor.execute("SELECT MAX(car_id) FROM cars")
+        max_car_id = cursor.fetchone()[0]
+        if max_car_id is None:
+            max_car_id = 0  # If there are no existing group_ids, start from 0
+
+        # Increment the highest group_id for the next assignment
+        next_car_id = max_car_id + 1
+
+        cursor.execute(
+            "INSERT INTO cars (car_id, car_name) VALUES (?, ?)",
+            (next_car_id, car_name),
+        )
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        conn.close()
+
+    return "Auto erfolgreich hinzugefügt."
 
 
 @app.route("/submit_m_delete", methods=["POST"])

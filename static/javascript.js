@@ -54,9 +54,7 @@ $(function () {
       },
       error: function (xhr, status, error) {
         // Handle the error
-        alert(
-          "An error occurred while processing your request. Please try again."
-        );
+        alert("Ein Fehler ist aufgetreten. Bitte erneut versuchen." + error);
       },
     });
   });
@@ -170,7 +168,7 @@ $(function () {
       },
       error: function (xhr, status, error) {
         // Handle the error
-        alert("Gruppe konnte nicht zugewiesen werden..");
+        alert("Gruppe konnte nicht zugewiesen werden.." + error);
       },
     });
   });
@@ -199,6 +197,208 @@ $(function () {
       $(this).val("");
     }
   );
+});
+
+// Add Data & Delete Data
+$(function () {
+  $("#submit_m_add").on("submit", function (event) {
+    // Prevent the default form submission
+    event.preventDefault();
+
+    // Get the form data
+    const formData = $(this).serialize();
+
+    const personal_nr = $('input[name="personal_nr"]').val();
+    const vorname = $('input[name="vorname"]').val();
+    const nachname = $('input[name="nachname"]').val();
+    const bereich = $('select[name="bereich"]').val();
+
+    const extendedFormData = `${formData}&personal_nr=${personal_nr}&vorname=${vorname}&nachname=${nachname}&bereich=${bereich}`;
+
+    $.ajax({
+      url: "/submit_m_add",
+      method: "POST",
+      data: extendedFormData,
+      success: function (response) {
+        // Handle the response from the Python backend
+        alert(response);
+        window.location.reload();
+      },
+      error: function (xhr, status, error) {
+        // Handle the error
+        alert("Ein Fehler ist aufgetreten. Bitte erneut versuchen." + error);
+      },
+    });
+  });
+
+  $("#submit_c_add").on("submit", function (event) {
+    event.preventDefault();
+
+    const formData = $(this).serialize();
+
+    const customer_id = $('input[name="customer_id"]').val();
+    const customer_name = $('input[name="customer_name"]').val();
+
+    const extendedFormData = `${formData}&customer_id=${customer_id}&customer_name=${customer_name}`;
+
+    $.ajax({
+      url: "/submit_c_add",
+      method: "POST",
+      data: extendedFormData,
+      success: function (response) {
+        alert(response);
+        window.location.reload();
+      },
+      error: function (xhr, status, error) {
+        alert("Ein Fehler ist aufgetreten. Bitte erneut versuchen." + error);
+      },
+    });
+  });
+
+  $("#submit_p_add").on("submit", function (event) {
+    event.preventDefault();
+
+    const formData = $(this).serialize();
+
+    const project_id = $('input[name="project_id"]').val();
+    const project_name = $('input[name="project_name"]').val();
+    const customer_id = $('select[name="customer_id"]').val();
+
+    const extendedFormData = `${formData}&project_id=${project_id}&project_name=${project_name}&customer_id=${customer_id}`;
+
+    $.ajax({
+      url: "/submit_p_add",
+      method: "POST",
+      data: extendedFormData,
+      success: function (response) {
+        alert(response);
+        window.location.reload();
+      },
+      error: function (xhr, status, error) {
+        alert("Ein Fehler ist aufgetreten. Bitte erneut versuchen." + error);
+      },
+    });
+  });
+
+  $("#submit_car_add").on("submit", function (event) {
+    event.preventDefault();
+
+    const formData = $(this).serialize();
+
+    const car_id = $('input[name="car_id"]').val();
+
+    const extendedFormData = `${formData}&car_id=${car_id}`;
+
+    $.ajax({
+      url: "/submit_car_add",
+      method: "POST",
+      data: extendedFormData,
+      success: function (response) {
+        alert(response);
+        window.location.reload();
+      },
+      error: function (xhr, status, error) {
+        alert("Ein Fehler ist aufgetreten. Bitte erneut versuchen." + error);
+      },
+    });
+  });
+
+  // DELETE DATA
+  $("#submit_m_delete").on("submit", function (event) {
+    // Prevent the default form submission
+    event.preventDefault();
+
+    // Get the form data
+    const formData = $(this).serialize();
+
+    const personal_nr = $('select[name="personal_nr"]').val();
+
+    const extendedFormData = `${formData}&personal_nr=${personal_nr}`;
+
+    $.ajax({
+      url: "/submit_m_delete",
+      method: "POST",
+      data: extendedFormData,
+      success: function (response) {
+        // Handle the response from the Python backend
+        alert(response);
+        window.location.reload();
+      },
+      error: function (xhr, status, error) {
+        // Handle the error
+        alert("Ein Fehler ist aufgetreten. Bitte erneut versuchen." + error);
+      },
+    });
+  });
+
+  $("#submit_c_delete").on("submit", function (event) {
+    event.preventDefault();
+
+    const formData = $(this).serialize();
+
+    const customer_id = $('input[name="kunden-delete"]').val();
+
+    const extendedFormData = `${formData}&kunden-delete=${customer_id}`;
+
+    $.ajax({
+      url: "/submit_c_delete",
+      method: "POST",
+      data: extendedFormData,
+      success: function (response) {
+        alert(response);
+        window.location.reload();
+      },
+      error: function (xhr, status, error) {
+        alert("Ein Fehler ist aufgetreten. Bitte erneut versuchen." + error);
+      },
+    });
+  });
+
+  $("#submit_car_delete").on("submit", function (event) {
+    event.preventDefault();
+
+    const formData = $(this).serialize();
+
+    const car_id = $('input[name="car-delete"]').val();
+
+    const extendedFormData = `${formData}&car-delete=${car_id}`;
+
+    $.ajax({
+      url: "/submit_car_delete",
+      method: "POST",
+      data: extendedFormData,
+      success: function (response) {
+        alert(response);
+        window.location.reload();
+      },
+      error: function (xhr, status, error) {
+        alert("Ein Fehler ist aufgetreten. Bitte erneut versuchen." + error);
+      },
+    });
+  });
+
+  $("#submit_p_delete").on("submit", function (event) {
+    event.preventDefault();
+
+    const formData = $(this).serialize();
+
+    const project_id = $('input[name="project-delete"]').val();
+
+    const extendedFormData = `${formData}&project-delete=${project_id}`;
+
+    $.ajax({
+      url: "/submit_p_delete",
+      method: "POST",
+      data: extendedFormData,
+      success: function (response) {
+        alert(response);
+        window.location.reload();
+      },
+      error: function (xhr, status, error) {
+        alert("Ein Fehler ist aufgetreten. Bitte erneut versuchen." + error);
+      },
+    });
+  });
 });
 
 // ICON FÜR HINWEIS

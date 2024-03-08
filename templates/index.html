@@ -294,11 +294,11 @@
                   </form>
 
                   <br />
-                  <label>Auto löschen:</label>
-                  <form id="submit_car_delete" action="" method="POST">
-                    <select name="car-delete" id="" required>
-                      <option value="" disabled selected>Auto</option>
-                      {% for row in car_table_data %}
+                  <label>Projekt löschen:</label>
+                  <form id="submit_p_delete" action="" method="POST">
+                    <select name="project-delete" id="" required>
+                      <option value="" disabled selected>Projekt</option>
+                      {% for row in project_table_data %}
                         <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                       {% endfor %}
                     </select>
@@ -306,11 +306,11 @@
                   </form>
 
                   <br />
-                  <label>Projekt löschen:</label>
-                  <form id="submit_p_delete" action="" method="POST">
-                    <select name="project-delete" id="" required>
-                      <option value="" disabled selected>Projekt</option>
-                      {% for row in project_table_data %}
+                  <label>Auto löschen:</label>
+                  <form id="submit_car_delete" action="" method="POST">
+                    <select name="car-delete" id="" required>
+                      <option value="" disabled selected>Auto</option>
+                      {% for row in car_table_data %}
                         <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                       {% endfor %}
                     </select>
@@ -382,7 +382,7 @@
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
+                                        {% if car[0] != 0 %}
                                           {{ car[1] }}
                                           <br />
                                         {% endif %}
@@ -437,7 +437,7 @@
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
+                                        {% if car[0] != 0 %}
                                           {{ car[1] }}
                                           <br />
                                         {% endif %}
@@ -492,7 +492,7 @@
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
+                                        {% if car[0] != 0 %}
                                           {{ car[1] }}
                                           <br />
                                         {% endif %}
@@ -547,7 +547,7 @@
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
+                                        {% if car[0] != 0 %}
                                           {{ car[1] }}
                                           <br />
                                         {% endif %}
@@ -602,7 +602,7 @@
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
+                                        {% if car[0] != 0 %}
                                           {{ car[1] }}
                                           <br />
                                         {% endif %}
@@ -657,7 +657,7 @@
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
+                                        {% if car[0] != 0 %}
                                           {{ car[1] }}
                                           <br />
                                         {% endif %}
@@ -734,7 +734,7 @@
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
+                                        {% if car[0] != 0 %}
                                           {{ car[1] }}
                                           <br />
                                         {% endif %}
@@ -789,7 +789,7 @@
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
+                                        {% if car[0] != 0 %}
                                           {{ car[1] }}
                                           <br />
                                         {% endif %}
@@ -847,7 +847,7 @@
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
+                                        {% if car[0] != 0 %}
                                           {{ car[1] }}
                                           <br />
                                         {% endif %}
@@ -902,7 +902,7 @@
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
+                                        {% if car[0] != 0 %}
                                           {{ car[1] }}
                                           <br />
                                         {% endif %}
@@ -957,7 +957,7 @@
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
+                                        {% if car[0] != 0 %}
                                           {{ car[1] }}
                                           <br />
                                         {% endif %}
@@ -1014,7 +1014,7 @@
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
-                                        {% if car[0] != 99 %}
+                                        {% if car[0] != 0 %}
                                           {{ car[1] }}
                                           <br />
                                         {% endif %}

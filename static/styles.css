@@ -16,12 +16,15 @@ h3,
 h4,
 p,
 strong,
-th {
+.week-table1 thead th,
+.week-table2 thead th {
     color: #fff;
 }
 
 .week-table1 td,
-.week-table2 td, tbody th, tbody strong {
+.week-table2 td,
+tbody th,
+tbody strong {
     color: #000;
 }
 
@@ -58,7 +61,8 @@ th {
 }
 
 .n-meetings-t th {
-    background-color: green;
+    background-color: #045c05;
+    color: #fff;
 }
 
 .n-meetings-t td {
@@ -141,7 +145,7 @@ th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
-    background-color: green;
+    background-color: #045c05;
 }
 
 .week-table1 thead,

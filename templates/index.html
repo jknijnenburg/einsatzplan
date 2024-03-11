@@ -37,7 +37,10 @@
               <br /><br />
               <button type="submit" id="login-button">Login</button>
             </form>
-            <a href="/?user_role=user"><button type="" id="logout-button">Logout</button></a>
+            <form id="logout-form" method="POST" action="/logout">
+              {{ form.csrf_token }}
+            <button type="submit" id="logout-button">Logout</button>
+            </form>
           </div>
           <div class="next-meetings">
             <table class="n-meetings-t">
@@ -120,24 +123,29 @@
                       </select>
                     <label>
                       Zusatz:</label>
-                    <select name="extra1" id="dd-x">
-                      <option value="no" disabled selected>Weiteres..</option>
-                      <option value="ST.">Stundenzettel</option>
-                      <option value="H">Hotel</option>
-                      <option value="T">Telefon</option>
-                    </select>
-                    <select name="extra2" id="dd-xx">
-                      <option value="no" disabled selected>Weiteres..</option>
-                      <option value="ST.">Stundenzettel</option>
-                      <option value="H">Hotel</option>
-                      <option value="T">Telefon</option>
-                    </select>
-                    <select name="extra3" id="dd-xxx">
-                      <option value="no" disabled selected>Weiteres..</option>
-                      <option value="ST.">Stundenzettel</option>
-                      <option value="H">Hotel</option>
-                      <option value="T">Telefon</option>
-                    </select>
+                      <select name="extra1" id="dd-x">
+                        <option value="no" disabled selected>Weiteres..</option>
+                        <option value="no">Kein Extra</option>
+                        {% for row in extra_table_data1 %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
+                      </select>
+                      
+                      <select name="extra2" id="dd-xx">
+                        <option value="no" disabled selected>Weiteres..</option>
+                        <option value="no">Kein Extra</option>
+                        {% for row in extra_table_data2 %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
+                      </select>
+                      
+                      <select name="extra3" id="dd-xxx">
+                        <option value="no" disabled selected>Weiteres..</option>
+                        <option value="no">Kein Extra</option>
+                        {% for row in extra_table_data3 %}
+                          <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
+                      </select>
                     <label>Hinweis:</label><textarea name="hinweis" id="hinweis" cols="30" rows="3"></textarea>
                     <br>
                     <div class="special">
@@ -191,24 +199,27 @@
                     </select>
                     <label>
                       Zusatz:</label><select name="extra1" id="dd-x-g">
-                        <option value="" disabled selected>Weiteres..</option>
-                        <option value="ST.">Stundenzettel</option>
-                        <option value="H">Hotel</option>
-                        <option value="T">Telefon</option>
+                        <option value="no" disabled selected>Weiteres..</option>
+                        <option value="no">Kein Extra</option>
+                        {% for row in extra_table_data4 %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
                       </select>
 
                       <select name="extra2" id="dd-xx-g">
-                        <option value="" disabled selected>Weiteres..</option>
-                        <option value="ST.">Stundenzettel</option>
-                        <option value="H">Hotel</option>
-                        <option value="T">Telefon</option>
+                        <option value="no" disabled selected>Weiteres..</option>
+                        <option value="no">Kein Extra</option>
+                        {% for row in extra_table_data5 %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
                       </select>
 
                       <select name="extra3" id="dd-xxx-g">
-                        <option value="" disabled selected>Weiteres..</option>
-                        <option value="ST.">Stundenzettel</option>
-                        <option value="H">Hotel</option>
-                        <option value="T">Telefon</option>
+                        <option value="no" disabled selected>Weiteres..</option>
+                        <option value="no">Kein Extra</option>
+                        {% for row in extra_table_data6 %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        {% endfor %}
                       </select>
                     <label>Hinweis:</label>
                     <textarea name="hinweis" id="hinweis" cols="30" rows="3"></textarea>
@@ -266,6 +277,14 @@
                     <button type="submit">Erstellen</button>
                   </form>
                   <br />
+                  <label>Neues Extra:</label>
+                  <br />
+                  <form id="submit_extra_add" action="" method="POST">
+                    <input type="text" name="extra_id" required placeholder="Kürzel" />
+                    <input type="text" name="extra_name" required placeholder="Bezeichnung" />
+                    <button type="submit">Erstellen</button>
+                  </form>
+                  <br />
                 </div>
                 <div class="delete-data">
                   <h3>Lösche Daten aus der Datenbank.</h3>
@@ -316,6 +335,18 @@
                     </select>
                     <button type="submit">Löschen</button>
                   </form>
+
+                  <br />
+                  <label>Extra löschen:</label>
+                  <form id="submit_extra_delete" action="" method="POST">
+                    <select name="extra-delete" id="" required>
+                      <option value="" disabled selected>Extra</option>
+                      {% for row in extra_table_data %}
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                      {% endfor %}
+                    </select>
+                    <button type="submit">Löschen</button>
+                  </form>
                 </div>
               {% endblock %}
             </div>
@@ -329,6 +360,7 @@
                   <td style="background-color: #fff;"><b>iF</b> = i.d. Firma</td>
                   <td style="background-color: #fff;"><b>ST.</b> = Stundenzettel</td>
                   <td style="background-color: #fff;"><b>H</b> = Hotel</td>
+                  <td style="background-color: #fff;"><b>T</b> = Telefon</td>
                   <td style="background-color: chartreuse;">Farbig = Gruppe</td>
                   <td style="background-color: grey;">Feiertag</td>
                   <td style="background-color: grey;"><b>B</b><br>= Feiertag in Bayern/Süden</td>
@@ -1093,6 +1125,22 @@
                 });
             });
         });
+
+        document.getElementById("logout-form").addEventListener("submit", function(event) {
+          event.preventDefault();
+          fetch("/logout", {
+              method: "POST",
+              credentials: "same-origin"  // Include this line for session cookie to be sent
+          })
+          .then(response => {
+              if (response.redirected) {
+                  window.location.href = response.url;  // Redirect to the index page after logout
+              }
+          })
+          .catch(error => {
+              console.error("Error:", error);
+          });
+      });
         
         $(document).ready(function () {
           $('#date-range').daterangepicker({

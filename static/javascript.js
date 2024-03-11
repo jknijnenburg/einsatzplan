@@ -303,6 +303,30 @@ $(function () {
     });
   });
 
+  $("#submit_extra_add").on("submit", function (event) {
+    event.preventDefault();
+
+    const formData = $(this).serialize();
+
+    const extra_id = $('input[name="extra_id"]').val();
+    const extra_name = $('input[name="extra_name"]').val();
+
+    const extendedFormData = `${formData}&extra_id=${extra_id}&extra_name=${extra_name}`;
+
+    $.ajax({
+      url: "/submit_e_add",
+      method: "POST",
+      data: extendedFormData,
+      success: function (response) {
+        alert(response);
+        window.location.reload();
+      },
+      error: function (xhr, status, error) {
+        alert("Ein Fehler ist aufgetreten. Bitte erneut versuchen." + error);
+      },
+    });
+  });
+
   // DELETE DATA
   $("#submit_m_delete").on("submit", function (event) {
     // Prevent the default form submission
@@ -388,6 +412,29 @@ $(function () {
 
     $.ajax({
       url: "/submit_p_delete",
+      method: "POST",
+      data: extendedFormData,
+      success: function (response) {
+        alert(response);
+        window.location.reload();
+      },
+      error: function (xhr, status, error) {
+        alert("Ein Fehler ist aufgetreten. Bitte erneut versuchen." + error);
+      },
+    });
+  });
+
+  $("#submit_extra_delete").on("submit", function (event) {
+    event.preventDefault();
+
+    const formData = $(this).serialize();
+
+    const extra_id = $('input[name="extra-delete"]').val();
+
+    const extendedFormData = `${formData}&extra-delete=${extra_id}`;
+
+    $.ajax({
+      url: "/submit_extra_delete",
       method: "POST",
       data: extendedFormData,
       success: function (response) {

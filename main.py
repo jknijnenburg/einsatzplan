@@ -77,7 +77,7 @@ def index():
     car_data = db.execute("SELECT * FROM cars")
     car_rows = car_data.fetchall()
     form = LoginForm()
-    user_role = request.args.get("user_role", "user")
+    user_role = session.get("user_role", "user")  # Get user role from session
 
     current_week_number = get_current_week_number()
     week_number1 = int(request.args.get("week_number1", 0))  # only for the assignments
@@ -142,6 +142,14 @@ def index():
         (today_date_meetings,),
     ).fetchall()
 
+    extra_data = db.execute("SELECT * FROM extras")
+    extra_data1 = db.execute("SELECT * FROM extras")
+    extra_data2 = db.execute("SELECT * FROM extras")
+    extra_data3 = db.execute("SELECT * FROM extras")
+    extra_data4 = db.execute("SELECT * FROM extras")
+    extra_data5 = db.execute("SELECT * FROM extras")
+    extra_data6 = db.execute("SELECT * FROM extras")
+
     return render_template(
         "index.html",
         data=rows,
@@ -167,7 +175,21 @@ def index():
         n_holidays=n_holidays,
         s_holidays=s_holidays,
         meetings_data=meetings_data,
+        extra_table_data1=extra_data1,
+        extra_table_data2=extra_data2,
+        extra_table_data3=extra_data3,
+        extra_table_data4=extra_data4,
+        extra_table_data5=extra_data5,
+        extra_table_data6=extra_data6,
+        extra_table_data=extra_data,
     )
+
+
+def authenticate(username, password):
+    if username == "admin" and password == "admin":
+        return "admin"
+    else:
+        return "user"
 
 
 @app.route("/login", methods=["POST"])
@@ -177,14 +199,23 @@ def login():
         username = form.username.data
         password = form.password.data
 
-    # Perform authentication logic here, e.g., check credentials against a database
-    if username == "admin" and password == "admin":
+        # Perform authentication logic here, e.g., check credentials against a database
+        # Perform authentication
+        user_role = authenticate(username, password)
+
+        # Set user role in session
+        session["user_role"] = user_role
+
         return jsonify({"status": "success", "user_role": "admin"})
     else:
         return jsonify({"status": "error", "user_role": "user"})
 
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    session.pop("user_role", None)  # Remove user role from session
+    session.clear()
     return redirect(url_for("index"))
-    return redirect(url_for("belegungsplan", user_role=user_role))
 
 
 @app.route("/assign_mitarbeiter", methods=["POST"])
@@ -568,6 +599,25 @@ def create_new_car():
     return "Auto erfolgreich hinzugefügt."
 
 
+@app.route("/submit_e_add", methods=["POST"])
+def create_new_extra():
+    id = request.form.get("extra_id")
+    name = request.form.get("extra_name")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("INSERT INTO extras (id, extra_name) VALUES (?, ?)", (id, name))
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        conn.close()
+
+    return "Extra erfolgreich hinzugefügt."
+
+
 @app.route("/submit_m_delete", methods=["POST"])
 def delete_user():
     personal_nr = request.form.get("personal_nr")
@@ -638,6 +688,24 @@ def delete_project():
         conn.close()
 
     return "Projekt erfolgreich entfernt."
+
+
+@app.route("/submit_extra_delete", methods=["POST"])
+def delete_extra():
+    extra_id = request.form.get("extra-delete")
+
+    conn = sqlite3.connect("datenbank.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("DELETE FROM extras WHERE extra_id=?", (extra_id,))
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        conn.close()
+
+    return "Extra erfolgreich entfernt."
 
 
 @app.route("/delete_assignment", methods=["POST"])

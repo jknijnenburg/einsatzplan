@@ -77,7 +77,7 @@ def generate_week_dates(start_date):
 
 
 def generate_week_days(start_date):
-    locale.setlocale(locale.LC_TIME, "de_DE")
+    locale.setlocale(locale.LC_TIME, "de_DE.utf8")
     week_days = [start_date + timedelta(days=i) for i in range(7)]
     return [date.strftime("%a") for date in week_days]
 
@@ -85,16 +85,17 @@ def generate_week_days(start_date):
 @app.route("/")
 def index():
     db = get_db()
-    cursor = db.execute("SELECT * FROM users ORDER BY work_field")
-    rows = cursor.fetchall()
-    assign_data = db.execute("SELECT * FROM assignment_table")
-    assign_rows = assign_data.fetchall()
-    customer_data = db.execute("SELECT * FROM customers")
-    customer_rows = customer_data.fetchall()
-    project_data = db.execute("SELECT * FROM projects")
-    project_rows = project_data.fetchall()
-    car_data = db.execute("SELECT * FROM cars")
-    car_rows = car_data.fetchall()
+    cur = db.cursor()
+    cur.execute("SELECT * FROM users ORDER BY work_field")
+    rows = cur.fetchall()
+    cur.execute("SELECT * FROM assignment_table")
+    assign_rows = cur.fetchall()
+    cur.execute("SELECT * FROM customers")
+    customer_rows = cur.fetchall()
+    cur.execute("SELECT * FROM projects")
+    project_rows = cur.fetchall()
+    cur.execute("SELECT * FROM cars")
+    car_rows = cur.fetchall()
     form = LoginForm()
     user_role = session.get("user_role", "user")  # Get user role from session
 

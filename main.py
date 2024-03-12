@@ -160,7 +160,7 @@ def index():
     )  # Bayern, da es die meisten Feiertage hat
 
     cur.execute(
-        "SELECT m.m_group, m.date, m.startTime, m.endTime, m.room, m.service, GROUP_CONCAT(u.user_id) as user_ids FROM meetings m JOIN users u ON m.user_id = u.user_id WHERE m.date >= ? GROUP BY m.m_group, m.date, m.startTime, m.endTime, m.room, m.service ORDER BY m.date ASC LIMIT 4",
+        "SELECT m.m_group, m.date, m.startTime, m.endTime, m.room, m.service, STRING_AGG(u.user_id) as user_ids FROM meetings m JOIN users u ON m.user_id = u.user_id WHERE m.date >= ? GROUP BY m.m_group, m.date, m.startTime, m.endTime, m.room, m.service ORDER BY m.date ASC LIMIT 4",
         (today_date_meetings,),
     )
     meetings_data = cur.fetchall()

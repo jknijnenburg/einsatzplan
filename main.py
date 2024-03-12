@@ -5,7 +5,7 @@ from tkinter import *
 from tkinter import Label
 import tkinter.font as tkFont
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
-from flask import g
+from flask import g, current_app
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, validators
 import sqlite3
@@ -38,12 +38,23 @@ rows = cursor.fetchall()
 cursor.close()
 conn.close()
 
-
 def get_db():
-    db = getattr(g, "_database", None)
+    db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = sqlite3.connect(app.config["DATABASE"])
+        db = g._database = pymssql.connect(
+            host=r"10.10.100.106",
+            port=r"1433",
+            user=r"S-EINSATZPLAN",
+            password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+            database=current_app.config["DATABASE"]
+        )
     return db
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
 
 
 @app.teardown_appcontext

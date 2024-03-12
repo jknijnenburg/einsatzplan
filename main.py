@@ -24,12 +24,13 @@ app.config["SECRET_KEY"] = "your_secret_key"
 app.config["DATABASE"] = "SLT_EINSATZPLAN"
 
 conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
+    host=r"10.10.100.106",
     port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
 )
+
 cursor = conn.cursor()
 cursor.execute("SELECT * FROM assignment_table")
 rows = cursor.fetchall()
@@ -41,7 +42,7 @@ conn.close()
 def get_db():
     db = getattr(g, "_database", None)
     if db is None:
-        db = g._database = pymssql.connect(app.config["DATABASE"])
+        db = g._database = sqlite3.connect(app.config["DATABASE"])
     return db
 
 
@@ -270,12 +271,12 @@ def assign_mitarbeiter():
     )
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     try:
@@ -353,12 +354,12 @@ def get_assignment_hinweis():
     assignment_id = request.form.get("assignmentId")
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     cursor.execute(
@@ -416,12 +417,12 @@ def assign_group():
 
     # Get the highest group_id from the database
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     try:
@@ -446,12 +447,12 @@ def assign_group():
 
         # Insert assignments for each user in numeric_user_ids
         conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+            host=r"sqlserver01.sltgmbh.com",
+            port=r"1433",
+            user=r"S-EINSATZPLAN",
+            password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+            database="SLT_EINSATZPLAN",
+        )
         cursor = conn.cursor()
 
         print(f"Received values: startDate={startDate}, endDate={endDate}, year={year}")
@@ -531,12 +532,12 @@ def create_new_user():
     bereich = request.form.get("bereich")
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     print(
@@ -568,12 +569,12 @@ def create_new_customer():
     customer_name = request.form.get("customer_name")
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     # Perform database operation to create a new customer with the provided inputs
@@ -598,12 +599,12 @@ def create_new_project():
     customer_id = request.form.get("customer_id")
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     # Perform database operation to create a new project with the provided inputs
@@ -626,12 +627,12 @@ def create_new_car():
     car_name = request.form.get("car_id")
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     # Perform database operation to create a new project with the provided inputs
@@ -663,12 +664,12 @@ def create_new_extra():
     name = request.form.get("extra_name")
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     try:
@@ -687,12 +688,12 @@ def delete_user():
     personal_nr = request.form.get("personal_nr")
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     try:
@@ -711,12 +712,12 @@ def delete_customer():
     customer_id = request.form.get("kunden-delete")
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     try:
@@ -735,12 +736,12 @@ def delete_car():
     car_id = request.form.get("car-delete")
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     try:
@@ -759,12 +760,12 @@ def delete_project():
     project_id = request.form.get("project-delete")
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     try:
@@ -783,12 +784,12 @@ def delete_extra():
     extra_id = request.form.get("extra-delete")
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     try:
@@ -807,12 +808,12 @@ def delete_assignment():
     assignment_id = request.form.get("assignmentId")
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     try:
@@ -874,12 +875,12 @@ def reserve_meeting():
 
         # Insert data into the database
         conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+            host=r"sqlserver01.sltgmbh.com",
+            port=r"1433",
+            user=r"S-EINSATZPLAN",
+            password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+            database="SLT_EINSATZPLAN",
+        )
         cursor = conn.cursor()
 
         print(
@@ -908,12 +909,12 @@ def reserve_meeting():
 
                 # Insert meeting for each user in participants_list
                 conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+                    host=r"sqlserver01.sltgmbh.com",
+                    port=r"1433",
+                    user=r"S-EINSATZPLAN",
+                    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+                    database="SLT_EINSATZPLAN",
+                )
                 cursor = conn.cursor()
                 try:
                     print("Participants IDs after list:", participants_list)
@@ -954,12 +955,12 @@ def delete_meeting():
     m_group = request.json.get("m_group")
 
     conn = pymssql.connect(
-    host=r"sqlserver01.sltgmbh.com",
-    port=r"1433",
-    user=r"S-EINSATZPLAN",
-    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-    database="SLT_EINSATZPLAN",
-)
+        host=r"10.10.100.106",
+        port=r"1433",
+        user=r"S-EINSATZPLAN",
+        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
+        database="SLT_EINSATZPLAN",
+    )
     cursor = conn.cursor()
 
     try:

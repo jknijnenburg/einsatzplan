@@ -25,6 +25,7 @@ app.config["DATABASE"] = "SLT_EINSATZPLAN"
 
 conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -270,6 +271,7 @@ def assign_mitarbeiter():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -352,6 +354,7 @@ def get_assignment_hinweis():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -414,6 +417,7 @@ def assign_group():
     # Get the highest group_id from the database
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -443,6 +447,7 @@ def assign_group():
         # Insert assignments for each user in numeric_user_ids
         conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -527,6 +532,7 @@ def create_new_user():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -563,6 +569,7 @@ def create_new_customer():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -592,6 +599,7 @@ def create_new_project():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -619,6 +627,7 @@ def create_new_car():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -655,6 +664,7 @@ def create_new_extra():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -678,6 +688,7 @@ def delete_user():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -701,6 +712,7 @@ def delete_customer():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -724,6 +736,7 @@ def delete_car():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -747,6 +760,7 @@ def delete_project():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -770,6 +784,7 @@ def delete_extra():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -793,6 +808,7 @@ def delete_assignment():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -859,6 +875,7 @@ def reserve_meeting():
         # Insert data into the database
         conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -892,6 +909,7 @@ def reserve_meeting():
                 # Insert meeting for each user in participants_list
                 conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",
@@ -937,6 +955,7 @@ def delete_meeting():
 
     conn = pymssql.connect(
     host=r"sqlserver01.sltgmbh.com",
+    port=r"1433",
     user=r"S-EINSATZPLAN",
     password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
     database="SLT_EINSATZPLAN",

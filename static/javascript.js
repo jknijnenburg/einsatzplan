@@ -8,6 +8,13 @@ const weeksInYear = Math.ceil((currentDate - startOfYear) / millisecondsInWeek);
 const weekOutputElement = document.getElementById("week-output");
 weekOutputElement.textContent = "KW " + weeksInYear;
 
+function getNumberOfWeek(date) {
+  const specific_date = new Date(date);
+  const firstDayOfYear = new Date(specific_date.getFullYear(), 0, 1);
+  const pastDaysOfYear = (specific_date - firstDayOfYear) / 86400000;
+  return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+}
+
 $(function () {
   $("#assignForm").on("submit", function (event) {
     // Prevent the default form submission
@@ -26,7 +33,7 @@ $(function () {
     const year = $('input[name="datefilter"]')
       .data("daterangepicker")
       .startDate.year();
-    const week_id = startDate.getWeekNumber();
+    const week_id = getNumberOfWeek(startDate);
 
     // Add other form fields here
     const personal_nr = $('select[name="personal_nr"]').val();

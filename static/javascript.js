@@ -26,6 +26,7 @@ $(function () {
     const year = $('input[name="datefilter"]')
       .data("daterangepicker")
       .startDate.year();
+    const week_id = startDate.getWeekNumber();
 
     // Add other form fields here
     const personal_nr = $('select[name="personal_nr"]').val();
@@ -40,7 +41,7 @@ $(function () {
     const checkedRadioButton = $("input[name='abw']:checked").val();
 
     // Extend the form data with additional fields
-    const extendedFormData = `${formData}&startDate=${startDate}&endDate=${endDate}&year=${year}&personal_nr=${personal_nr}&project_id=${project_id}&car_id=${car_id}&ort=${ort}&extra1=${extra1}&extra2=${extra2}&extra3=${extra3}&hinweis=${hinweis}&checkedRadioButton=${checkedRadioButton}`;
+    const extendedFormData = `${formData}&startDate=${startDate}&endDate=${endDate}&year=${year}&week_id=${week_id}&personal_nr=${personal_nr}&project_id=${project_id}&car_id=${car_id}&ort=${ort}&extra1=${extra1}&extra2=${extra2}&extra3=${extra3}&hinweis=${hinweis}&checkedRadioButton=${checkedRadioButton}`;
 
     // Send the extended form data to the Python backend using AJAX
     $.ajax({

@@ -186,7 +186,7 @@ def index():
 
 
 def authenticate(username, password):
-    if username == "admin" and password == "admin":
+    if username == "admin" and password == "tecod-tasuyi":
         return "admin"
     else:
         return "user"
@@ -698,7 +698,7 @@ def delete_extra():
     cursor = conn.cursor()
 
     try:
-        cursor.execute("DELETE FROM extras WHERE extra_id=?", (extra_id,))
+        cursor.execute("DELETE FROM extras WHERE id=?", (extra_id,))
         conn.commit()
     except sqlite3.Error as e:
         print(f"SQLite error: {e}")

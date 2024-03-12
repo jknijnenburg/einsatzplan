@@ -4,7 +4,7 @@ from tkinter import ttk
 from tkinter import *
 from tkinter import Label
 import tkinter.font as tkFont
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_from_directory
 from flask import g, current_app
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, validators
@@ -37,6 +37,11 @@ rows = cursor.fetchall()
 
 cursor.close()
 conn.close()
+
+# include static assets/fonts folder
+@app.route('/assets/fonts/<filename>')
+def assets_folder(filename):
+    return send_from_directory('assets/fonts', filename)
 
 
 def get_db():
@@ -891,4 +896,4 @@ class LoginForm(FlaskForm):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")

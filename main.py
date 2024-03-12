@@ -38,21 +38,23 @@ rows = cursor.fetchall()
 cursor.close()
 conn.close()
 
+
 def get_db():
-    db = getattr(g, '_database', None)
+    db = getattr(g, "_database", None)
     if db is None:
         db = g._database = pymssql.connect(
             host=r"10.10.100.106",
             port=r"1433",
             user=r"S-EINSATZPLAN",
             password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-            database=current_app.config["DATABASE"]
+            database=current_app.config["DATABASE"],
         )
     return db
 
+
 @app.teardown_appcontext
 def close_connection(exception):
-    db = getattr(g, '_database', None)
+    db = getattr(g, "_database", None)
     if db is not None:
         db.close()
 
@@ -162,13 +164,14 @@ def index():
         (today_date_meetings,),
     ).fetchall()
 
-    extra_data = db.execute("SELECT * FROM extras")
-    extra_data1 = db.execute("SELECT * FROM extras")
-    extra_data2 = db.execute("SELECT * FROM extras")
-    extra_data3 = db.execute("SELECT * FROM extras")
-    extra_data4 = db.execute("SELECT * FROM extras")
-    extra_data5 = db.execute("SELECT * FROM extras")
-    extra_data6 = db.execute("SELECT * FROM extras")
+    cur.execute("SELECT * FROM extras")
+    extra_data = cur.fetchall()
+    extra_data1 = cur.fetchall()
+    extra_data2 = cur.fetchall()
+    extra_data3 = cur.fetchall()
+    extra_data4 = cur.fetchall()
+    extra_data5 = cur.fetchall()
+    extra_data6 = cur.fetchall()
 
     return render_template(
         "index.html",
@@ -282,56 +285,50 @@ def assign_mitarbeiter():
         f"Received values: personal_nr={personal_nr}, startDate={startDate}, endDate={endDate}, year={year}, week_id={week_id}, project_id={project_id}, car_id={car_id},extra={extra1, extra2, extra3}, checkboxValue={abw}"
     )
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     try:
         # Check if the user already has an entry between the startDate and endDate
-        cursor.execute(
+        cur.execute(
             "SELECT COUNT(*) FROM assignment_table WHERE user_id = ? AND startDate <= ? AND endDate >= ?",
             (personal_nr, endDate, startDate),
         )
-        count = cursor.fetchone()[0]
+        count = cur.fetchone()[0]
 
         if count > 0:
             return "Der Mitarbeiter hat schon eine Zuteilung zwischen dem ausgewählten Datum."
 
         # Check if the assignment already exists
-        cursor.execute(
+        cur.execute(
             "SELECT COUNT(*) FROM assignment_table WHERE user_id = ? AND startDate = ? AND endDate = ?",
             (personal_nr, startDate, endDate),
         )
-        count = cursor.fetchone()[0]
+        count = cur.fetchone()[0]
 
         if count > 0:
             return "Die Zuteilung existiert bereits."
 
         if car_id != 0 and car_id != "0":
-            cursor.execute(
+            cur.execute(
                 "SELECT COUNT(*) FROM assignment_table WHERE car_id = ? AND startDate <= ? AND endDate >= ?",
                 (car_id, endDate, startDate),
             )
 
-            car_cnt = cursor.fetchone()[0]
+            car_cnt = cur.fetchone()[0]
 
             if car_cnt > 0:
                 return "Auto ist bereits zugewiesen."
 
-        cursor.execute(
+        cur.execute(
             "SELECT project_name FROM projects WHERE project_id = ?",
             (project_id,),
         )
 
-        project_name = cursor.fetchone()[0]
+        project_name = cur.fetchone()[0]
 
         # Insert the assignment into the database
-        cursor.execute(
+        cur.execute(
             "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, week_id, extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 personal_nr,
@@ -351,33 +348,28 @@ def assign_mitarbeiter():
                 project_name,
             ),
         )
-        conn.commit()
+        db.commit()
 
         return "Mitarbeiter erfolgreich zugewiesen."
     except pymssql.Error as e:
         print(f"SQLite error: {e}")
         return "An error occurred while assigning the employee."
     finally:
-        conn.close()
+        db.close()
 
 
 @app.route("/get_assignment_hinweis", methods=["POST"])
 def get_assignment_hinweis():
     assignment_id = request.form.get("assignmentId")
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
+    cur.execute
 
-    cursor.execute(
+    cur.execute(
         "SELECT hinweis FROM assignment_table WHERE assignment_id=?", (assignment_id,)
     )
-    result = cursor.fetchone()
+    result = cur.fetchone()
 
     if result:
         hinweis = result[0]
@@ -428,18 +420,12 @@ def assign_group():
         project_id = 0
 
     # Get the highest group_id from the database
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     try:
-        cursor.execute("SELECT MAX(group_id) FROM assignment_table")
-        max_group_id = cursor.fetchone()[0]
+        cur.execute("SELECT MAX(group_id) FROM assignment_table")
+        max_group_id = cur.fetchone()[0]
         if max_group_id is None:
             max_group_id = 0  # If there are no existing group_ids, start from 0
 
@@ -451,21 +437,15 @@ def assign_group():
             None  # Handle the case where there's an error getting the group_id
         )
     finally:
-        conn.close()
+        db.close()
 
     if next_group_id is not None:
         # Remove duplicate user IDs
         numeric_user_ids = list(set(numeric_user_ids))
 
         # Insert assignments for each user in numeric_user_ids
-        conn = pymssql.connect(
-            host=r"sqlserver01.sltgmbh.com",
-            port=r"1433",
-            user=r"S-EINSATZPLAN",
-            password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-            database="SLT_EINSATZPLAN",
-        )
-        cursor = conn.cursor()
+        db = get_db()
+        cur = db.cursor()
 
         print(f"Received values: startDate={startDate}, endDate={endDate}, year={year}")
 
@@ -474,29 +454,29 @@ def assign_group():
             print("Next Group ID:", next_group_id)
 
             if car_id != 0 and car_id != "0":
-                cursor.execute(
+                cur.execute(
                     "SELECT COUNT(*) FROM assignment_table WHERE car_id = ? AND startDate <= ? AND endDate >= ? AND group_id != ?",
                     (car_id, endDate, startDate, next_group_id),
                 )
 
-                car_cnt = cursor.fetchone()[0]
+                car_cnt = cur.fetchone()[0]
 
                 if car_cnt > 0:
                     return "Auto ist bereits in anderer Gruppe zugewiesen."
 
-            cursor.execute(
+            cur.execute(
                 "SELECT project_name FROM projects WHERE project_id = ?",
                 (project_id,),
             )
 
-            project_name = cursor.fetchone()[0]
+            project_name = cur.fetchone()[0]
 
             for user_id in numeric_user_ids:
-                cursor.execute(
+                cur.execute(
                     "SELECT COUNT(*) FROM assignment_table WHERE user_id = ? AND startDate <= ? AND endDate >= ?",
                     (user_id, endDate, startDate),
                 )
-                count = cursor.fetchone()[0]
+                count = cur.fetchone()[0]
 
                 if count > 0:
                     return (
@@ -505,7 +485,7 @@ def assign_group():
                         + " hat schon eine Zuteilung zwischen dem ausgewählten Datum."
                     )
 
-                cursor.execute(
+                cur.execute(
                     "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         user_id,
@@ -525,12 +505,12 @@ def assign_group():
                     ),
                 )
 
-            conn.commit()
+            db.commit()
             print("Gruppen erfolgreich zugewiesen.")
         except pymssql.Error as e:
             print(f"SQLite error: {e}")
         finally:
-            conn.close()
+            db.close()
         return "Gruppe erfolgreich zugewiesen."
     else:
         return "Fehler beim Zuweisen der Gruppen."
@@ -543,14 +523,8 @@ def create_new_user():
     nachname = request.form.get("nachname")
     bereich = request.form.get("bereich")
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     print(
         f"Received values: personal_nr={personal_nr}, vorname={vorname}, nachname={nachname}, bereich={bereich}"
@@ -562,15 +536,15 @@ def create_new_user():
         if bereich == "null":
             return "Bereich darf nicht leer sein."
 
-        cursor.execute(
+        cur.execute(
             "INSERT INTO users (user_id, first_name, last_name, work_field) VALUES (?, ?, ?, ?)",
             (personal_nr, vorname, nachname, bereich),
         )
-        conn.commit()
+        db.commit()
     except pymssql.Error as e:
         print(f"SQLite error: {e}")
     finally:
-        conn.close()
+        db.close()
 
     return "Mitarbeiter erfolgreich angelegt."
 
@@ -580,26 +554,20 @@ def create_new_customer():
     customer_id = request.form.get("customer_id")
     customer_name = request.form.get("customer_name")
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     # Perform database operation to create a new customer with the provided inputs
     try:
-        cursor.execute(
+        cur.execute(
             "INSERT INTO customers (customer_id, customer_name) VALUES (?, ?)",
             (customer_id, customer_name),
         )
-        conn.commit()
+        db.commit()
     except pymssql.Error as e:
         print(f"SQLite error: {e}")
     finally:
-        conn.close()
+        db.close()
 
     return "Kunde erfolgreich angelegt."
 
@@ -610,26 +578,20 @@ def create_new_project():
     project_name = request.form.get("project_name")
     customer_id = request.form.get("customer_id")
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     # Perform database operation to create a new project with the provided inputs
     try:
-        cursor.execute(
+        cur.execute(
             "INSERT INTO projects (project_id, project_name, customer_id) VALUES (?, ?, ?)",
             (project_id, project_name, customer_id),
         )
-        conn.commit()
+        db.commit()
     except pymssql.Error as e:
         print(f"SQLite error: {e}")
     finally:
-        conn.close()
+        db.close()
 
     return "Projekt erfolgreich angelegt."
 
@@ -638,34 +600,28 @@ def create_new_project():
 def create_new_car():
     car_name = request.form.get("car_id")
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     # Perform database operation to create a new project with the provided inputs
     try:
-        cursor.execute("SELECT MAX(car_id) FROM cars")
-        max_car_id = cursor.fetchone()[0]
+        cur.execute("SELECT MAX(car_id) FROM cars")
+        max_car_id = cur.fetchone()[0]
         if max_car_id is None:
             max_car_id = 0  # If there are no existing group_ids, start from 0
 
         # Increment the highest group_id for the next assignment
         next_car_id = max_car_id + 1
 
-        cursor.execute(
+        cur.execute(
             "INSERT INTO cars (car_id, car_name) VALUES (?, ?)",
             (next_car_id, car_name),
         )
-        conn.commit()
+        db.commit()
     except pymssql.Error as e:
         print(f"SQLite error: {e}")
     finally:
-        conn.close()
+        db.close()
 
     return "Auto erfolgreich hinzugefügt."
 
@@ -675,22 +631,16 @@ def create_new_extra():
     id = request.form.get("extra_id")
     name = request.form.get("extra_name")
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     try:
-        cursor.execute("INSERT INTO extras (id, extra_name) VALUES (?, ?)", (id, name))
-        conn.commit()
+        cur.execute("INSERT INTO extras (id, extra_name) VALUES (?, ?)", (id, name))
+        db.commit()
     except pymssql.Error as e:
         print(f"SQLite error: {e}")
     finally:
-        conn.close()
+        db.close()
 
     return "Extra erfolgreich hinzugefügt."
 
@@ -699,22 +649,16 @@ def create_new_extra():
 def delete_user():
     personal_nr = request.form.get("personal_nr")
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     try:
-        cursor.execute("DELETE FROM users WHERE user_id=?", (personal_nr,))
-        conn.commit()
+        cur.execute("DELETE FROM users WHERE user_id=?", (personal_nr,))
+        db.commit()
     except pymssql.Error as e:
         print(f"SQLite error: {e}")
     finally:
-        conn.close()
+        db.close()
 
     return "Mitarbeiter erfolgreich entfernt."
 
@@ -723,22 +667,16 @@ def delete_user():
 def delete_customer():
     customer_id = request.form.get("kunden-delete")
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     try:
-        cursor.execute("DELETE FROM customers WHERE customer_id=?", (customer_id,))
-        conn.commit()
+        cur.execute("DELETE FROM customers WHERE customer_id=?", (customer_id,))
+        db.commit()
     except pymssql.Error as e:
         print(f"SQLite error: {e}")
     finally:
-        conn.close()
+        db.close()
 
     return "Kunde erfolgreich entfernt."
 
@@ -747,22 +685,16 @@ def delete_customer():
 def delete_car():
     car_id = request.form.get("car-delete")
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     try:
-        cursor.execute("DELETE FROM cars WHERE car_id=?", (car_id,))
-        conn.commit()
+        cur.execute("DELETE FROM cars WHERE car_id=?", (car_id,))
+        db.commit()
     except pymssql.Error as e:
         print(f"SQLite error: {e}")
     finally:
-        conn.close()
+        db.close()
 
     return "Auto erfolgreich entfernt."
 
@@ -771,22 +703,16 @@ def delete_car():
 def delete_project():
     project_id = request.form.get("project-delete")
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     try:
-        cursor.execute("DELETE FROM projects WHERE project_id=?", (project_id,))
-        conn.commit()
+        cur.execute("DELETE FROM projects WHERE project_id=?", (project_id,))
+        db.commit()
     except pymssql.Error as e:
         print(f"SQLite error: {e}")
     finally:
-        conn.close()
+        db.close()
 
     return "Projekt erfolgreich entfernt."
 
@@ -795,22 +721,16 @@ def delete_project():
 def delete_extra():
     extra_id = request.form.get("extra-delete")
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     try:
-        cursor.execute("DELETE FROM extras WHERE id=?", (extra_id,))
-        conn.commit()
+        cur.execute("DELETE FROM extras WHERE id=?", (extra_id,))
+        db.commit()
     except pymssql.Error as e:
         print(f"SQLite error: {e}")
     finally:
-        conn.close()
+        db.close()
 
     return "Extra erfolgreich entfernt."
 
@@ -819,35 +739,30 @@ def delete_extra():
 def delete_assignment():
     assignment_id = request.form.get("assignmentId")
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     try:
-        cursor.execute(
+        cur.execute(
             "DELETE FROM assignment_table WHERE assignment_id=?", (assignment_id,)
         )
-        conn.commit()
+        db.commit()
         result = {"status": "success"}
     except pymssql.Error as e:
         print(f"SQLite error: {e}")
         result = {"status": "error"}
 
-    conn.close()
+    db.close()
     return jsonify(result)
 
 
 @app.route("/belegungsplan")
 def belegungsplan():
     db = get_db()
+    cur = db.cursor()
     form = LoginForm()
     user_role = request.args.get("user_role", "user")
-    cursor = db.execute("SELECT * FROM users ORDER BY user_id")
+    cursor = cur.execute("SELECT * FROM users ORDER BY user_id")
     users = cursor.fetchall()
 
     # Fetch meetings with distinct m_group and associated user_ids
@@ -886,22 +801,16 @@ def reserve_meeting():
         ]
 
         # Insert data into the database
-        conn = pymssql.connect(
-            host=r"sqlserver01.sltgmbh.com",
-            port=r"1433",
-            user=r"S-EINSATZPLAN",
-            password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-            database="SLT_EINSATZPLAN",
-        )
-        cursor = conn.cursor()
+        db = get_db()
+        cur = db.cursor()
 
         print(
             f"Received values: participants_list={participants_list}, date={date}, startTime={start_time}, endTime={end_time}, room={room}, services={services}"
         )
 
         try:
-            cursor.execute("SELECT MAX(m_group) FROM meetings")
-            max_meeting_id = cursor.fetchone()[0]
+            cur.execute("SELECT MAX(m_group) FROM meetings")
+            max_meeting_id = cur.fetchone()[0]
             if max_meeting_id is None:
                 max_meeting_id = 0  # If there are no existing group_ids, start from 0
 
@@ -920,20 +829,15 @@ def reserve_meeting():
                 participants_list = list(set(participants_list))
 
                 # Insert meeting for each user in participants_list
-                conn = pymssql.connect(
-                    host=r"sqlserver01.sltgmbh.com",
-                    port=r"1433",
-                    user=r"S-EINSATZPLAN",
-                    password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-                    database="SLT_EINSATZPLAN",
-                )
-                cursor = conn.cursor()
+                db = get_db()
+                cur = db.cursor()
+
                 try:
                     print("Participants IDs after list:", participants_list)
                     print("Next Meeting ID:", next_meeting_id)
 
                     for participant in participants_list:
-                        cursor.execute(
+                        cur.execute(
                             "INSERT INTO meetings (user_id, date, startTime, endTime, room, service, m_group) VALUES (?, ?, ?, ?, ?, ?, ?)",
                             (
                                 participant,
@@ -946,12 +850,12 @@ def reserve_meeting():
                             ),
                         )
 
-                    conn.commit()
+                    db.commit()
                     print("Meeting erfolgreich erstellt.")
                 except pymssql.Error as e:
                     print(f"SQLite error: {e}")
                 finally:
-                    conn.close()
+                    db.close()
                     return jsonify(
                         {
                             "status": "success",
@@ -966,22 +870,16 @@ def reserve_meeting():
 def delete_meeting():
     m_group = request.json.get("m_group")
 
-    conn = pymssql.connect(
-        host=r"10.10.100.106",
-        port=r"1433",
-        user=r"S-EINSATZPLAN",
-        password=r"&H&^1c2M':Rq2-!_H77;_Kh28pz3^NwB",
-        database="SLT_EINSATZPLAN",
-    )
-    cursor = conn.cursor()
+    db = get_db()
+    cur = db.cursor()
 
     try:
-        cursor.execute("DELETE FROM meetings WHERE m_group=?", (m_group,))
-        conn.commit()
+        cur.execute("DELETE FROM meetings WHERE m_group=?", (m_group,))
+        db.commit()
     except pymssql.Error as e:
         print(f"SQLite error: {e}")
     finally:
-        conn.close()
+        db.close()
 
     return jsonify({"status": "success"})
 

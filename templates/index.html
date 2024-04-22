@@ -6,12 +6,15 @@
     <title>Einsatzplan - SLT</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'styles.css') }}" />
+    {% comment %}
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css" />
-
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-
+    {% endcomment %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'styles.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'daterangepicker.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'chosen.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'boxicons.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'fonts.css') }}" />
   </head>
   {% block title %}
@@ -71,7 +74,7 @@
             </table> 
           </div>
           <div class="logo">
-            <img src="https://www.slt-technologies.com/images/main_header_left-slt.jpg" alt="" />
+            <img src="./assets/images/main_header_left-slt.jpg" alt="" />
           </div>
         </div>
 
@@ -1089,11 +1092,19 @@
         {% endblock %}
       </main>
 
+      {% comment %}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
       <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
       <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-      <script src="{{ url_for('static', filename = 'javascript.js') }}"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+      {% endcomment %}
+
+      <script type="text/javascript" src="{{ url_for('static', filename = 'javascript.js') }}"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename = 'chosen.jquery.min.js') }}"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename = 'jquery-3.7.1.min.js') }}"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename = 'moment.min.js') }}"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename = 'daterangepicker.js') }}"></script>
+      
       <script>
         document.addEventListener("DOMContentLoaded", function () {
           document
@@ -1187,7 +1198,8 @@
         }
       </script>
 
-      <script src="https://cdn.jsdelivr.net/npm/brython@3.9.1/brython.min.js"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename = 'brython.js') }}"></script>
+      {% comment %}<script src="https://cdn.jsdelivr.net/npm/brython@3.9.1/brython.min.js"></script>{% endcomment %}
       <footer>
         <tr>
           <td style="background-color:#287429;" width="100%">

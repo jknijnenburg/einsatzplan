@@ -77,3 +77,8 @@ group
 meetings
 projects
 users
+
+npm install jquery
+npm install unpkg.com/react@16.7.0/umd/react.production.min.js
+npm install unpkg.com/react-dom@16.7.0/umd/react-dom.production.min.js
+

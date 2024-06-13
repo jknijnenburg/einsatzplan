@@ -4,7 +4,7 @@ from tkinter import ttk
 from tkinter import *
 from tkinter import Label
 import tkinter.font as tkFont
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_from_directory
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_from_directory, flash
 from flask import g, current_app
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, validators
@@ -89,8 +89,42 @@ def generate_week_days(start_date):
     return [date.strftime("%a") for date in week_days]
 
 
+def authenticate_login(username, password):
+    correct_username = "slt"
+    correct_password = "einsatz54"
+
+    return username == correct_username and password == correct_password
+
+
+# Login bevor der User auf die Webseite zugreifen kann
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        if authenticate_login(username, password):
+            session['logged_in'] = True
+            return redirect(url_for('index'))
+        else:
+            flash('Falsche Login-Daten, bitte erneut versuchen.')
+            return redirect(url_for('login'))
+    
+    return render_template('login.html', form=form)
+
+@app.route('/logout', methods=["POST"])
+def logout():
+    session.pop("logged_in", False)
+    session.clear()
+    return redirect(url_for('login'))
+
+
 @app.route("/")
 def index():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
     db = get_db()
     cur = db.cursor()
     cur.execute("SELECT * FROM users ORDER BY work_field")
@@ -212,7 +246,6 @@ def index():
         extra_table_data=extra_data,
     )
 
-
 def authenticate(username, password):
     if username == "admin" and password == "tecod-tasuyi":
         return "admin"
@@ -220,14 +253,13 @@ def authenticate(username, password):
         return "user"
 
 
-@app.route("/login", methods=["POST"])
-def login():
+@app.route("/login_admin", methods=["POST"])
+def login_admin():
     form = LoginForm(request.form)
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
 
-        # Perform authentication logic here, e.g., check credentials against a database
         # Perform authentication
         user_role = authenticate(username, password)
 
@@ -239,10 +271,9 @@ def login():
         return jsonify({"status": "error", "user_role": "user"})
 
 
-@app.route("/logout", methods=["POST"])
-def logout():
+@app.route("/logout_admin", methods=["POST"])
+def logout_admin():
     session.pop("user_role", None)  # Remove user role from session
-    session.clear()
     return redirect(url_for("index"))
 
 
@@ -763,6 +794,9 @@ def delete_assignment():
 
 @app.route("/belegungsplan")
 def belegungsplan():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    
     db = get_db()
     cur = db.cursor()
     form = LoginForm()

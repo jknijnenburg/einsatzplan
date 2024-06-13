@@ -67,3 +67,23 @@
     font-weight: 800;
     font-style: italic;
 }
+
+@font-face {
+    font-family: 'boxicons';
+    src: url('../assets/fonts/boxicons.woff2');
+}
+
+@font-face {
+    font-family: 'boxicons';
+    src: url('../assets/fonts/boxicons.woff');
+}
+
+@font-face {
+    font-family: 'boxicons';
+    src: url('../assets/fonts/boxicons.ttf');
+}
+
+@font-face {
+    font-family: 'boxicons';
+    src: url('../assets/fonts/boxicons.svg');
+}

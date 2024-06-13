@@ -161,3 +161,6 @@ cython_debug/
 
 # uwsgi sockets
 *.sock
+
+# Mac
+.DS_Store

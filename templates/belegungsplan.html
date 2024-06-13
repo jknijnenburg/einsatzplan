@@ -11,13 +11,11 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('assets', filename = 'chosen.min.css') }}" />
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'fonts.css') }}" />
-
-    {% comment %}<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />{% endcomment %}
     
     <!-- Include moment.js -->
     <script type="text/javascript" src="{{ url_for('static', filename = 'moment.js') }}"></script>
     <!-- Include jQuery -->
-    <script type="text/javascript" src="{{ url_for('static', filename = 'jquery-3.7.1.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'jquery-3.7.1.js') }}"></script>
     <!-- Include jQuery UI with the datepicker widget -->
     <script type="text/javascript" src="{{ url_for('assets', filename = 'jquery-ui.js') }}" />
   </head>
@@ -30,7 +28,7 @@
         <div class="top-container">
           <a href="/?user_role={{ user_role }}">Zurück</a>
           <div class="logo">
-            <img src="./assets/images/main_header_left-slt.jpg" alt="" />
+            
           </div>
         </div>
         {% if user_role == 'admin' %}
@@ -105,11 +103,9 @@
           </table>
         {% endblock %}
       </main>
-      <footer></footer>
 
       <script type="text/javascript" src="{{ url_for('static', filename = 'belegungsplan.js') }}"></script>
       <script type="text/javascript" src="{{ url_for('assets', filename = 'chosen.jquery.min.js') }}" />
-      {% comment %}<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>{% endcomment %}
     </body>
   {% endblock %}
 

@@ -37,7 +37,8 @@ Einsatzplan Management
 - Löschfunktion für Einträge (Am besten anwählen und löschen)
 - Extra Besprechungsliste als Seite wo man Manuell den Raum Auswählen kann und die Bewirtung anklicken sowie Die Teilnehmer, Uhrzeit + Datum
 - Besprechungsliste als QuickView oben rechts mit vlt. den heutigen 3 und dann als Button um die Liste aufzurufen woanders.
-
+- Logos oben und unten weg
+- Login vor die Seite
 
 
 
@@ -46,6 +47,7 @@ Zukunft:
 - Auslesen der aktuellen Datenbank von z.B. den eingetragenen Urlaubstagen, etc. um diese vielleicht auch abzugleichen.
 
 - Automatische Aktualisierung der Seite, wenn was an der Datenbank verändert wird.
+
 
 # -- SETUP ENV --
 

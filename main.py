@@ -1,14 +1,7 @@
-import tkinter as tk
-from tkinter import messagebox
-from tkinter import ttk
-from tkinter import *
-from tkinter import Label
-import tkinter.font as tkFont
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_from_directory, flash
 from flask import g, current_app
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, validators
-import sqlite3
 import uuid
 import json
 from datetime import datetime, timedelta

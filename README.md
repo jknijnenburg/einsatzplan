@@ -58,11 +58,16 @@ Zukunft:
 3. python3 -m pip install --upgrade pip
 
 4. python3 -m pip install --verbose -r requirements.txt
-# Run testing env
-5. python3 -m flask --app ./main.py run
 
-# Run with uwsgi (within venv)
-1. uwsgi_python3 --http-socket 0.0.0.0:5000 -w wsgi:app
+# Run testing env
+- Create `.env` file with credentials for database
+```
+SQL_SERVER="sql-server.host"
+SQL_USER="sql-username"
+SQL_PASSWORD="sql-password"
+SQL_DATABASE="sql-database"
+```
+- source .env && python3 -m flask --app ./app.py run
 
 # -- DATABASE --
 

@@ -10,6 +10,7 @@ import math
 import holidays
 import pymssql
 import os
+import time
 
 # debug mode
 DEBUG = os.environ["DEBUG"]
@@ -38,6 +39,22 @@ conn = pymssql.connect(
     password=SQL_PASSWORD,
     database=SQL_DATABASE,
 )
+
+def retry_on_operational_error(func):
+    def wrapper(*args, **kwargs):
+        max_retries = 3
+        retries = 0
+        while retries < max_retries:
+            try:
+                return func(*args, **kwargs)
+            except pymssql.OperationalError as e:
+                print(f"OperationalError: {e}. Retrying in 1 second...")
+                time.sleep(1)
+                retries += 1
+        return jsonify({"status": "error",
+                        "message": "Failed to connect to the database after multiple attempts."})
+    
+    return wrapper
 
 cursor = conn.cursor()
 cursor.execute("SELECT * FROM assignment_table")
@@ -129,6 +146,7 @@ def logout():
 
 
 @app.route("/")
+@retry_on_operational_error
 def index():
     if not session.get('logged_in'):
         return redirect(url_for('login'))

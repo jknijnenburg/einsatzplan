@@ -164,6 +164,4 @@ cython_debug/
 
 # Mac
 .DS_Store
-.vscode/launch.json
 .vscode/settings.json
-.vscode/tasks.json

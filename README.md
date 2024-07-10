@@ -59,28 +59,31 @@ Zukunft:
 
 4. python3 -m pip install --verbose -r requirements.txt
 
-# Run testing env
-- Create `.env` file with credentials for database
-```
-SQL_SERVER="sql-server.host"
-SQL_USER="sql-username"
-SQL_PASSWORD="sql-password"
-SQL_DATABASE="sql-database"
-```
-- source .env && python3 -m flask --app ./app.py run
+# Run testing env with Visual Studio Code and Docker
+
+@see also https://code.visualstudio.com/docs/containers/debug-python
+
+1. Create `.env` file with credentials for database:
+    ```
+    SQL_SERVER="sql-server.host"
+    SQL_USER="sql-username"
+    SQL_PASSWORD="sql-password"
+    SQL_DATABASE="sql-database"
+    ```
+2. Start debugging Run and Debug `Ctrl+Shift+D`, select "Docker: Python - Flask" and Start debugging with `F5`.
+
 
 # -- DATABASE --
 
-datenbank.db
+database.sql, database-mssql.sql
 
-Tabellen:
+Tables:
 
 CalenderWeek
 assignment_table
 cars
 customers
 extras
-group
 meetings
 projects
 users

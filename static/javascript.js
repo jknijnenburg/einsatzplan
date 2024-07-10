@@ -131,6 +131,7 @@ $(function () {
     const year = $('input[name="datefilter-g"]')
       .data("daterangepicker")
       .startDate.year();
+    const week_id = getNumberOfWeek(startDate);
 
     // Add other form fields here
     const project_id = $('select[name="project_id"]').val();
@@ -151,7 +152,7 @@ $(function () {
     }
 
     // Extend the form data with additional fields
-    const extendedGroupData = `${formData}&startDate=${startDate}&endDate=${endDate}&year=${year}&project_id=${project_id}&car_id=${car_id}&ort=${ort}&extra1=${extra1}&extra2=${extra2}&extra3=${extra3}&hinweis=${hinweis}`;
+    const extendedGroupData = `${formData}&startDate=${startDate}&endDate=${endDate}&year=${year}&week_id=${week_id}&project_id=${project_id}&car_id=${car_id}&ort=${ort}&extra1=${extra1}&extra2=${extra2}&extra3=${extra3}&hinweis=${hinweis}`;
 
     // Set the form token in the session
     const formToken = $("input[name='form_token']").val();

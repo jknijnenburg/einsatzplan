@@ -4,13 +4,12 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, validators
 import uuid
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 import locale
 import math
 import holidays
 import pymssql
 import os
-import time
 
 # debug mode
 DEBUG = os.environ["DEBUG"]
@@ -32,43 +31,30 @@ app.config["SECRET_KEY"] = "your_secret_key"
 #locale.setlocale(locale.LC_ALL, "de_DE.UTF-8")
 print(locale.getlocale())
 
-conn = pymssql.connect(
-    host=SQL_SERVER,
-    port=1433,
-    user=SQL_USER,
-    password=SQL_PASSWORD,
-    database=SQL_DATABASE,
-)
-
+# database connect retry
 def retry_on_operational_error(func):
     def wrapper(*args, **kwargs):
-        max_retries = 3
+        max_retries = 10
         retries = 0
         while retries < max_retries:
             try:
                 return func(*args, **kwargs)
             except pymssql.OperationalError as e:
-                print(f"OperationalError: {e}. Retrying in 1 second...")
-                time.sleep(1)
+                print(f"OperationalError: {e}. Retrying in 5 seconds...")
+                time.sleep(5)
                 retries += 1
         return jsonify({"status": "error",
                         "message": "Failed to connect to the database after multiple attempts."})
     
     return wrapper
 
-cursor = conn.cursor()
-cursor.execute("SELECT * FROM assignment_table")
-rows = cursor.fetchall()
-
-cursor.close()
-conn.close()
-
 # include static assets/fonts folder
 @app.route('/assets/fonts/<filename>')
 def assets_folder(filename):
     return send_from_directory('assets/fonts', filename)
 
-
+# catch OperationalErrors on connect / SQL-Database in standby?
+@retry_on_operational_error
 def get_db():
     db = getattr(g, "_database", None)
     if db is None:
@@ -82,18 +68,18 @@ def get_db():
     return db
 
 
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, "_database", None)
-    if db is not None:
-        db.close()
+#@app.teardown_appcontext
+#def close_connection(exception):
+#    db = getattr(g, "_database", None)
+#    if db is not None:
+#        db.close()
 
 
-@app.teardown_appcontext
-def close_db(error):
-    db = getattr(g, "_database", None)
-    if db is not None:
-        db.commit()
+#@app.teardown_appcontext
+#def close_db(error):
+#    db = getattr(g, "_database", None)
+#    if db is not None:
+#        db.commit()
 
 
 def get_current_week_number():
@@ -119,6 +105,29 @@ def authenticate_login(username, password):
     correct_password = "einsatz54"
 
     return username == correct_username and password == correct_password
+
+# Creates CalendarWeek entity
+def ensureCalendarWeekExists(year, week_id):
+    try:
+        db = get_db()
+        cur = db.cursor()
+        cur.execute(
+            "SELECT week_id FROM CalendarWeek WHERE week_id = %d AND year = %d", 
+            (week_id, year)
+        )
+        row = cur.fetchone()
+        if not row:
+            # calc begin, end of week
+            start_date = datetime.fromisocalendar(int(year), int(week_id), 1)
+            end_date = start_date + timedelta(days=6)
+            cur.execute(
+                "INSERT INTO CalendarWeek (week_id, year, startDate, endDate) VALUES (%d, %d, %s, %s)", 
+                (week_id, year, start_date, end_date)
+            )
+            db.commit()
+            # keep db open
+    except Exception as e:
+        print(f"SQL error: {e}")
 
 
 # Login bevor der User auf die Webseite zugreifen kann
@@ -146,7 +155,7 @@ def logout():
 
 
 @app.route("/")
-@retry_on_operational_error
+@app.route("/index")
 def index():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
@@ -231,12 +240,6 @@ def index():
 
     cur.execute("SELECT * FROM extras")
     extra_data = cur.fetchall()
-    extra_data1 = cur.fetchall()
-    extra_data2 = cur.fetchall()
-    extra_data3 = cur.fetchall()
-    extra_data4 = cur.fetchall()
-    extra_data5 = cur.fetchall()
-    extra_data6 = cur.fetchall()
 
     return render_template(
         "index.html",
@@ -263,12 +266,12 @@ def index():
         n_holidays=n_holidays,
         s_holidays=s_holidays,
         meetings_data=meetings_data,
-        extra_table_data1=extra_data1,
-        extra_table_data2=extra_data2,
-        extra_table_data3=extra_data3,
-        extra_table_data4=extra_data4,
-        extra_table_data5=extra_data5,
-        extra_table_data6=extra_data6,
+        extra_table_data1=extra_data,
+        extra_table_data2=extra_data,
+        extra_table_data3=extra_data,
+        extra_table_data4=extra_data,
+        extra_table_data5=extra_data,
+        extra_table_data6=extra_data,
         extra_table_data=extra_data,
     )
 
@@ -353,7 +356,7 @@ def assign_mitarbeiter():
     try:
         # Check if the user already has an entry between the startDate and endDate
         cur.execute(
-            "SELECT COUNT(*) FROM assignment_table WHERE user_id = ? AND startDate <= ? AND endDate >= ?",
+            "SELECT COUNT(*) FROM assignment_table WHERE user_id = %d AND startDate <= %s AND endDate >= %s",
             (personal_nr, endDate, startDate),
         )
         count = cur.fetchone()[0]
@@ -363,7 +366,7 @@ def assign_mitarbeiter():
 
         # Check if the assignment already exists
         cur.execute(
-            "SELECT COUNT(*) FROM assignment_table WHERE user_id = ? AND startDate = ? AND endDate = ?",
+            "SELECT COUNT(*) FROM assignment_table WHERE user_id = %d AND startDate = %s AND endDate = %s",
             (personal_nr, startDate, endDate),
         )
         count = cur.fetchone()[0]
@@ -373,7 +376,7 @@ def assign_mitarbeiter():
 
         if car_id != 0 and car_id != "0":
             cur.execute(
-                "SELECT COUNT(*) FROM assignment_table WHERE car_id = ? AND startDate <= ? AND endDate >= ?",
+                "SELECT COUNT(*) FROM assignment_table WHERE car_id = %d AND startDate <= %s AND endDate >= %s",
                 (car_id, endDate, startDate),
             )
 
@@ -383,15 +386,18 @@ def assign_mitarbeiter():
                 return "Auto ist bereits zugewiesen."
 
         cur.execute(
-            "SELECT project_name FROM projects WHERE project_id = ?",
+            "SELECT project_name FROM projects WHERE project_id = %d",
             (project_id,),
         )
 
         project_name = cur.fetchone()[0]
 
+        # ensure CalendarWeek exists
+        ensureCalendarWeekExists(year, week_id)
+
         # Insert the assignment into the database
         cur.execute(
-            "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, week_id, extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, week_id, extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) VALUES (%d, %d, %d, %s, %s, %d, %d, %s, %s, %s, %s, %d, %s, %d, %s)",
             (
                 personal_nr,
                 car_id,
@@ -414,7 +420,7 @@ def assign_mitarbeiter():
 
         return "Mitarbeiter erfolgreich zugewiesen."
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
         return "An error occurred while assigning the employee."
     finally:
         db.close()
@@ -426,10 +432,9 @@ def get_assignment_hinweis():
 
     db = get_db()
     cur = db.cursor()
-    cur.execute
 
     cur.execute(
-        "SELECT hinweis FROM assignment_table WHERE assignment_id=?", (assignment_id,)
+        "SELECT hinweis FROM assignment_table WHERE assignment_id=%d", (assignment_id,)
     )
     result = cur.fetchone()
 
@@ -456,6 +461,7 @@ def assign_group():
     startDate = request.form.get("startDate")
     endDate = request.form.get("endDate")
     year = request.form.get("year")
+    week_id = request.form.get("week_id")
     location = request.form.get("ort")
     extra1 = request.form.get("extra1")
     extra2 = request.form.get("extra2")
@@ -494,21 +500,16 @@ def assign_group():
         # Increment the highest group_id for the next assignment
         next_group_id = max_group_id + 1
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
         next_group_id = (
             None  # Handle the case where there's an error getting the group_id
         )
-    finally:
-        db.close()
 
     if next_group_id is not None:
         # Remove duplicate user IDs
         numeric_user_ids = list(set(numeric_user_ids))
 
         # Insert assignments for each user in numeric_user_ids
-        db = get_db()
-        cur = db.cursor()
-
         print(f"Received values: startDate={startDate}, endDate={endDate}, year={year}")
 
         try:
@@ -517,7 +518,7 @@ def assign_group():
 
             if car_id != 0 and car_id != "0":
                 cur.execute(
-                    "SELECT COUNT(*) FROM assignment_table WHERE car_id = ? AND startDate <= ? AND endDate >= ? AND group_id != ?",
+                    "SELECT COUNT(*) FROM assignment_table WHERE car_id = %d AND startDate <= %s AND endDate >= %s AND group_id != %d",
                     (car_id, endDate, startDate, next_group_id),
                 )
 
@@ -527,7 +528,7 @@ def assign_group():
                     return "Auto ist bereits in anderer Gruppe zugewiesen."
 
             cur.execute(
-                "SELECT project_name FROM projects WHERE project_id = ?",
+                "SELECT project_name FROM projects WHERE project_id = %d",
                 (project_id,),
             )
 
@@ -535,7 +536,7 @@ def assign_group():
 
             for user_id in numeric_user_ids:
                 cur.execute(
-                    "SELECT COUNT(*) FROM assignment_table WHERE user_id = ? AND startDate <= ? AND endDate >= ?",
+                    "SELECT COUNT(*) FROM assignment_table WHERE user_id = %d AND startDate <= %s AND endDate >= %s",
                     (user_id, endDate, startDate),
                 )
                 count = cur.fetchone()[0]
@@ -547,8 +548,11 @@ def assign_group():
                         + " hat schon eine Zuteilung zwischen dem ausgewählten Datum."
                     )
 
+                # ensure CalendarWeek exists
+                ensureCalendarWeekExists(year, week_id)
+
                 cur.execute(
-                    "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, week_id, extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) VALUES (%d, %d, %d, %s, %s, %d, %d, %s, %s, %s, %s, %d, %s, %d, %s)",
                     (
                         user_id,
                         car_id,
@@ -556,6 +560,7 @@ def assign_group():
                         startDate,
                         endDate,
                         year,
+                        week_id,
                         extra1,
                         extra2,
                         extra3,
@@ -570,7 +575,7 @@ def assign_group():
             db.commit()
             print("Gruppen erfolgreich zugewiesen.")
         except pymssql.Error as e:
-            print(f"SQLite error: {e}")
+            print(f"SQL error: {e}")
         finally:
             db.close()
         return "Gruppe erfolgreich zugewiesen."
@@ -599,12 +604,12 @@ def create_new_user():
             return "Bereich darf nicht leer sein."
 
         cur.execute(
-            "INSERT INTO users (user_id, first_name, last_name, work_field) VALUES (?, ?, ?, ?)",
+            "INSERT INTO users (user_id, first_name, last_name, work_field) VALUES (%d, %s, %s, %s)",
             (personal_nr, vorname, nachname, bereich),
         )
         db.commit()
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
     finally:
         db.close()
 
@@ -622,12 +627,12 @@ def create_new_customer():
     # Perform database operation to create a new customer with the provided inputs
     try:
         cur.execute(
-            "INSERT INTO customers (customer_id, customer_name) VALUES (?, ?)",
+            "INSERT INTO customers (customer_id, customer_name) VALUES (%d, %s)",
             (customer_id, customer_name),
         )
         db.commit()
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
     finally:
         db.close()
 
@@ -646,12 +651,12 @@ def create_new_project():
     # Perform database operation to create a new project with the provided inputs
     try:
         cur.execute(
-            "INSERT INTO projects (project_id, project_name, customer_id) VALUES (?, ?, ?)",
+            "INSERT INTO projects (project_id, project_name, customer_id) VALUES (%d, %s, %d)",
             (project_id, project_name, customer_id),
         )
         db.commit()
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
     finally:
         db.close()
 
@@ -676,12 +681,12 @@ def create_new_car():
         next_car_id = max_car_id + 1
 
         cur.execute(
-            "INSERT INTO cars (car_id, car_name) VALUES (?, ?)",
+            "INSERT INTO cars (car_id, car_name) VALUES (%d, %s)",
             (next_car_id, car_name),
         )
         db.commit()
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
     finally:
         db.close()
 
@@ -697,10 +702,10 @@ def create_new_extra():
     cur = db.cursor()
 
     try:
-        cur.execute("INSERT INTO extras (id, extra_name) VALUES (?, ?)", (id, name))
+        cur.execute("INSERT INTO extras (id, extra_name) VALUES (%s, %s)", (id, name))
         db.commit()
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
     finally:
         db.close()
 
@@ -715,10 +720,10 @@ def delete_user():
     cur = db.cursor()
 
     try:
-        cur.execute("DELETE FROM users WHERE user_id=?", (personal_nr,))
+        cur.execute("DELETE FROM users WHERE user_id=%d", (personal_nr,))
         db.commit()
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
     finally:
         db.close()
 
@@ -733,10 +738,10 @@ def delete_customer():
     cur = db.cursor()
 
     try:
-        cur.execute("DELETE FROM customers WHERE customer_id=?", (customer_id,))
+        cur.execute("DELETE FROM customers WHERE customer_id=%d", (customer_id,))
         db.commit()
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
     finally:
         db.close()
 
@@ -751,10 +756,10 @@ def delete_car():
     cur = db.cursor()
 
     try:
-        cur.execute("DELETE FROM cars WHERE car_id=?", (car_id,))
+        cur.execute("DELETE FROM cars WHERE car_id=%d", (car_id,))
         db.commit()
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
     finally:
         db.close()
 
@@ -769,10 +774,10 @@ def delete_project():
     cur = db.cursor()
 
     try:
-        cur.execute("DELETE FROM projects WHERE project_id=?", (project_id,))
+        cur.execute("DELETE FROM projects WHERE project_id=%d", (project_id,))
         db.commit()
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
     finally:
         db.close()
 
@@ -787,10 +792,10 @@ def delete_extra():
     cur = db.cursor()
 
     try:
-        cur.execute("DELETE FROM extras WHERE id=?", (extra_id,))
+        cur.execute("DELETE FROM extras WHERE id=%s", (extra_id,))
         db.commit()
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
     finally:
         db.close()
 
@@ -806,12 +811,12 @@ def delete_assignment():
 
     try:
         cur.execute(
-            "DELETE FROM assignment_table WHERE assignment_id=?", (assignment_id,)
+            "DELETE FROM assignment_table WHERE assignment_id=%d", (assignment_id,)
         )
         db.commit()
         result = {"status": "success"}
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
         result = {"status": "error"}
 
     db.close()
@@ -827,13 +832,15 @@ def belegungsplan():
     cur = db.cursor()
     form = LoginForm()
     user_role = request.args.get("user_role", "user")
-    cursor = cur.execute("SELECT * FROM users ORDER BY user_id")
-    users = cursor.fetchall()
+
+    cur.execute("SELECT * FROM users ORDER BY user_id")
+    users = cur.fetchall()
 
     # Fetch meetings with distinct m_group and associated user_ids
-    meetings_data = db.execute(
-        "SELECT m.m_group, m.date, m.startTime, m.endTime, m.room, m.service, GROUP_CONCAT(u.user_id) as user_ids FROM meetings m JOIN users u ON m.user_id = u.user_id GROUP BY m.m_group, m.date, m.startTime, m.endTime, m.room, m.service ORDER BY m.date DESC"
-    ).fetchall()
+    cur.execute(
+        "SELECT m.m_group, m.date, m.startTime, m.endTime, m.room, m.service, STRING_AGG(u.user_id, ',') as user_ids FROM meetings m JOIN users u ON m.user_id = u.user_id GROUP BY m.m_group, m.date, m.startTime, m.endTime, m.room, m.service ORDER BY m.date DESC"
+    )
+    meetings_data = cur.fetchall()
 
     current_week_number = get_current_week_number()
     today_date = datetime.now()
@@ -857,7 +864,7 @@ def reserve_meeting():
         start_time = request.form.get("startTime")
         end_time = request.form.get("endTime")
         room = request.form.get("room")
-        services = request.form.getlist("services")
+        services = request.form.get("services")
 
         personal_nr_list = request.form.getlist("personal_nr_list")
 
@@ -873,62 +880,47 @@ def reserve_meeting():
             f"Received values: participants_list={participants_list}, date={date}, startTime={start_time}, endTime={end_time}, room={room}, services={services}"
         )
 
-        try:
-            cur.execute("SELECT MAX(m_group) FROM meetings")
-            max_meeting_id = cur.fetchone()[0]
-            if max_meeting_id is None:
-                max_meeting_id = 0  # If there are no existing group_ids, start from 0
+        cur.execute("SELECT MAX(m_group) FROM meetings")
+        max_meeting_id = cur.fetchone()[0]
+        if max_meeting_id is None:
+            max_meeting_id = 0  # If there are no existing group_ids, start from 0
 
-            # Increment the highest group_id for the next assignment
-            next_meeting_id = max_meeting_id + 1
-        except pymssql.Error as e:
-            print(f"SQLite error: {e}")
-            next_meeting_id = (
-                None  # Handle the case where there's an error getting the group_id
-            )
-        finally:
-            conn.close()
+        # Increment the highest group_id for the next assignment
+        next_meeting_id = max_meeting_id + 1
 
-            if next_meeting_id is not None:
-                # Remove duplicate user IDs
-                participants_list = list(set(participants_list))
+        if next_meeting_id is not None:
+            # Remove duplicate user IDs
+            participants_list = list(set(participants_list))
 
-                # Insert meeting for each user in participants_list
-                db = get_db()
-                cur = db.cursor()
+            # Insert meeting for each user in participants_list
+            db = get_db()
+            cur = db.cursor()
 
-                try:
-                    print("Participants IDs after list:", participants_list)
-                    print("Next Meeting ID:", next_meeting_id)
+            print("Participants IDs after list:", participants_list)
+            print("Next Meeting ID:", next_meeting_id)
 
-                    for participant in participants_list:
-                        cur.execute(
-                            "INSERT INTO meetings (user_id, date, startTime, endTime, room, service, m_group) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                            (
-                                participant,
-                                date,
-                                start_time,
-                                end_time,
-                                room,
-                                ", ".join(services),
-                                next_meeting_id,
-                            ),
-                        )
-
-                    db.commit()
-                    print("Meeting erfolgreich erstellt.")
-                except pymssql.Error as e:
-                    print(f"SQLite error: {e}")
-                finally:
-                    db.close()
-                    return jsonify(
-                        {
-                            "status": "success",
-                            "message": "Meeting reserved successfully",
-                        }
+            for participant in participants_list:
+                print(participant, date, start_time, end_time, room, services, next_meeting_id)
+                cur.execute(
+                    "INSERT INTO meetings (user_id, date, startTime, endTime, room, service, m_group) VALUES (%d, %s, %s, %s, %s, %s, %d)",
+                    (
+                        participant,
+                        date,
+                        start_time,
+                        end_time,
+                        room,
+                        services,
+                        next_meeting_id
                     )
+                )
+
+            db.commit()
+            print("Meeting erfolgreich erstellt.")
+            return jsonify({"status": "success","message": "Meeting reserved successfully"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
+    finally:
+        db.close()
 
 
 @app.route("/delete_meeting", methods=["POST"])
@@ -939,10 +931,10 @@ def delete_meeting():
     cur = db.cursor()
 
     try:
-        cur.execute("DELETE FROM meetings WHERE m_group=?", (m_group,))
+        cur.execute("DELETE FROM meetings WHERE m_group=%d", (m_group,))
         db.commit()
     except pymssql.Error as e:
-        print(f"SQLite error: {e}")
+        print(f"SQL error: {e}")
     finally:
         db.close()
 

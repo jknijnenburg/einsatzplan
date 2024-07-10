@@ -55,7 +55,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[cars](
-	[car_id] [int] IDENTITY(1,1) NOT NULL,
+	[car_id] [int] NOT NULL,
 	[car_name] [nvarchar](255) NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
@@ -91,20 +91,6 @@ CREATE TABLE [dbo].[extras](
 	[extra_name] [nvarchar](255) NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[group]    Script Date: 21.03.2024 11:43:08 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[group](
-	[group_id] [int] NOT NULL,
-	[member] [int] NOT NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[group_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
 /****** Object:  Table [dbo].[meetings]    Script Date: 21.03.2024 11:43:08 ******/
 SET ANSI_NULLS ON
 GO
@@ -117,7 +103,7 @@ CREATE TABLE [dbo].[meetings](
 	[startTime] [time](7) NOT NULL,
 	[endTime] [time](7) NOT NULL,
 	[room] [nvarchar](255) NOT NULL,
-	[service] [int] NOT NULL,
+	[service] [nvarchar](255) NOT NULL,
 	[m_group] [int] NOT NULL,
  CONSTRAINT [PK__meetings__C7B91CAB7A68A9CD] PRIMARY KEY CLUSTERED 
 (
@@ -163,9 +149,6 @@ GO
 ALTER TABLE [dbo].[assignment_table]  WITH CHECK ADD FOREIGN KEY([car_id])
 REFERENCES [dbo].[cars] ([car_id])
 GO
-ALTER TABLE [dbo].[assignment_table]  WITH CHECK ADD FOREIGN KEY([group_id])
-REFERENCES [dbo].[group] ([group_id])
-GO
 ALTER TABLE [dbo].[assignment_table]  WITH CHECK ADD FOREIGN KEY([project_id])
 REFERENCES [dbo].[projects] ([project_id])
 GO
@@ -177,11 +160,6 @@ GO
 ALTER TABLE [dbo].[assignment_table]  WITH CHECK ADD FOREIGN KEY([week_id], [year])
 REFERENCES [dbo].[CalendarWeek] ([week_id], [year])
 GO
-ALTER TABLE [dbo].[group]  WITH CHECK ADD  CONSTRAINT [FK__group__member__6E01572D] FOREIGN KEY([member])
-REFERENCES [dbo].[users] ([user_id])
-GO
-ALTER TABLE [dbo].[group] CHECK CONSTRAINT [FK__group__member__6E01572D]
-GO
 ALTER TABLE [dbo].[meetings]  WITH CHECK ADD  CONSTRAINT [FK__meetings__user_i__7A672E12] FOREIGN KEY([user_id])
 REFERENCES [dbo].[users] ([user_id])
 GO
@@ -189,4 +167,11 @@ ALTER TABLE [dbo].[meetings] CHECK CONSTRAINT [FK__meetings__user_i__7A672E12]
 GO
 ALTER TABLE [dbo].[projects]  WITH CHECK ADD FOREIGN KEY([customer_id])
 REFERENCES [dbo].[customers] ([customer_id])
+GO
+INSERT INTO "customers" VALUES (0,'k.A.');
+INSERT INTO "projects" VALUES (0,'k.A.',0);
+INSERT INTO "cars" VALUES (0,'Kein Auto');
+INSERT INTO "extras" VALUES ('ST.','Stundenzettel');
+INSERT INTO "extras" VALUES ('H','Hotel');
+INSERT INTO "extras" VALUES ('T','Telefon');
 GO

@@ -373,6 +373,7 @@
             <button onclick="prevWeek()" id="b-week-c">Vorherige Woche</button>
             <button onclick="nextWeek()" id="b-week-c">Nächste Woche</button>
             <button onclick="resetWeek()" id="b-week-c">HEUTE</button>
+
             <div class="tables-container" style="padding-top: 10px;">
               <p class="week-number" id="w-n-1">KW {{ kw_1 }}</p>
               <p class="week-number" id="w-n-2">KW {{ kw_2 }}</p>
@@ -407,9 +408,17 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    <b>{{ assignment[3] }}</b>
-                                    {{ assignment[14] }}                              
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[12] }}" data-group-color="" data-abw-id="{{ assignment[14] }}" data-abw-color="">
+                                    <b>{{ assignment[3] }}</b>                   
+                                    {% for project in project_table_data %}
+                                      {% if project[0] == assignment[3] %}
+                                          {% for customer in customer_table_data %}
+                                              {% if project[2] == customer[0] %}
+                                                  {{ customer[1] }}
+                                              {% endif %}
+                                          {% endfor %}
+                                      {% endif %}
+                                    {% endfor %}                          
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -419,16 +428,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
                                     {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
                                     {% if assignment[9] != 'no' and assignment[9] != 'null' %}
                                       {{ assignment[9] }}
                                     {% endif %}
-                                    {{ assignment[10] }}
+                                    {% if assignment[10] != 'no' and assignment[10] != 'null' %}
+                                      {{ assignment[10] }}
+                                    {% endif %}
+                                    {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
@@ -462,9 +471,17 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    <b>{{ assignment[3] }}</b>
-                                    {{ assignment[14] }}                              
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[12] }}" data-group-color="" data-abw-id="{{ assignment[14] }}" data-abw-color="">
+                                    <b>{{ assignment[3] }}</b>                   
+                                    {% for project in project_table_data %}
+                                      {% if project[0] == assignment[3] %}
+                                          {% for customer in customer_table_data %}
+                                              {% if project[2] == customer[0] %}
+                                                  {{ customer[1] }}
+                                              {% endif %}
+                                          {% endfor %}
+                                      {% endif %}
+                                    {% endfor %}                          
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -474,16 +491,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
                                     {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
                                     {% if assignment[9] != 'no' and assignment[9] != 'null' %}
                                       {{ assignment[9] }}
                                     {% endif %}
-                                    {{ assignment[10] }}
+                                    {% if assignment[10] != 'no' and assignment[10] != 'null' %}
+                                      {{ assignment[10] }}
+                                    {% endif %}
+                                    {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
@@ -517,9 +534,17 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    <b>{{ assignment[3] }}</b>
-                                    {{ assignment[14] }}                              
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[12] }}" data-group-color="" data-abw-id="{{ assignment[14] }}" data-abw-color="">
+                                    <b>{{ assignment[3] }}</b>                   
+                                    {% for project in project_table_data %}
+                                      {% if project[0] == assignment[3] %}
+                                          {% for customer in customer_table_data %}
+                                              {% if project[2] == customer[0] %}
+                                                  {{ customer[1] }}
+                                              {% endif %}
+                                          {% endfor %}
+                                      {% endif %}
+                                    {% endfor %}                          
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -529,16 +554,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
                                     {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
                                     {% if assignment[9] != 'no' and assignment[9] != 'null' %}
                                       {{ assignment[9] }}
                                     {% endif %}
-                                    {{ assignment[10] }}
+                                    {% if assignment[10] != 'no' and assignment[10] != 'null' %}
+                                      {{ assignment[10] }}
+                                    {% endif %}
+                                    {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
@@ -572,9 +597,17 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    <b>{{ assignment[3] }}</b>
-                                    {{ assignment[14] }}                              
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[12] }}" data-group-color="" data-abw-id="{{ assignment[14] }}" data-abw-color="">
+                                    <b>{{ assignment[3] }}</b>                   
+                                    {% for project in project_table_data %}
+                                      {% if project[0] == assignment[3] %}
+                                          {% for customer in customer_table_data %}
+                                              {% if project[2] == customer[0] %}
+                                                  {{ customer[1] }}
+                                              {% endif %}
+                                          {% endfor %}
+                                      {% endif %}
+                                    {% endfor %}                          
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -584,16 +617,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
                                     {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
                                     {% if assignment[9] != 'no' and assignment[9] != 'null' %}
                                       {{ assignment[9] }}
                                     {% endif %}
-                                    {{ assignment[10] }}
+                                    {% if assignment[10] != 'no' and assignment[10] != 'null' %}
+                                      {{ assignment[10] }}
+                                    {% endif %}
+                                    {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
@@ -627,9 +660,17 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    <b>{{ assignment[3] }}</b>
-                                    {{ assignment[14] }}                              
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[12] }}" data-group-color="" data-abw-id="{{ assignment[14] }}" data-abw-color="">
+                                    <b>{{ assignment[3] }}</b>                   
+                                    {% for project in project_table_data %}
+                                      {% if project[0] == assignment[3] %}
+                                          {% for customer in customer_table_data %}
+                                              {% if project[2] == customer[0] %}
+                                                  {{ customer[1] }}
+                                              {% endif %}
+                                          {% endfor %}
+                                      {% endif %}
+                                    {% endfor %}                          
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -639,16 +680,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
                                     {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
                                     {% if assignment[9] != 'no' and assignment[9] != 'null' %}
                                       {{ assignment[9] }}
                                     {% endif %}
-                                    {{ assignment[10] }}
+                                    {% if assignment[10] != 'no' and assignment[10] != 'null' %}
+                                      {{ assignment[10] }}
+                                    {% endif %}
+                                    {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
@@ -682,9 +723,17 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    <b>{{ assignment[3] }}</b>
-                                    {{ assignment[14] }}                              
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[12] }}" data-group-color="" data-abw-id="{{ assignment[14] }}" data-abw-color="">
+                                    <b>{{ assignment[3] }}</b>                   
+                                    {% for project in project_table_data %}
+                                      {% if project[0] == assignment[3] %}
+                                          {% for customer in customer_table_data %}
+                                              {% if project[2] == customer[0] %}
+                                                  {{ customer[1] }}
+                                              {% endif %}
+                                          {% endfor %}
+                                      {% endif %}
+                                    {% endfor %}                          
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -694,16 +743,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
                                     {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
                                     {% if assignment[9] != 'no' and assignment[9] != 'null' %}
                                       {{ assignment[9] }}
                                     {% endif %}
-                                    {{ assignment[10] }}
+                                    {% if assignment[10] != 'no' and assignment[10] != 'null' %}
+                                      {{ assignment[10] }}
+                                    {% endif %}
+                                    {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
@@ -759,9 +808,17 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    <b>{{ assignment[3] }}</b>
-                                    {{ assignment[14] }}                              
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[12] }}" data-group-color="" data-abw-id="{{ assignment[14] }}" data-abw-color="">
+                                    <b>{{ assignment[3] }}</b>                   
+                                    {% for project in project_table_data %}
+                                      {% if project[0] == assignment[3] %}
+                                          {% for customer in customer_table_data %}
+                                              {% if project[2] == customer[0] %}
+                                                  {{ customer[1] }}
+                                              {% endif %}
+                                          {% endfor %}
+                                      {% endif %}
+                                    {% endfor %}                          
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -771,16 +828,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
                                     {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
                                     {% if assignment[9] != 'no' and assignment[9] != 'null' %}
                                       {{ assignment[9] }}
                                     {% endif %}
-                                    {{ assignment[10] }}
+                                    {% if assignment[10] != 'no' and assignment[10] != 'null' %}
+                                      {{ assignment[10] }}
+                                    {% endif %}
+                                    {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
@@ -814,9 +871,17 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    <b>{{ assignment[3] }}</b>
-                                    {{ assignment[14] }}                              
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[12] }}" data-group-color="" data-abw-id="{{ assignment[14] }}" data-abw-color="">
+                                    <b>{{ assignment[3] }}</b>                   
+                                    {% for project in project_table_data %}
+                                      {% if project[0] == assignment[3] %}
+                                          {% for customer in customer_table_data %}
+                                              {% if project[2] == customer[0] %}
+                                                  {{ customer[1] }}
+                                              {% endif %}
+                                          {% endfor %}
+                                      {% endif %}
+                                    {% endfor %}                          
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -826,16 +891,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
                                     {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
                                     {% if assignment[9] != 'no' and assignment[9] != 'null' %}
                                       {{ assignment[9] }}
                                     {% endif %}
-                                    {{ assignment[10] }}
+                                    {% if assignment[10] != 'no' and assignment[10] != 'null' %}
+                                      {{ assignment[10] }}
+                                    {% endif %}
+                                    {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
@@ -872,9 +937,17 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    <b>{{ assignment[3] }}</b>
-                                    {{ assignment[14] }}                              
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[12] }}" data-group-color="" data-abw-id="{{ assignment[14] }}" data-abw-color="">
+                                    <b>{{ assignment[3] }}</b>                   
+                                    {% for project in project_table_data %}
+                                      {% if project[0] == assignment[3] %}
+                                          {% for customer in customer_table_data %}
+                                              {% if project[2] == customer[0] %}
+                                                  {{ customer[1] }}
+                                              {% endif %}
+                                          {% endfor %}
+                                      {% endif %}
+                                    {% endfor %}                          
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -884,16 +957,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
                                     {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
                                     {% if assignment[9] != 'no' and assignment[9] != 'null' %}
                                       {{ assignment[9] }}
                                     {% endif %}
-                                    {{ assignment[10] }}
+                                    {% if assignment[10] != 'no' and assignment[10] != 'null' %}
+                                      {{ assignment[10] }}
+                                    {% endif %}
+                                    {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
@@ -927,9 +1000,17 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    <b>{{ assignment[3] }}</b>
-                                    {{ assignment[14] }}                              
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[12] }}" data-group-color="" data-abw-id="{{ assignment[14] }}" data-abw-color="">
+                                    <b>{{ assignment[3] }}</b>                   
+                                    {% for project in project_table_data %}
+                                      {% if project[0] == assignment[3] %}
+                                          {% for customer in customer_table_data %}
+                                              {% if project[2] == customer[0] %}
+                                                  {{ customer[1] }}
+                                              {% endif %}
+                                          {% endfor %}
+                                      {% endif %}
+                                    {% endfor %}                          
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -939,16 +1020,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
                                     {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
                                     {% if assignment[9] != 'no' and assignment[9] != 'null' %}
                                       {{ assignment[9] }}
                                     {% endif %}
-                                    {{ assignment[10] }}
+                                    {% if assignment[10] != 'no' and assignment[10] != 'null' %}
+                                      {{ assignment[10] }}
+                                    {% endif %}
+                                    {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
@@ -982,9 +1063,17 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    <b>{{ assignment[3] }}</b>
-                                    {{ assignment[14] }}                              
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[12] }}" data-group-color="" data-abw-id="{{ assignment[14] }}" data-abw-color="">
+                                    <b>{{ assignment[3] }}</b>                   
+                                    {% for project in project_table_data %}
+                                      {% if project[0] == assignment[3] %}
+                                          {% for customer in customer_table_data %}
+                                              {% if project[2] == customer[0] %}
+                                                  {{ customer[1] }}
+                                              {% endif %}
+                                          {% endfor %}
+                                      {% endif %}
+                                    {% endfor %}                          
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -994,16 +1083,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
                                     {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
                                     {% if assignment[9] != 'no' and assignment[9] != 'null' %}
                                       {{ assignment[9] }}
                                     {% endif %}
-                                    {{ assignment[10] }}
+                                    {% if assignment[10] != 'no' and assignment[10] != 'null' %}
+                                      {{ assignment[10] }}
+                                    {% endif %}
+                                    {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
@@ -1039,9 +1128,17 @@
                                 {% set assignment_found = false %}
                                 {% if row[0] == assignment[1] and assignment[4] <= date <= assignment[5] %}
                                   {% set assignment_found = true %}
-                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[11] }}" data-group-color="" data-abw-id="{{ assignment[13] }}" data-abw-color="">
-                                    <b>{{ assignment[3] }}</b>
-                                    {{ assignment[14] }}                              
+                                  <div data-assignment-id="{{ assignment[0] }}" data-start-date="{{ assignment[4] }}" data-group-id="{{ assignment[12] }}" data-group-color="" data-abw-id="{{ assignment[14] }}" data-abw-color="">
+                                    <b>{{ assignment[3] }}</b>                   
+                                    {% for project in project_table_data %}
+                                      {% if project[0] == assignment[3] %}
+                                          {% for customer in customer_table_data %}
+                                              {% if project[2] == customer[0] %}
+                                                  {{ customer[1] }}
+                                              {% endif %}
+                                          {% endfor %}
+                                      {% endif %}
+                                    {% endfor %}                          
                                     <br />
                                     {% for car in car_table_data %}
                                       {% if car[0] == assignment[2] %}
@@ -1051,16 +1148,16 @@
                                         {% endif %}
                                       {% endif %}
                                     {% endfor %}
-                                    {% if assignment[7] != 'no' and assignment[7] != 'null' %}
-                                      {{ assignment[7] }}
-                                    {% endif %}
                                     {% if assignment[8] != 'no' and assignment[8] != 'null' %}
                                       {{ assignment[8] }}
                                     {% endif %}
                                     {% if assignment[9] != 'no' and assignment[9] != 'null' %}
                                       {{ assignment[9] }}
                                     {% endif %}
-                                    {{ assignment[10] }}
+                                    {% if assignment[10] != 'no' and assignment[10] != 'null' %}
+                                      {{ assignment[10] }}
+                                    {% endif %}
+                                    {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}

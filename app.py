@@ -5,6 +5,7 @@ from wtforms import StringField, PasswordField, SubmitField, validators
 import uuid
 import json
 from datetime import datetime, timedelta, time
+from time import sleep
 import locale
 import math
 import holidays
@@ -41,7 +42,7 @@ def retry_on_operational_error(func):
                 return func(*args, **kwargs)
             except pymssql.OperationalError as e:
                 print(f"OperationalError: {e}. Retrying in 5 seconds...")
-                time.sleep(5)
+                sleep(5)
                 retries += 1
         return jsonify({"status": "error",
                         "message": "Failed to connect to the database after multiple attempts."})
@@ -395,6 +396,8 @@ def assign_mitarbeiter():
         # ensure CalendarWeek exists
         ensureCalendarWeekExists(year, week_id)
 
+        group_id = 0
+
         # Insert the assignment into the database
         cur.execute(
             "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, week_id, extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) VALUES (%d, %d, %d, %s, %s, %d, %d, %s, %s, %s, %s, %d, %s, %d, %s)",
@@ -410,7 +413,7 @@ def assign_mitarbeiter():
                 extra2,
                 extra3,
                 location,
-                0,  # Weil nur ein einzelner Mitarbeiter hinzugefügt wird und er keine Gruppe hat
+                group_id,  # Weil nur ein einzelner Mitarbeiter hinzugefügt wird und er keine Gruppe hat
                 hinweis,
                 abw,
                 project_name,

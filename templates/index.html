@@ -401,7 +401,7 @@
                       {% if row[3] == 'Elektriker' %}
                         <tr>
                           <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td>{{ row[1] }}<br>{{ row[2] }}</td>
                           {% for date in week_dates1 %}
                             <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
                               {% for assignment in assignment_table_data %}
@@ -464,7 +464,7 @@
                       {% if row[3] == 'Schlosser' %}
                         <tr>
                           <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td>{{ row[1] }}<br>{{ row[2] }}</td>
                           {% for date in week_dates1 %}
                             <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
                               {% for assignment in assignment_table_data %}
@@ -527,7 +527,7 @@
                       {% if row[3] == 'Hauswart' %}
                         <tr>
                           <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td>{{ row[1] }}<br>{{ row[2] }}</td>
                           {% for date in week_dates1 %}
                             <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
                               {% for assignment in assignment_table_data %}
@@ -590,7 +590,7 @@
                       {% if row[3] == 'Büro' %}
                         <tr>
                           <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td>{{ row[1] }}<br>{{ row[2] }}</td>
                           {% for date in week_dates1 %}
                             <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
                               {% for assignment in assignment_table_data %}
@@ -653,7 +653,7 @@
                       {% if row[3] == 'Dreher & Fräser' %}
                         <tr>
                           <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td>{{ row[1] }}<br>{{ row[2] }}</td>
                           {% for date in week_dates1 %}
                             <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
                               {% for assignment in assignment_table_data %}
@@ -716,7 +716,7 @@
                       {% if row[3] == 'Freie Mitarbeiter' %}
                         <tr>
                           <td>{{ row[0] }}</td>
-                          <td>{{ row[1] }}</td>
+                          <td>{{ row[1] }}<br>{{ row[2] }}</td>
                           {% for date in week_dates1 %}
                             <td class="assignment-cell {% if date in n_holidays %}n_holiday{% endif %}" id="t-a-field">
                               {% for assignment in assignment_table_data %}

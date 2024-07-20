@@ -11,8 +11,6 @@ import math
 import holidays
 import pymssql
 import os
-from flask_caching import Cache
-from flask_session import Session
 
 # debug mode
 DEBUG = os.environ["DEBUG"]
@@ -29,14 +27,6 @@ app = Flask(__name__)
 
 # secret for flask CRSF
 app.config["SECRET_KEY"] = "your_secret_key"
-
-# Configure caching
-app.config['CACHE_TYPE'] = 'simple'
-cache = Cache(app)
-
-# Configure server-side sessions
-app.config['SESSION_TYPE'] = 'filesystem'
-Session(app)
 
 # change locale to DE
 #locale.setlocale(locale.LC_ALL, "de_DE.UTF-8")
@@ -67,22 +57,17 @@ def assets_folder(filename):
 # catch OperationalErrors on connect / SQL-Database in standby?
 @retry_on_operational_error
 def get_db():
-    if'db' not in g:
-        g.db = pymssql.connect(
+    db = getattr(g, "_database", None)
+    if db is None:
+        db = g._database = pymssql.connect(
             host=SQL_SERVER,
             port=1433,
             user=SQL_USER,
             password=SQL_PASSWORD,
             database=SQL_DATABASE,
-            as_dict=True
         )
-    return g.db
+    return db
 
-@app.teardown_appcontext
-def close_db(error):
-    db = g.pop('db', None)
-    if db is not None:
-        db.close()
 
 #@app.teardown_appcontext
 #def close_connection(exception):
@@ -172,7 +157,6 @@ def logout():
 
 @app.route("/")
 @app.route("/index")
-@cache.cached(timeout=300) # Cache for 5 minutes
 def index():
     if not session.get('logged_in'):
         return redirect(url_for('login'))

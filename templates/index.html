@@ -92,7 +92,7 @@
                     <select name="personal_nr" id="dd-m" required>
                       <option value="" disabled selected>Mitarbeiter</option>
                       {% for row in data %}
-                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }} {{ row[2] }}</option>
                       {% endfor %}
                     </select>
                     <label>Von-Bis-Datum:</label>
@@ -169,7 +169,7 @@
                   <form id="group-form" action="" method="POST">
                     <select name="personal_nr_list" id="personal_nr_list" class="chosen-select" data-placeholder="Mitarbeiter auswählen.." multiple>
                       {% for row in data %}
-                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
+                        <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }} {{ row [2] }}</option>
                       {% endfor %}
                     </select>
                     <label>Von-Bis-Datum:</label>

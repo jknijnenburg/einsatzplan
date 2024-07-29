@@ -225,6 +225,7 @@ def index():
         car_table_data=car_rows,
         form=form,
         user_role=user_role,
+        current_week=current_week,
         kw_1=kw_1,
         kw_2=kw_2,
         start_date1=start_date1.strftime("%Y-%m-%d"),

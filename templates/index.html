@@ -379,7 +379,7 @@
             <div class="tables-container" style="padding-top: 10px;">
               <p class="week-number" id="w-n-1">KW {{ kw_1 }}</p>
               <p class="week-number" id="w-n-2">KW {{ kw_2 }}</p>
-              <table class="week-table1" id="{% if kw_1 == current_week_number %}current-week-table{% endif %}">
+              <table class="week-table1" id="{% if kw_1 == current_week %}current-week-table{% endif %}">
                 <thead>
                   <tr>
                     <th>P-Nr.</th>
@@ -779,7 +779,7 @@
                   {% endif %}
                 </tbody>
               </table>
-              <table class="week-table2" id="{% if kw_2 == current_week_number %}current-week-table{% endif %}">
+              <table class="week-table2" id="{% if kw_2 == current_week %}current-week-table{% endif %}">
                 <thead>
                   <tr>
                     <th id="m-pc-row">P-Nr.</th>

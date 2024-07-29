@@ -174,51 +174,25 @@ def index():
     cur.execute("SELECT * FROM cars")
     car_rows = cur.fetchall()
     form = LoginForm()
-    user_role = session.get("user_role", "user")  # Get user role from session
+    user_role = session.get("user_role", "user")  # Get user role from URL params
 
-    current_week_number = get_current_week_number()
-    week_number1 = int(request.args.get("week_number1", 0))  # only for the assignments
-    week_number2 = int(request.args.get("week_number2", 1))
     today_date = datetime.now()
+    current_week = today_date.isocalendar()[1]
 
-    today_date_meetings = datetime.now().date()
+    kw_1 = int(request.args.get("kw_1", current_week))
+    kw_2 = kw_1 + 1
 
-    # to show the right KW
-    kw_1 = int(request.args.get("kw_1", today_date.isocalendar()[1]))
-
-    iso_year = today_date.isocalendar()[0]
-    iso_week = kw_1
-
-    if iso_week == 53:
-        iso_week = 1
-        iso_year += 1
-
-    if iso_week == 0:
-        iso_week = 52
-        iso_year -= 1
-
-    kw_2 = int(request.args.get("kw_2", iso_week + 1))
-
-    if kw_2 == 53:
+    if kw_2 > 53:
         kw_2 = 1
-        iso_year += 1
 
-    if kw_2 == 0:
-        kw_2 = 52
-        iso_year -= 1
+    year = today_date.year
+    if kw_1 > current_week:
+        year -= 1
 
-    start_date1 = (
-        today_date
-        - timedelta(days=today_date.weekday())
-        + timedelta(weeks=week_number1)
-    )
+    start_date1 = datetime.strptime(f'{year}-W{kw_1}-1', "%Y-W%W-%w")
     end_date1 = start_date1 + timedelta(days=6)
 
-    start_date2 = (
-        today_date
-        - timedelta(days=today_date.weekday())
-        + timedelta(weeks=week_number2)
-    )
+    start_date2 = datetime.strptime(f'{year}-W{kw_2}-1', "%Y-W%W-%w")
     end_date2 = start_date2 + timedelta(days=6)
 
     week_dates1 = generate_week_dates(start_date1)
@@ -228,10 +202,10 @@ def index():
     week_days2 = generate_week_days(start_date2)
 
     n_holidays = holidays.country_holidays(
-        "DE", subdiv="HB", language="en_US", years=2024
+        "DE", subdiv="HB", language="en_US", years=year
     )  # Feiertage in Bremen
     s_holidays = holidays.country_holidays(
-        "DE", subdiv="BY", language="en_US", years=2024
+        "DE", subdiv="BY", language="en_US", years=year
     )  # Bayern, da es die meisten Feiertage hat
 
     cur.execute(
@@ -251,11 +225,8 @@ def index():
         car_table_data=car_rows,
         form=form,
         user_role=user_role,
-        current_week_number=current_week_number,
-        kw_1=iso_week,
+        kw_1=kw_1,
         kw_2=kw_2,
-        week_number1=week_number1,
-        week_number2=week_number2,
         start_date1=start_date1.strftime("%Y-%m-%d"),
         end_date1=end_date1.strftime("%Y-%m-%d"),
         start_date2=start_date2.strftime("%Y-%m-%d"),

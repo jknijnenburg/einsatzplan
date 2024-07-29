@@ -370,9 +370,11 @@
                 </tr>
               </table>
             </div>
-            <button onclick="prevWeek()" id="b-week-c">Vorherige Woche</button>
-            <button onclick="nextWeek()" id="b-week-c">Nächste Woche</button>
-            <button onclick="resetWeek()" id="b-week-c">HEUTE</button>
+            <button onclick="navigateWeeks(-1)" id="b-week-c">Vorherige Woche</button>
+            <button onclick="navigateWeeks(1)" id="b-week-c">Nächste Woche</button>
+            <button onclick="jumpToToday()" id="b-week-c">HEUTE</button>
+            <input type="number" id="weekInput" min="1" max="53" placeholder="KW">
+            <button onclick="jumpToWeek()">Gehe zu KW</button>
 
             <div class="tables-container" style="padding-top: 10px;">
               <p class="week-number" id="w-n-1">KW {{ kw_1 }}</p>
@@ -1268,31 +1270,57 @@
         })
 
         function navigateWeeks(offset) {
-          const userRole = getUrlParameter('user_role') || 'user';
-          const currentWeek1 = parseInt('{{ week_number1 }}');
-          const currentWeek2 = parseInt('{{ week_number2 }}');
-          const kw1 = parseInt('{{ kw_1 }}');
-          const kw2 = parseInt('{{ kw_2 }}');
-          const newWeek1 = currentWeek1 + offset;
-          const newWeek2 = currentWeek2 + offset;
-          const newKW1 = kw1 + offset;
-          const newKW2 = kw2 + offset;
+          const urlParams = new URLSearchParams(window.location.search);
+          let kw1 = parseInt(urlParams.get('kw_1')) || getCurrentWeek();
+          let kw2 = parseInt(urlParams.get('kw_2')) || (kw1 + 1);
+          const userRole = urlParams.get('user_role') || 'user';
+      
+          kw1 += direction;
+          kw2 += direction;
+      
+          if (kw1 < 1) {
+              kw1 = 52;
+              kw2 = 1;
+          } else if (kw1 > 52) {
+              kw1 = 1;
+              kw2 = 2;
+          }
         
-          window.location.href = `/?user_role=${userRole}&week_number1=${newWeek1}&week_number2=${newWeek2}&kw_1=${newKW1}&kw_2=${newKW2}`;
+          window.location.href = `/?user_role=${userRole}&kw_1=${kw1}&kw_2=${kw2}`;
+        }
+
+        function jumpToToday() {
+          const currentWeek = getCurrentWeek();
+          const urlParams = new URLSearchParams(window.location.search);
+          const userRole = urlParams.get('user_role') || 'user';
+          window.location.href = `/?user_role=${userRole}&kw_1=${currentWeek}&kw_2=${currentWeek + 1}`;
+        }
+      
+        function jumpToWeek() {
+          const weekInput = document.getElementById('weekInput');
+          let targetWeek = parseInt(weekInput.value);
+          const urlParams = new URLSearchParams(window.location.search);
+          const userRole = urlParams.get('user_role') || 'user';
+      
+          if (targetWeek < 1) targetWeek = 1;
+          if (targetWeek > 52) targetWeek = 52;
+      
+          let nextWeek = targetWeek + 1;
+          if (nextWeek > 52) nextWeek = 1;
+      
+          window.location.href = `/?user_role=${userRole}&kw_1=${targetWeek}&kw_2=${nextWeek}`;
+        }
+      
+        function getCurrentWeek() {
+          const now = new Date();
+          const onejan = new Date(now.getFullYear(), 0, 1);
+          return Math.ceil((((now - onejan) / 86400000) + onejan.getDay() + 1) / 7);
         }
 
         function updateWeekURL(userRole) {
           const currentURL = new URL(window.location.href);
           currentURL.searchParams.set('user_role', userRole);
           window.history.replaceState({}, document.title, currentURL.href);
-        }
-        
-        function prevWeek() {
-          navigateWeeks(-1);
-        }
-        
-        function nextWeek() {
-          navigateWeeks(1);
         }
         
         function resetWeek() {

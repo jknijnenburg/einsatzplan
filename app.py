@@ -11,6 +11,7 @@ import math
 import holidays
 import pymssql
 import os
+from flask_caching import Cache
 
 # debug mode
 DEBUG = os.environ["DEBUG"]
@@ -24,6 +25,7 @@ print(SQL_SERVER)
 
 # app
 app = Flask(__name__)
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 # secret for flask CRSF
 app.config["SECRET_KEY"] = "your_secret_key"
@@ -157,6 +159,7 @@ def logout():
 
 @app.route("/")
 @app.route("/index")
+@cache.cached(timeout=300)
 def index():
     if not session.get('logged_in'):
         return redirect(url_for('login'))

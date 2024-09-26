@@ -678,3 +678,77 @@ $(function () {
     }
   });
 });
+
+// EDIT-Button for assignment
+$(document).ready(function() {
+  // Open edit modal when edit button is clicked
+  $(".edit-btn").click(function() {
+    var assignmentId = $(this).data("assignment-id");
+    openEditModal(assignmentId);
+  });
+
+  function openEditModal(assignmentId) {
+    // Fetch assignment details from the server
+    $.ajax({
+      url: `/get_assignment_details/${assignmentId}`,
+      method: "GET",
+      success: function(data) {
+        $("#editAssignmentId").val(assignmentId);
+        $("#editStartDate").val(data.start_date);
+        $("#editEndDate").val(data.end_date);
+        $("#editHinweis").val(data.hinweis);
+        
+        // Clear previous selections
+        $("#editEmployees option").prop("selected", false);
+        
+        // Select the correct employees
+        data.employees.forEach(function(employeeId) {
+          $(`#editEmployees option[value="${employeeId}"]`).prop("selected", true);
+        });
+
+        $("#editAssignmentModal").show();
+      },
+      error: function(xhr, status, error) {
+        console.error("Error fetching assignment details:", error);
+        alert("An error occurred while fetching assignment details.");
+      }
+    });
+  }
+
+  // Close modal when clicking the close button
+  $(".close").click(function() {
+    $("#editAssignmentModal").hide();
+  });
+
+  // Handle form submission
+  $("#editAssignmentForm").submit(function(e) {
+    e.preventDefault();
+    var formData = $(this).serialize();
+
+    $.ajax({
+      url: "/edit_assignment",
+      method: "POST",
+      data: formData,
+      success: function(response) {
+        if (response.status === "success") {
+          alert(response.message);
+          $("#editAssignmentModal").hide();
+          refreshAssignments();
+        } else {
+          alert("Error: " + response.message);
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error("Error updating assignment:", error);
+        alert("An error occurred while updating the assignment.");
+      }
+    });
+  });
+
+  function refreshAssignments() {
+    // Hier eventuell noch eine Logic einbauen, bei der nur die Assignments refreshed werden und nicht die ganze Seite
+    
+    // Page reload
+    location.reload();
+  }
+});

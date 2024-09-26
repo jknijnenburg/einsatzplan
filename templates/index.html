@@ -441,6 +441,7 @@
                                     {% endif %}
                                     {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="edit-btn" data-assignment-id="{{ assignment[0] }}">Edit</button>
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
@@ -504,6 +505,7 @@
                                     {% endif %}
                                     {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="edit-btn" data-assignment-id="{{ assignment[0] }}">Edit</button>
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
@@ -567,6 +569,7 @@
                                     {% endif %}
                                     {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="edit-btn" data-assignment-id="{{ assignment[0] }}">Edit</button>
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
@@ -630,6 +633,7 @@
                                     {% endif %}
                                     {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="edit-btn" data-assignment-id="{{ assignment[0] }}">Edit</button>
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
@@ -693,6 +697,7 @@
                                     {% endif %}
                                     {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="edit-btn" data-assignment-id="{{ assignment[0] }}">Edit</button>
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
@@ -756,6 +761,7 @@
                                     {% endif %}
                                     {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="edit-btn" data-assignment-id="{{ assignment[0] }}">Edit</button>
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
@@ -841,6 +847,7 @@
                                     {% endif %}
                                     {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="edit-btn" data-assignment-id="{{ assignment[0] }}">Edit</button>
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
@@ -904,6 +911,7 @@
                                     {% endif %}
                                     {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="edit-btn" data-assignment-id="{{ assignment[0] }}">Edit</button>
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
@@ -970,6 +978,7 @@
                                     {% endif %}
                                     {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="edit-btn" data-assignment-id="{{ assignment[0] }}">Edit</button>
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
@@ -1033,6 +1042,7 @@
                                     {% endif %}
                                     {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="edit-btn" data-assignment-id="{{ assignment[0] }}">Edit</button>
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
@@ -1096,6 +1106,7 @@
                                     {% endif %}
                                     {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="edit-btn" data-assignment-id="{{ assignment[0] }}">Edit</button>
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
@@ -1161,6 +1172,7 @@
                                     {% endif %}
                                     {{ assignment[11] }}
                                     {% if user_role == "admin" and date == assignment[4] %}
+                                      <button class="edit-btn" data-assignment-id="{{ assignment[0] }}">Edit</button>
                                       <button class="delete-btn" data-assignment-id="{{ assignment[0] }}">Löschen</button>
                                     {% endif %}
                                   </div>
@@ -1189,6 +1201,37 @@
           </div>
         {% endblock %}
       </main>
+
+      <div id="editAssignmentModal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>Edit Assignment</h2>
+          <form id="editAssignmentForm">
+            <input type="hidden" id="editAssignmentId" name="assignment_id">
+            <div>
+              <label for="editStartDate">Start Date:</label>
+              <input type="date" id="editStartDate" name="start_date" required>
+            </div>
+            <div>
+              <label for="editEndDate">End Date:</label>
+              <input type="date" id="editEndDate" name="end_date" required>
+            </div>
+            <div>
+              <label for="editHinweis">Hinweis:</label>
+              <textarea id="editHinweis" name="hinweis"></textarea>
+            </div>
+            <div>
+              <label for="editEmployees">Employees:</label>
+              <select id="editEmployees" name="employees[]" multiple required>
+                {% for row in data %}
+                  <option value="{{ row[0] }}">{{ row[1] }} {{ row[2] }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit">Update Assignment</button>
+          </form>
+        </div>
+      </div>
 
       <script type="text/javascript" src="{{ url_for('static', filename = 'jquery-3.7.1.js') }}"></script>
       <script type="text/javascript" src="{{ url_for('static', filename = 'jquery-ui.js') }}"></script>

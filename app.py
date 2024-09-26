@@ -900,6 +900,100 @@ def reserve_meeting():
     finally:
         db.close()
 
+# Get assignment details
+@app.route("/get_assignment_details/<int:assignment_id>")
+def get_assignment_details(assignment_id):
+    db = get_db()
+    cur = db.cursor()
+    try:
+        cur.execute("""
+            SELECT a.startDate, a.endDate, a.hinweis, a.user_id
+            FROM assignment_table a
+            WHERE a.assignment_id = %s OR a.group_id = (
+                SELECT group_id FROM assignment_table WHERE assignment_id = %s
+            )
+        """, (assignment_id, assignment_id))
+        assignments = cur.fetchall()
+        
+        if not assignments:
+            return jsonify({"error": "Assignment not found"}), 404
+        
+        return jsonify({
+            "start_date": assignments[0][0].strftime('%Y-%m-%d'),
+            "end_date": assignments[0][1].strftime('%Y-%m-%d'),
+            "hinweis": assignments[0][2],
+            "employees": [a[3] for a in assignments]
+        })
+    except Exception as e:
+        print(f"Error fetching assignment details: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+    finally:
+        db.close()
+
+
+# Edit existing assignment
+@app.route("/edit_assignment", methods=["POST"])
+def edit_assignment():
+    assignment_id = request.form.get("assignment_id")
+    new_start_date = request.form.get("start_date")
+    new_end_date = request.form.get("end_date")
+    new_hinweis = request.form.get("hinweis")
+    new_employees = request.form.getlist("employees[]")
+
+    db = get_db()
+    cur = db.cursor()
+
+    try:
+        # Check for overlaps
+        overlap_query = """
+        SELECT user_id FROM assignment_table 
+        WHERE user_id IN %s 
+        AND ((startDate <= %s AND endDate >= %s) 
+        OR (startDate <= %s AND endDate >= %s))
+        AND assignment_id != %s
+        AND group_id != (SELECT group_id FROM assignment_table WHERE assignment_id = %s)
+        """
+        cur.execute(overlap_query, (tuple(new_employees), new_end_date, new_start_date, new_start_date, new_end_date, assignment_id, assignment_id))
+        overlaps = cur.fetchall()
+
+        if overlaps:
+            return jsonify({"status": "error", "message": "Overlap detected for employees: " + ", ".join([str(o[0]) for o in overlaps])})
+
+        # Get the group_id
+        cur.execute("SELECT group_id FROM assignment_table WHERE assignment_id = %s", (assignment_id,))
+        group_id = cur.fetchone()[0]
+
+        # Update all assignments in the group
+        update_query = """
+        UPDATE assignment_table 
+        SET startDate = %s, endDate = %s, hinweis = %s
+        WHERE group_id = %s
+        """
+        cur.execute(update_query, (new_start_date, new_end_date, new_hinweis, group_id))
+
+        # Delete old employee assignments not in the new list
+        cur.execute("DELETE FROM assignment_table WHERE group_id = %s AND user_id NOT IN %s", (group_id, tuple(new_employees)))
+
+        # Insert new employee assignments
+        for employee in new_employees:
+            cur.execute("""
+                INSERT INTO assignment_table (user_id, startDate, endDate, hinweis, group_id)
+                SELECT %s, %s, %s, %s, %s
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM assignment_table WHERE group_id = %s AND user_id = %s
+                )
+            """, (employee, new_start_date, new_end_date, new_hinweis, group_id, group_id, employee))
+
+        db.commit()
+        return jsonify({"status": "success", "message": "Assignment updated successfully"})
+
+    except Exception as e:
+        db.rollback()
+        print(f"Error updating assignment: {e}")
+        return jsonify({"status": "error", "message": str(e)})
+    finally:
+        db.close()
+
 
 @app.route("/delete_meeting", methods=["POST"])
 def delete_meeting():

@@ -387,6 +387,17 @@ $(function () {
       success: function (response) {
         // Handle the response from the Python backend
         alert(response);
+
+        // Remove the deleted user from the select dropdown
+        $('select[name="personal_nr"] option[value="' + personal_nr + '"]').remove();
+
+        // Remove the deleted user from the table
+        $('.tables-container tr').each(function() {
+          if ($(this).find('td:first').text().trim() === personal_nr) {
+            $(this).remove();
+          }
+        });
+
         window.location.reload();
       },
       error: function (xhr, status, error) {

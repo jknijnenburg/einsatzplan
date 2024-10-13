@@ -15,53 +15,68 @@ function getNumberOfWeek(date) {
   return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
 }
 
+// Assign single user
 $(function () {
   $("#assignForm").on("submit", function (event) {
     // Prevent the default form submission
     event.preventDefault();
 
     // Get the form data
-    const formData = $(this).serialize();
+    const formData = new FormData(this);
 
-    // Manually add startDate and endDate to the form data
-    const startDate = $('input[name="datefilter"]')
-      .data("daterangepicker")
-      .startDate.format("YYYY-MM-DD");
-    const endDate = $('input[name="datefilter"]')
-      .data("daterangepicker")
-      .endDate.format("YYYY-MM-DD");
-    const year = $('input[name="datefilter"]')
-      .data("daterangepicker")
-      .startDate.year();
-    const week_id = getNumberOfWeek(startDate);
+    // Get date range
+    const startDate = moment($('input[name="datefilter"]').data("daterangepicker").startDate);
+    const endDate = moment($('input[name="datefilter"]').data("daterangepicker").endDate);
 
-    // Add other form fields here
-    const personal_nr = $('select[name="personal_nr"]').val();
-    const project_id = $('select[name="project_id"]').val();
-    const car_id = $('select[name="car_id"]').val();
-    const ort = $('select[name="ort"]').val();
-    const extra1 = $('select[name="extra1"]').val();
-    const extra2 = $('select[name="extra2"]').val();
-    const extra3 = $('select[name="extra3"]').val();
-    const hinweis = $('textarea[name="hinweis"]').val();
+    // Get recurring assignment options
+    const isRecurring = $('#is_recurring').is(':checked');
+    const recurrenceInterval = parseInt($('#recurrence_interval').val(), 10);
+    const recurrenceEndDate = moment($('#recurrence_end_date').val());
 
-    const checkedRadioButton = $("input[name='abw']:checked").val();
+    const assignments = [];
 
-    // Extend the form data with additional fields
-    const extendedFormData = `${formData}&startDate=${startDate}&endDate=${endDate}&year=${year}&week_id=${week_id}&personal_nr=${personal_nr}&project_id=${project_id}&car_id=${car_id}&ort=${ort}&extra1=${extra1}&extra2=${extra2}&extra3=${extra3}&hinweis=${hinweis}&checkedRadioButton=${checkedRadioButton}`;
+    function createAssignment(start, end) {
+      return {
+        personal_nr: $('select[name="personal_nr"]').val(),
+        startDate: start.format('YYYY-MM-DD'),
+        endDate: end.format('YYYY-MM-DD'),
+        year: start.year(),
+        week_id: getNumberOfWeek(start.toDate()),
+        project_id: $('select[name="project_id"]').val(),
+        car_id: $('select[name="car_id"]').val(),
+        ort: $('select[name="ort"]').val(),
+        extra1: $('select[name="extra1"]').val(),
+        extra2: $('select[name="extra2"]').val(),
+        extra3: $('select[name="extra3"]').val(),
+        hinweis: $('textarea[name="hinweis"]').val(),
+        checkedRadioButton: $("input[name='abw']:checked").val()
+      };
+    }
 
-    // Send the extended form data to the Python backend using AJAX
+    assignments.push(createAssignment(startDate, endDate));
+
+    if (isRecurring) {
+      let currentStart = startDate.clone().add(recurrenceInterval, 'weeks');
+      let currentEnd = endDate.clone().add(recurrenceInterval, 'weeks');
+
+      while (currentStart.isSameOrBefore(recurrenceEndDate)) {
+        assignments.push(createAssignment(currentStart, currentEnd));
+        currentStart.add(recurrenceInterval, 'weeks');
+        currentEnd.add(recurrenceInterval, 'weeks');
+      }
+    }
+
+    // Send assignments to the server
     $.ajax({
-      url: "/assign_mitarbeiter",
+      url: "/assign_mitarbeiter_bulk",
       method: "POST",
-      data: extendedFormData,
+      data: JSON.stringify(assignments),
+      contentType: "application/json",
       success: function (response) {
-        // Handle the response from the Python backend
-        alert(response);
+        alert(response.message);
         window.location.reload();
       },
       error: function (xhr, status, error) {
-        // Handle the error
         alert("Ein Fehler ist aufgetreten. Bitte erneut versuchen." + error);
       },
     });
@@ -91,6 +106,15 @@ $(function () {
       $(this).val("");
     }
   );
+
+  // Show/hide recurring options
+  $('#is_recurring').change(function() {
+    if (this.checked) {
+      $('#recurring_options').show();
+    } else {
+      $('#recurring_options').hide();
+    }
+  });
 });
 
 // DESIGN
@@ -131,19 +155,29 @@ $(function () {
     const year = $('input[name="datefilter-g"]')
       .data("daterangepicker")
       .startDate.year();
-    const week_id = getNumberOfWeek(startDate);
 
-    // Add other form fields here
-    const project_id = $('select[name="project_id"]').val();
-    const car_id = $('select[name="car_id"]').val();
-    const ort = $('select[name="ort"]').val();
-    const extra1 = $('select[name="extra1"]').val();
-    const extra2 = $('select[name="extra2"]').val();
-    const extra3 = $('select[name="extra3"]').val();
-    const hinweis = $('textarea[name="hinweis"]').val();
+    const isRecurring = $('#is_recurring_group').is(':checked');
+    const recurrenceInterval = parseInt($('#recurrence_interval_group').val(), 10);
+    const recurrenceEndDate = moment($('#recurrence_end_date_group').val());
 
-    // Get the selected personal_nr_list as an array
-    const personal_nr_list = $('select[name="personal_nr_list"]').val();
+    const groupAssignments = [];
+
+    function createGroupAssignment(start, end) {
+      return {
+        personal_nr_list: $('select[name="personal_nr_list"]').val(),
+        startDate: start.format('YYYY-MM-DD'),
+        endDate: end.format('YYYY-MM-DD'),
+        year: start.year(),
+        week_id: getNumberOfWeek(start.toDate()),
+        project_id: $('select[name="project_id"]').val(),
+        car_id: $('select[name="car_id"]').val(),
+        ort: $('select[name="ort"]').val(),
+        extra1: $('select[name="extra1"]').val(),
+        extra2: $('select[name="extra2"]').val(),
+        extra3: $('select[name="extra3"]').val(),
+        hinweis: $('textarea[name="hinweis"]').val()
+      };
+    }
 
     // Check if personal_nr_list is not empty
     if (!personal_nr_list || personal_nr_list.length === 0) {
@@ -151,33 +185,31 @@ $(function () {
       return; // Prevent further execution
     }
 
-    // Extend the form data with additional fields
-    const extendedGroupData = `${formData}&startDate=${startDate}&endDate=${endDate}&year=${year}&week_id=${week_id}&project_id=${project_id}&car_id=${car_id}&ort=${ort}&extra1=${extra1}&extra2=${extra2}&extra3=${extra3}&hinweis=${hinweis}`;
+    groupAssignments.push(createGroupAssignment(startDate, endDate));
 
-    // Set the form token in the session
-    const formToken = $("input[name='form_token']").val();
-    sessionStorage.setItem("form_token", formToken);
+    if (isRecurring) {
+      let currentStart = startDate.clone().add(recurrenceInterval, 'weeks');
+      let currentEnd = endDate.clone().add(recurrenceInterval, 'weeks');
 
-    console.log("Submitting form...");
-    // Send the extended form data to the Python backend using AJAX
+      while (currentStart.isSameOrBefore(recurrenceEndDate)) {
+        groupAssignments.push(createGroupAssignment(currentStart, currentEnd));
+        currentStart.add(recurrenceInterval, 'weeks');
+        currentEnd.add(recurrenceInterval, 'weeks');
+      }
+    }
+
+    // Send group assignments to the server
     $.ajax({
-      url: "/assign_group",
+      url: "/assign_group_bulk",
       method: "POST",
-      data:
-        extendedGroupData +
-        "&personal_nr_list=" +
-        personal_nr_list.join(",") +
-        "&form_token=" +
-        formToken,
+      data: JSON.stringify(groupAssignments),
+      contentType: "application/json",
       success: function (response) {
-        console.log("Server response:", response);
-
-        alert(response);
+        alert(response.message);
         window.location.reload();
       },
       error: function (xhr, status, error) {
-        // Handle the error
-        alert("Gruppe konnte nicht zugewiesen werden.." + error);
+        alert("Gruppe konnte nicht zugewiesen werden. " + error);
       },
     });
   });

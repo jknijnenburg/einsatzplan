@@ -403,6 +403,76 @@ def assign_mitarbeiter():
     finally:
         db.close()
 
+@app.route("/assign_mitarbeiter_bulk", methods=["POST"])
+def assign_mitarbeiter_bulk():
+    assignments = request.json
+    db = get_db()
+    cur = db.cursor()
+
+    try:
+        for assignment in assignments:
+            personal_nr = assignment['personal_nr']
+            startDate = assignment['startDate']
+            endDate = assignment['endDate']
+            year = assignment['year']
+            week_id = assignment['week_id']
+            project_id = assignment['project_id']
+            car_id = assignment['car_id']
+            extra1 = assignment['extra1']
+            extra2 = assignment['extra2']
+            extra3 = assignment['extra3']
+            location = assignment['ort']
+            hinweis = assignment['hinweis']
+            abw = assignment['checkedRadioButton']
+
+            # Check if the user already has an entry between the startDate and endDate
+            cur.execute(
+                "SELECT COUNT(*) FROM assignment_table WHERE user_id = %d AND startDate <= %s AND endDate >= %s",
+                (personal_nr, endDate, startDate),
+            )
+            count = cur.fetchone()[0]
+
+            if count > 0:
+                return jsonify({"error": f"Der Mitarbeiter {personal_nr} hat schon eine Zuteilung zwischen dem ausgewählten Datum."}), 400
+
+            if car_id != 0 and car_id != "0":
+                cur.execute(
+                    "SELECT COUNT(*) FROM assignment_table WHERE car_id = %d AND startDate <= %s AND endDate >= %s",
+                    (car_id, endDate, startDate),
+                )
+                car_cnt = cur.fetchone()[0]
+
+                if car_cnt > 0:
+                    return jsonify({"error": "Auto ist bereits zugewiesen."}), 400
+
+            cur.execute(
+                "SELECT project_name FROM projects WHERE project_id = %d",
+                (project_id,),
+            )
+            project_name = cur.fetchone()[0]
+
+            # ensure CalendarWeek exists
+            ensureCalendarWeekExists(year, week_id)
+
+            # Insert the assignment into the database
+            cur.execute(
+                """INSERT INTO assignment_table 
+                (user_id, car_id, project_id, startDate, endDate, year, week_id, 
+                extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) 
+                VALUES (%d, %d, %d, %s, %s, %d, %d, %s, %s, %s, %s, %d, %s, %d, %s)""",
+                (personal_nr, car_id, project_id, startDate, endDate, year, week_id,
+                 extra1, extra2, extra3, location, 0, hinweis, abw, project_name)
+            )
+
+        db.commit()
+        return jsonify({"message": "Assignments created successfully"}), 200
+    except pymssql.Error as e:
+        print(f"SQL error: {e}")
+        return jsonify({"error": "An error occurred while creating assignments"}), 500
+    finally:
+        db.close()
+
+
 
 @app.route("/get_assignment_hinweis", methods=["POST"])
 def get_assignment_hinweis():
@@ -559,6 +629,85 @@ def assign_group():
         return "Gruppe erfolgreich zugewiesen."
     else:
         return "Fehler beim Zuweisen der Gruppen."
+
+@app.route("/assign_group_bulk", methods=["POST"])
+def assign_group_bulk():
+    group_assignments = request.json
+    db = get_db()
+    cur = db.cursor()
+
+    try:
+        for assignment in group_assignments:
+            personal_nr_list = assignment['personal_nr_list']
+            startDate = assignment['startDate']
+            endDate = assignment['endDate']
+            year = assignment['year']
+            week_id = assignment['week_id']
+            project_id = assignment['project_id']
+            car_id = assignment['car_id']
+            location = assignment['ort']
+            extra1 = assignment['extra1']
+            extra2 = assignment['extra2']
+            extra3 = assignment['extra3']
+            hinweis = assignment['hinweis']
+
+            # Get the highest group_id from the database
+            cur.execute("SELECT MAX(group_id) FROM assignment_table")
+            max_group_id = cur.fetchone()[0]
+            if max_group_id is None:
+                max_group_id = 0
+
+            next_group_id = max_group_id + 1
+
+            # Check for car assignment conflicts
+            if car_id != 0 and car_id != "0":
+                cur.execute(
+                    "SELECT COUNT(*) FROM assignment_table WHERE car_id = %d AND startDate <= %s AND endDate >= %s AND group_id != %d",
+                    (car_id, endDate, startDate, next_group_id),
+                )
+                car_cnt = cur.fetchone()[0]
+                if car_cnt > 0:
+                    return jsonify({"error": "Auto ist bereits in anderer Gruppe zugewiesen."}), 400
+
+            # Get project name
+            cur.execute(
+                "SELECT project_name FROM projects WHERE project_id = %d",
+                (project_id,),
+            )
+            project_name = cur.fetchone()[0]
+
+            for user_id in personal_nr_list:
+                # Check for user assignment conflicts
+                cur.execute(
+                    "SELECT COUNT(*) FROM assignment_table WHERE user_id = %d AND startDate <= %s AND endDate >= %s",
+                    (user_id, endDate, startDate),
+                )
+                count = cur.fetchone()[0]
+                if count > 0:
+                    return jsonify({"error": f"Der Mitarbeiter {user_id} hat schon eine Zuteilung zwischen dem ausgewählten Datum."}), 400
+
+                # Ensure CalendarWeek exists
+                ensureCalendarWeekExists(year, week_id)
+
+                # Insert the assignment
+                cur.execute(
+                    """INSERT INTO assignment_table 
+                    (user_id, car_id, project_id, startDate, endDate, year, week_id, 
+                    extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) 
+                    VALUES (%d, %d, %d, %s, %s, %d, %d, %s, %s, %s, %s, %d, %s, %d, %s)""",
+                    (user_id, car_id, project_id, startDate, endDate, year, week_id,
+                     extra1, extra2, extra3, location, next_group_id, hinweis, 0, project_name)
+                )
+
+        db.commit()
+        return jsonify({"message": "Gruppen erfolgreich zugewiesen."}), 200
+    except pymssql.Error as e:
+        db.rollback()
+        print(f"SQL error: {e}")
+        return jsonify({"error": "Ein Fehler ist aufgetreten beim Zuweisen der Gruppen."}), 500
+    finally:
+        db.close()
+
 
 
 @app.route("/submit_m_add", methods=["POST"])

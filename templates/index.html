@@ -97,6 +97,17 @@
                     </select>
                     <label>Von-Bis-Datum:</label>
                     <input type="text" id="date-select" name="datefilter" value="" required />
+                    <div>
+                      <label for="is_recurring">Wiederkehrende Zuweisung:</label>
+                      <input type="checkbox" id="is_recurring" name="is_recurring">
+                    </div>
+                    <div id="recurring_options" style="display: none;">
+                      <label for="recurrence_interval">Wiederholungsintervall (in Wochen):</label>
+                      <input type="number" id="recurrence_interval" name="recurrence_interval" min="1" value="2">
+                  
+                      <label for="recurrence_end_date">Enddatum der Wiederholung:</label>
+                      <input type="date" id="recurrence_end_date" name="recurrence_end_date">
+                    </div>
                     <label>
                       Projekt:</label>
                     <select name="project_id" id="dd-p">
@@ -174,6 +185,17 @@
                     </select>
                     <label>Von-Bis-Datum:</label>
                     <input type="text" id="date-select" name="datefilter-g" value="" required />
+                    <div>
+                      <label for="is_recurring_group">Wiederkehrende Zuweisung:</label>
+                      <input type="checkbox" id="is_recurring_group" name="is_recurring_group">
+                    </div>
+                    <div id="recurring_options_group" style="display: none;">
+                      <label for="recurrence_interval_group">Wiederholungsintervall (in Wochen):</label>
+                      <input type="number" id="recurrence_interval_group" name="recurrence_interval_group" min="1" value="2">
+                  
+                      <label for="recurrence_end_date_group">Enddatum der Wiederholung:</label>
+                      <input type="date" id="recurrence_end_date_group" name="recurrence_end_date_group">
+                    </div>
                     <label>
                       Projekt:</label>
                       <select name="project_id" id="dd-p-g" required>
@@ -1375,6 +1397,17 @@
           const urlParams = new URLSearchParams(window.location.search);
           return urlParams.get(name);
         }
+      </script>
+      <script>
+        $(document).ready(function() {
+          $('#is_recurring_group').change(function() {
+            if (this.checked) {
+              $('#recurring_options_group').show();
+            } else {
+              $('#recurring_options_group').hide();
+            }
+          });
+        });
       </script>
     </body>
   {% endblock %}

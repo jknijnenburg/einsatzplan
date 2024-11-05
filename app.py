@@ -1,10 +1,20 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_from_directory, flash
-from flask import g, current_app
+from flask import (
+    Flask,
+    render_template,
+    request,
+    jsonify,
+    redirect,
+    url_for,
+    session,
+    send_from_directory,
+    flash,
+    g,
+)
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, validators
 import uuid
 import json
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta, time, date
 from time import sleep
 import locale
 import math
@@ -13,8 +23,9 @@ import pymssql
 import os
 from flask_caching import Cache
 
+
 # debug mode
-DEBUG = os.environ["DEBUG"]
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 # get configuration from App Settings / .env
 SQL_SERVER = os.environ["SQL_SERVER"]
@@ -25,14 +36,18 @@ print(SQL_SERVER)
 
 # app
 app = Flask(__name__)
-cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+cache = Cache(app, config={"CACHE_TYPE": "simple"})
 
-# secret for flask CRSF
+# secret for flask CSRF
 app.config["SECRET_KEY"] = "your_secret_key"
 
+# Database setup
+DATABASE = "datenbank.db"
+
 # change locale to DE
-#locale.setlocale(locale.LC_ALL, "de_DE.UTF-8")
+# locale.setlocale(locale.LC_ALL, "de_DE.UTF-8")
 print(locale.getlocale())
+
 
 # database connect retry
 def retry_on_operational_error(func):
@@ -46,15 +61,21 @@ def retry_on_operational_error(func):
                 print(f"OperationalError: {e}. Retrying in 5 seconds...")
                 sleep(5)
                 retries += 1
-        return jsonify({"status": "error",
-                        "message": "Failed to connect to the database after multiple attempts."})
-    
+        return jsonify(
+            {
+                "status": "error",
+                "message": "Failed to connect to the database after multiple attempts.",
+            }
+        )
+
     return wrapper
 
+
 # include static assets/fonts folder
-@app.route('/assets/fonts/<filename>')
+@app.route("/assets/fonts/<filename>")
 def assets_folder(filename):
-    return send_from_directory('assets/fonts', filename)
+    return send_from_directory("assets/fonts", filename)
+
 
 # catch OperationalErrors on connect / SQL-Database in standby?
 @retry_on_operational_error
@@ -71,15 +92,15 @@ def get_db():
     return db
 
 
-#@app.teardown_appcontext
-#def close_connection(exception):
+# @app.teardown_appcontext
+# def close_connection(exception):
 #    db = getattr(g, "_database", None)
 #    if db is not None:
 #        db.close()
 
 
-#@app.teardown_appcontext
-#def close_db(error):
+# @app.teardown_appcontext
+# def close_db(error):
 #    db = getattr(g, "_database", None)
 #    if db is not None:
 #        db.commit()
@@ -98,9 +119,27 @@ def generate_week_dates(start_date):
 
 
 def generate_week_days(start_date):
-    #locale.setlocale(locale.LC_TIME, "de_DE.UTF-8")
+    locale.setlocale(locale.LC_TIME, "de_DE")
     week_days = [start_date + timedelta(days=i) for i in range(7)]
     return [date.strftime("%a") for date in week_days]
+
+
+def get_dates_for_week(year, week):
+    # Get start and end dates for a given ISO week number.
+    # Create a date object for the first day of the year
+    first_day = date(year, 1, 1)
+
+    # Get the first Monday of the year
+    if first_day.weekday() > 3:
+        first_monday = first_day + timedelta(days=(7 - first_day.weekday()))
+    else:
+        first_monday = first_day - timedelta(days=first_day.weekday())
+
+    # Calculate the Monday of the desired week
+    target_monday = first_monday + timedelta(weeks=int(week) - 1)
+
+    # Return the week's start (Monday) and end (Sunday) dates
+    return target_monday, target_monday + timedelta(days=6)
 
 
 def authenticate_login(username, password):
@@ -109,14 +148,15 @@ def authenticate_login(username, password):
 
     return username == correct_username and password == correct_password
 
+
 # Creates CalendarWeek entity
 def ensureCalendarWeekExists(year, week_id):
     try:
         db = get_db()
         cur = db.cursor()
         cur.execute(
-            "SELECT week_id FROM CalendarWeek WHERE week_id = %d AND year = %d", 
-            (week_id, year)
+            "SELECT week_id FROM CalendarWeek WHERE week_id = %s AND year = %s",
+            (week_id, year),
         )
         row = cur.fetchone()
         if not row:
@@ -124,8 +164,8 @@ def ensureCalendarWeekExists(year, week_id):
             start_date = datetime.fromisocalendar(int(year), int(week_id), 1)
             end_date = start_date + timedelta(days=6)
             cur.execute(
-                "INSERT INTO CalendarWeek (week_id, year, startDate, endDate) VALUES (%d, %d, %s, %s)", 
-                (week_id, year, start_date, end_date)
+                "INSERT INTO CalendarWeek (week_id, year, startDate, endDate) VALUES (%s, %s, %s, %s)",
+                (week_id, year, start_date, end_date),
             )
             db.commit()
             # keep db open
@@ -134,7 +174,7 @@ def ensureCalendarWeekExists(year, week_id):
 
 
 # Login bevor der User auf die Webseite zugreifen kann
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -142,30 +182,33 @@ def login():
         password = form.password.data
 
         if authenticate_login(username, password):
-            session['logged_in'] = True
-            return redirect(url_for('index'))
+            session["logged_in"] = True
+            return redirect(url_for("index"))
         else:
-            flash('Falsche Login-Daten, bitte erneut versuchen.')
-            return redirect(url_for('login'))
-    
-    return render_template('login.html', form=form)
+            flash("Falsche Login-Daten, bitte erneut versuchen.")
+            return redirect(url_for("login"))
 
-@app.route('/logout', methods=["POST"])
+    return render_template("login.html", form=form)
+
+
+@app.route("/logout", methods=["POST"])
 def logout():
     session.pop("logged_in", False)
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for("login"))
 
 
 @app.route("/")
 @app.route("/index")
 @cache.cached(timeout=300)
 def index():
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
 
     db = get_db()
     cur = db.cursor()
+
+    # Fetch necessary data
     cur.execute("SELECT * FROM users ORDER BY work_field")
     rows = cur.fetchall()
     cur.execute("SELECT * FROM assignment_table")
@@ -176,48 +219,72 @@ def index():
     project_rows = cur.fetchall()
     cur.execute("SELECT * FROM cars")
     car_rows = cur.fetchall()
+    cur.execute("SELECT * FROM extras")
+    extras = cur.fetchall()
+
     form = LoginForm()
-    user_role = session.get("user_role", "user")  # Get user role from URL params
+    user_role = session.get("user_role", "user")  # Get user role from session
 
-    today_date = datetime.now()
-    current_week = today_date.isocalendar()[1]
+    # Get current date info
+    today = datetime.now()
+    current_year = today.year
+    current_week = today.isocalendar()[1]
 
+    # Get requested weeks from URL parameters, defaulting to current week
     kw_1 = int(request.args.get("kw_1", current_week))
-    kw_2 = kw_1 + 1
+    kw_2 = int(request.args.get("kw_2", current_week + 1))
 
-    if kw_2 > 53:
+    # Handle year transitions
+    year_1 = current_year
+    year_2 = current_year
+
+    if kw_1 > 52:
+        kw_1 = 1
+        year_1 += 1
+    elif kw_1 < 1:
+        kw_1 = 52
+        year_1 -= 1
+
+    if kw_2 > 52:
         kw_2 = 1
+        year_2 += 1
+    elif kw_2 < 1:
+        kw_2 = 52
+        year_2 -= 1
 
-    year = today_date.year
-    if kw_1 > current_week:
-        year -= 1
+    # Get date ranges for both weeks
+    start_date1, end_date1 = get_dates_for_week(year_1, kw_1)
+    start_date2, end_date2 = get_dates_for_week(year_2, kw_2)
 
-    start_date1 = datetime.strptime(f'{year}-W{kw_1}-1', "%Y-W%W-%w")
-    end_date1 = start_date1 + timedelta(days=6)
+    # Generate week dates and days
+    week_dates1 = [start_date1 + timedelta(days=i) for i in range(7)]
+    week_dates2 = [start_date2 + timedelta(days=i) for i in range(7)]
 
-    start_date2 = datetime.strptime(f'{year}-W{kw_2}-1', "%Y-W%W-%w")
-    end_date2 = start_date2 + timedelta(days=6)
+    # Format dates for display
+    week_dates1 = [date.strftime("%Y-%m-%d") for date in week_dates1]
+    week_dates2 = [date.strftime("%Y-%m-%d") for date in week_dates2]
 
-    week_dates1 = generate_week_dates(start_date1)
-    week_dates2 = generate_week_dates(start_date2)
+    # Generate weekday names
+    locale.setlocale(locale.LC_TIME, "de_DE.UTF-8")
+    week_days1 = [(start_date1 + timedelta(days=i)).strftime("%a") for i in range(7)]
+    week_days2 = [(start_date2 + timedelta(days=i)).strftime("%a") for i in range(7)]
 
-    week_days1 = generate_week_days(start_date1)
-    week_days2 = generate_week_days(start_date2)
+    # Get holidays
+    n_holidays = holidays.country_holidays("DE", subdiv="HB", years=[year_1, year_2])
+    s_holidays = holidays.country_holidays("DE", subdiv="BY", years=[year_1, year_2])
 
+    # Get holidays
     n_holidays = holidays.country_holidays(
-        "DE", subdiv="HB", language="en_US", years=year
+        "DE", subdiv="HB", language="en_US", years=2024
     )  # Feiertage in Bremen
     s_holidays = holidays.country_holidays(
-        "DE", subdiv="BY", language="en_US", years=year
+        "DE", subdiv="BY", language="en_US", years=2024
     )  # Bayern, da es die meisten Feiertage hat
 
     cur.execute(
         "SELECT TOP(4) m.m_group, m.date, m.startTime, m.endTime, m.room, m.service, STRING_AGG(u.user_id, ',') as user_ids FROM meetings m JOIN users u ON m.user_id = u.user_id WHERE m.date >= GETDATE() GROUP BY m.m_group, m.date, m.startTime, m.endTime, m.room, m.service ORDER BY m.date ASC",
     )
     meetings_data = cur.fetchall()
-
-    cur.execute("SELECT * FROM extras")
-    extra_data = cur.fetchall()
 
     return render_template(
         "index.html",
@@ -228,13 +295,9 @@ def index():
         car_table_data=car_rows,
         form=form,
         user_role=user_role,
-        current_week=current_week,
+        current_week_number=current_week,
         kw_1=kw_1,
         kw_2=kw_2,
-        start_date1=start_date1.strftime("%Y-%m-%d"),
-        end_date1=end_date1.strftime("%Y-%m-%d"),
-        start_date2=start_date2.strftime("%Y-%m-%d"),
-        end_date2=end_date2.strftime("%Y-%m-%d"),
         week_dates1=week_dates1,
         week_dates2=week_dates2,
         week_days1=week_days1,
@@ -242,14 +305,9 @@ def index():
         n_holidays=n_holidays,
         s_holidays=s_holidays,
         meetings_data=meetings_data,
-        extra_table_data1=extra_data,
-        extra_table_data2=extra_data,
-        extra_table_data3=extra_data,
-        extra_table_data4=extra_data,
-        extra_table_data5=extra_data,
-        extra_table_data6=extra_data,
-        extra_table_data=extra_data,
+        extra_table_data=extras,
     )
+
 
 def authenticate(username, password):
     if username == "admin" and password == "tecod-tasuyi":
@@ -282,127 +340,6 @@ def logout_admin():
     return redirect(url_for("index"))
 
 
-@app.route("/assign_mitarbeiter", methods=["POST"])
-def assign_mitarbeiter():
-    personal_nr = request.form.get("personal_nr")
-
-    startDate = request.form.get("startDate")
-    endDate = request.form.get("endDate")
-    year = request.form.get("year")
-    location = request.form.get("ort")
-
-    project_id = request.form.get("project_id", 0)
-
-    if project_id == "null" or project_id == 0 or project_id == "0":
-        project_id = 0
-
-    car_id = request.form.get("car_id")
-
-    if car_id == "null":
-        car_id = 0
-
-    extra1 = request.form.get("extra1")
-
-    if extra1 == "null":
-        extra1 = "no"
-
-    extra2 = request.form.get("extra2")
-
-    if extra2 == "null":
-        extra2 = "no"
-
-    extra3 = request.form.get("extra3")
-
-    if extra3 == "null":
-        extra3 = "no"
-
-    hinweis = request.form.get("hinweis", "")
-
-    abw = request.form.get("checkedRadioButton")
-
-    week_id = request.form.get("week_id")
-
-    print(
-        f"Received values: personal_nr={personal_nr}, startDate={startDate}, endDate={endDate}, year={year}, week_id={week_id}, project_id={project_id}, car_id={car_id},extra={extra1, extra2, extra3}, checkboxValue={abw}"
-    )
-
-    db = get_db()
-    cur = db.cursor()
-
-    try:
-        # Check if the user already has an entry between the startDate and endDate
-        cur.execute(
-            "SELECT COUNT(*) FROM assignment_table WHERE user_id = %d AND startDate <= %s AND endDate >= %s",
-            (personal_nr, endDate, startDate),
-        )
-        count = cur.fetchone()[0]
-
-        if count > 0:
-            return "Der Mitarbeiter hat schon eine Zuteilung zwischen dem ausgewählten Datum."
-
-        # Check if the assignment already exists
-        cur.execute(
-            "SELECT COUNT(*) FROM assignment_table WHERE user_id = %d AND startDate = %s AND endDate = %s",
-            (personal_nr, startDate, endDate),
-        )
-        count = cur.fetchone()[0]
-
-        if count > 0:
-            return "Die Zuteilung existiert bereits."
-
-        if car_id != 0 and car_id != "0":
-            cur.execute(
-                "SELECT COUNT(*) FROM assignment_table WHERE car_id = %d AND startDate <= %s AND endDate >= %s",
-                (car_id, endDate, startDate),
-            )
-
-            car_cnt = cur.fetchone()[0]
-
-            if car_cnt > 0:
-                return "Auto ist bereits zugewiesen."
-
-        cur.execute(
-            "SELECT project_name FROM projects WHERE project_id = %d",
-            (project_id,),
-        )
-
-        project_name = cur.fetchone()[0]
-
-        # ensure CalendarWeek exists
-        ensureCalendarWeekExists(year, week_id)
-
-        group_id = 0
-
-        # Insert the assignment into the database
-        cur.execute(
-            "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, week_id, extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) VALUES (%d, %d, %d, %s, %s, %d, %d, %s, %s, %s, %s, %d, %s, %d, %s)",
-            (
-                personal_nr,
-                car_id,
-                project_id,
-                startDate,
-                endDate,
-                year,
-                week_id,
-                extra1,
-                extra2,
-                extra3,
-                location,
-                group_id,  # Weil nur ein einzelner Mitarbeiter hinzugefügt wird und er keine Gruppe hat
-                hinweis,
-                abw,
-                project_name,
-            ),
-        )
-        db.commit()
-
-        return "Mitarbeiter erfolgreich zugewiesen."
-    except pymssql.Error as e:
-        print(f"SQL error: {e}")
-        return "An error occurred while assigning the employee."
-    finally:
-        db.close()
-
 @app.route("/assign_mitarbeiter_bulk", methods=["POST"])
 def assign_mitarbeiter_bulk():
     assignments = request.json
@@ -411,33 +348,47 @@ def assign_mitarbeiter_bulk():
 
     try:
         for assignment in assignments:
-            personal_nr = assignment['personal_nr']
-            startDate = assignment['startDate']
-            endDate = assignment['endDate']
-            year = assignment['year']
-            week_id = assignment['week_id']
-            project_id = assignment['project_id']
-            car_id = assignment['car_id']
-            extra1 = assignment['extra1']
-            extra2 = assignment['extra2']
-            extra3 = assignment['extra3']
-            location = assignment['ort']
-            hinweis = assignment['hinweis']
-            abw = assignment['checkedRadioButton']
+            personal_nr = assignment["personal_nr"]
+            startDate = assignment["startDate"]
+            endDate = assignment["endDate"]
+            year = assignment["year"]
+            week_id = assignment["week_id"]
+            project_id = assignment.get("project_id", "0")
+            car_id = assignment.get("car_id", "0")
+            extra1 = assignment.get("extra1", "no")
+            extra2 = assignment.get("extra2", "no")
+            extra3 = assignment.get("extra3", "no")
+            location = assignment.get("ort", "")
+            hinweis = assignment.get("hinweis", "")
+            abw = assignment.get("checkedRadioButton", "0")
+
+            # Convert empty or null values to defaults
+            project_id = "0" if not project_id or project_id == "null" else project_id
+            car_id = "0" if not car_id or car_id == "null" else car_id
+            extra1 = "no" if not extra1 or extra1 == "null" else extra1
+            extra2 = "no" if not extra2 or extra2 == "null" else extra2
+            extra3 = "no" if not extra3 or extra3 == "null" else extra3
 
             # Check if the user already has an entry between the startDate and endDate
             cur.execute(
-                "SELECT COUNT(*) FROM assignment_table WHERE user_id = %d AND startDate <= %s AND endDate >= %s",
+                "SELECT COUNT(*) FROM assignment_table WHERE user_id = %s AND startDate <= %s AND endDate >= %s",
                 (personal_nr, endDate, startDate),
             )
             count = cur.fetchone()[0]
 
             if count > 0:
-                return jsonify({"error": f"Der Mitarbeiter {personal_nr} hat schon eine Zuteilung zwischen dem ausgewählten Datum."}), 400
+                return (
+                    jsonify(
+                        {
+                            "error": f"Der Mitarbeiter {personal_nr} hat schon eine Zuteilung zwischen dem ausgewählten Datum."
+                        }
+                    ),
+                    400,
+                )
 
             if car_id != 0 and car_id != "0":
                 cur.execute(
-                    "SELECT COUNT(*) FROM assignment_table WHERE car_id = %d AND startDate <= %s AND endDate >= %s",
+                    "SELECT COUNT(*) FROM assignment_table WHERE car_id = %s AND startDate <= %s AND endDate >= %s",
                     (car_id, endDate, startDate),
                 )
                 car_cnt = cur.fetchone()[0]
@@ -446,7 +397,7 @@ def assign_mitarbeiter_bulk():
                     return jsonify({"error": "Auto ist bereits zugewiesen."}), 400
 
             cur.execute(
-                "SELECT project_name FROM projects WHERE project_id = %d",
+                "SELECT project_name FROM projects WHERE project_id = %s",
                 (project_id,),
             )
             project_name = cur.fetchone()[0]
@@ -459,9 +410,24 @@ def assign_mitarbeiter_bulk():
                 """INSERT INTO assignment_table 
                 (user_id, car_id, project_id, startDate, endDate, year, week_id, 
                 extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) 
-                VALUES (%d, %d, %d, %s, %s, %d, %d, %s, %s, %s, %s, %d, %s, %d, %s)""",
-                (personal_nr, car_id, project_id, startDate, endDate, year, week_id,
-                 extra1, extra2, extra3, location, 0, hinweis, abw, project_name)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                (
+                    personal_nr,
+                    car_id,
+                    project_id,
+                    startDate,
+                    endDate,
+                    year,
+                    week_id,
+                    extra1,
+                    extra2,
+                    extra3,
+                    location,
+                    0,
+                    hinweis,
+                    abw,
+                    project_name,
+                ),
             )
 
         db.commit()
@@ -473,7 +439,6 @@ def assign_mitarbeiter_bulk():
         db.close()
 
 
-
 @app.route("/get_assignment_hinweis", methods=["POST"])
 def get_assignment_hinweis():
     assignment_id = request.form.get("assignmentId")
@@ -482,7 +447,8 @@ def get_assignment_hinweis():
     cur = db.cursor()
 
     cur.execute(
-        "SELECT hinweis FROM assignment_table WHERE assignment_id=%d", (assignment_id,)
+        "SELECT hinweis FROM assignment_table WHERE assignment_id=%s",
+        (assignment_id,),
     )
     result = cur.fetchone()
 
@@ -494,113 +460,95 @@ def get_assignment_hinweis():
     return jsonify({"hinweis": hinweis})
 
 
-@app.route("/assign_group", methods=["POST"])
-def assign_group():
-    # Use getlist to retrieve a list of values for the "personal_nr_list" key
-    personal_nr_list = request.form.getlist("personal_nr_list")
-
-    # Convert user IDs to integers
-    numeric_user_ids = [
-        int(user_id) for user_id in ",".join(personal_nr_list).split(",")
-    ]
-
-    print("Numeric User IDs before list:", numeric_user_ids)
-
-    startDate = request.form.get("startDate")
-    endDate = request.form.get("endDate")
-    year = request.form.get("year")
-    week_id = request.form.get("week_id")
-    location = request.form.get("ort")
-    extra1 = request.form.get("extra1")
-    extra2 = request.form.get("extra2")
-    extra3 = request.form.get("extra3")
-    hinweis = request.form.get("hinweis")
-    project_id = request.form.get("project_id")
-    car_id = request.form.get("car_id")
-
-    if car_id == "null":
-        car_id = 0
-
-    if extra1 == "null":
-        extra1 = "no"
-
-    if extra2 == "null":
-        extra2 = "no"
-
-    if extra3 == "null":
-        extra3 = "no"
-
-    abw = 0
-
-    if project_id == "null" or project_id == 0 or project_id == "0":
-        project_id = 0
-
-    # Get the highest group_id from the database
+@app.route("/assign_group_bulk", methods=["POST"])
+def assign_group_bulk():
+    group_assignments = request.json
     db = get_db()
     cur = db.cursor()
 
     try:
-        cur.execute("SELECT MAX(group_id) FROM assignment_table")
-        max_group_id = cur.fetchone()[0]
-        if max_group_id is None:
-            max_group_id = 0  # If there are no existing group_ids, start from 0
+        for assignment in group_assignments:
+            personal_nr_list = assignment["personal_nr_list"]
+            startDate = assignment["startDate"]
+            endDate = assignment["endDate"]
+            year = assignment["year"]
+            week_id = assignment["week_id"]
+            project_id = assignment.get("project_id", "0")
+            car_id = assignment.get("car_id", "0")
+            location = assignment.get("ort", "")
+            extra1 = assignment.get("extra1", "no")
+            extra2 = assignment.get("extra2", "no")
+            extra3 = assignment.get("extra3", "no")
+            hinweis = assignment.get("hinweis", "")
 
-        # Increment the highest group_id for the next assignment
-        next_group_id = max_group_id + 1
-    except pymssql.Error as e:
-        print(f"SQL error: {e}")
-        next_group_id = (
-            None  # Handle the case where there's an error getting the group_id
-        )
+            # Convert empty or null values to defaults
+            project_id = "0" if not project_id or project_id == "null" else project_id
+            car_id = "0" if not car_id or car_id == "null" else car_id
+            extra1 = "no" if not extra1 or extra1 == "null" else extra1
+            extra2 = "no" if not extra2 or extra2 == "null" else extra2
+            extra3 = "no" if not extra3 or extra3 == "null" else extra3
 
-    if next_group_id is not None:
-        # Remove duplicate user IDs
-        numeric_user_ids = list(set(numeric_user_ids))
+            # Get the highest group_id from the database
+            cur.execute("SELECT MAX(group_id) FROM assignment_table")
+            max_group_id = cur.fetchone()[0]
+            if max_group_id is None:
+                max_group_id = 0
 
-        # Insert assignments for each user in numeric_user_ids
-        print(f"Received values: startDate={startDate}, endDate={endDate}, year={year}")
+            next_group_id = max_group_id + 1
 
-        try:
-            print("Numeric User IDs after list:", numeric_user_ids)
-            print("Next Group ID:", next_group_id)
-
+            # Check for car assignment conflicts
             if car_id != 0 and car_id != "0":
                 cur.execute(
-                    "SELECT COUNT(*) FROM assignment_table WHERE car_id = %d AND startDate <= %s AND endDate >= %s AND group_id != %d",
+                    """SELECT COUNT(*) FROM assignment_table 
+                       WHERE car_id = %s AND startDate <= %s AND endDate >= %s AND group_id != %s""",
                     (car_id, endDate, startDate, next_group_id),
                 )
-
                 car_cnt = cur.fetchone()[0]
-
                 if car_cnt > 0:
-                    return "Auto ist bereits in anderer Gruppe zugewiesen."
+                    return (
+                        jsonify(
+                            {"error": "Auto ist bereits in anderer Gruppe zugewiesen."}
+                        ),
+                        400,
+                    )
 
+            # Get project name
             cur.execute(
-                "SELECT project_name FROM projects WHERE project_id = %d",
-                (project_id,),
+                "SELECT project_name FROM projects WHERE project_id = %s", (project_id,)
             )
+            project_result = cur.fetchone()
+            if project_result:
+                project_name = project_result[0]
+            else:
+                project_name = ""
 
-            project_name = cur.fetchone()[0]
-
-            for user_id in numeric_user_ids:
+            for user_id in personal_nr_list:
+                # Check for user assignment conflicts
                 cur.execute(
-                    "SELECT COUNT(*) FROM assignment_table WHERE user_id = %d AND startDate <= %s AND endDate >= %s",
+                    """SELECT COUNT(*) FROM assignment_table 
+                       WHERE user_id = %s AND startDate <= %s AND endDate >= %s""",
                     (user_id, endDate, startDate),
                 )
                 count = cur.fetchone()[0]
-
                 if count > 0:
                     return (
-                        "Der Mitarbeiter "
-                        + f"{user_id}"
-                        + " hat schon eine Zuteilung zwischen dem ausgewählten Datum."
+                        jsonify(
+                            {
+                                "error": f"Der Mitarbeiter {user_id} hat schon eine Zuteilung zwischen dem ausgewählten Datum."
+                            }
+                        ),
+                        400,
                     )
 
-                # ensure CalendarWeek exists
+                # Ensure CalendarWeek exists
                 ensureCalendarWeekExists(year, week_id)
 
+                # Insert the assignment
                 cur.execute(
-                    "INSERT INTO assignment_table (user_id, car_id, project_id, startDate, endDate, year, week_id, extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) VALUES (%d, %d, %d, %s, %s, %d, %d, %s, %s, %s, %s, %d, %s, %d, %s)",
+                    """INSERT INTO assignment_table 
+                       (user_id, car_id, project_id, startDate, endDate, year, week_id,
+                        extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) 
+                       VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                     (
                         user_id,
                         car_id,
@@ -615,88 +563,9 @@ def assign_group():
                         location,
                         next_group_id,
                         hinweis,
-                        abw,
+                        0,
                         project_name,
                     ),
-                )
-
-            db.commit()
-            print("Gruppen erfolgreich zugewiesen.")
-        except pymssql.Error as e:
-            print(f"SQL error: {e}")
-        finally:
-            db.close()
-        return "Gruppe erfolgreich zugewiesen."
-    else:
-        return "Fehler beim Zuweisen der Gruppen."
-
-@app.route("/assign_group_bulk", methods=["POST"])
-def assign_group_bulk():
-    group_assignments = request.json
-    db = get_db()
-    cur = db.cursor()
-
-    try:
-        for assignment in group_assignments:
-            personal_nr_list = assignment['personal_nr_list']
-            startDate = assignment['startDate']
-            endDate = assignment['endDate']
-            year = assignment['year']
-            week_id = assignment['week_id']
-            project_id = assignment['project_id']
-            car_id = assignment['car_id']
-            location = assignment['ort']
-            extra1 = assignment['extra1']
-            extra2 = assignment['extra2']
-            extra3 = assignment['extra3']
-            hinweis = assignment['hinweis']
-
-            # Get the highest group_id from the database
-            cur.execute("SELECT MAX(group_id) FROM assignment_table")
-            max_group_id = cur.fetchone()[0]
-            if max_group_id is None:
-                max_group_id = 0
-
-            next_group_id = max_group_id + 1
-
-            # Check for car assignment conflicts
-            if car_id != 0 and car_id != "0":
-                cur.execute(
-                    "SELECT COUNT(*) FROM assignment_table WHERE car_id = %d AND startDate <= %s AND endDate >= %s AND group_id != %d",
-                    (car_id, endDate, startDate, next_group_id),
-                )
-                car_cnt = cur.fetchone()[0]
-                if car_cnt > 0:
-                    return jsonify({"error": "Auto ist bereits in anderer Gruppe zugewiesen."}), 400
-
-            # Get project name
-            cur.execute(
-                "SELECT project_name FROM projects WHERE project_id = %d",
-                (project_id,),
-            )
-            project_name = cur.fetchone()[0]
-
-            for user_id in personal_nr_list:
-                # Check for user assignment conflicts
-                cur.execute(
-                    "SELECT COUNT(*) FROM assignment_table WHERE user_id = %d AND startDate <= %s AND endDate >= %s",
-                    (user_id, endDate, startDate),
-                )
-                count = cur.fetchone()[0]
-                if count > 0:
-                    return jsonify({"error": f"Der Mitarbeiter {user_id} hat schon eine Zuteilung zwischen dem ausgewählten Datum."}), 400
-
-                # Ensure CalendarWeek exists
-                ensureCalendarWeekExists(year, week_id)
-
-                # Insert the assignment
-                cur.execute(
-                    """INSERT INTO assignment_table 
-                    (user_id, car_id, project_id, startDate, endDate, year, week_id, 
-                    extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name) 
-                    VALUES (%d, %d, %d, %s, %s, %d, %d, %s, %s, %s, %s, %d, %s, %d, %s)""",
-                    (user_id, car_id, project_id, startDate, endDate, year, week_id,
-                     extra1, extra2, extra3, location, next_group_id, hinweis, 0, project_name)
                 )
 
         db.commit()
@@ -704,10 +573,12 @@ def assign_group_bulk():
     except pymssql.Error as e:
         db.rollback()
         print(f"SQL error: {e}")
-        return jsonify({"error": "Ein Fehler ist aufgetreten beim Zuweisen der Gruppen."}), 500
+        return (
+            jsonify({"error": "Ein Fehler ist aufgetreten beim Zuweisen der Gruppen."}),
+            500,
+        )
     finally:
         db.close()
-
 
 
 @app.route("/submit_m_add", methods=["POST"])
@@ -731,7 +602,7 @@ def create_new_user():
             return "Bereich darf nicht leer sein."
 
         cur.execute(
-            "INSERT INTO users (user_id, first_name, last_name, work_field) VALUES (%d, %s, %s, %s)",
+            "INSERT INTO users (user_id, first_name, last_name, work_field) VALUES (%s, %s, %s, %s)",
             (personal_nr, vorname, nachname, bereich),
         )
         db.commit()
@@ -754,7 +625,7 @@ def create_new_customer():
     # Perform database operation to create a new customer with the provided inputs
     try:
         cur.execute(
-            "INSERT INTO customers (customer_id, customer_name) VALUES (%d, %s)",
+            "INSERT INTO customers (customer_id, customer_name) VALUES (%s, %s)",
             (customer_id, customer_name),
         )
         db.commit()
@@ -778,7 +649,7 @@ def create_new_project():
     # Perform database operation to create a new project with the provided inputs
     try:
         cur.execute(
-            "INSERT INTO projects (project_id, project_name, customer_id) VALUES (%d, %s, %d)",
+            "INSERT INTO projects (project_id, project_name, customer_id) VALUES (%s, %s, %s)",
             (project_id, project_name, customer_id),
         )
         db.commit()
@@ -808,7 +679,7 @@ def create_new_car():
         next_car_id = max_car_id + 1
 
         cur.execute(
-            "INSERT INTO cars (car_id, car_name) VALUES (%d, %s)",
+            "INSERT INTO cars (car_id, car_name) VALUES (%s, %s)",
             (next_car_id, car_name),
         )
         db.commit()
@@ -820,7 +691,7 @@ def create_new_car():
     return "Auto erfolgreich hinzugefügt."
 
 
-@app.route("/submit_e_add", methods=["POST"])
+@app.route("/submit_extra_add", methods=["POST"])
 def create_new_extra():
     id = request.form.get("extra_id")
     name = request.form.get("extra_name")
@@ -847,7 +718,7 @@ def delete_user():
     cur = db.cursor()
 
     try:
-        cur.execute("DELETE FROM users WHERE user_id=%d", (personal_nr,))
+        cur.execute("DELETE FROM users WHERE user_id=%s", (personal_nr,))
         db.commit()
     except pymssql.Error as e:
         print(f"SQL error: {e}")
@@ -865,7 +736,7 @@ def delete_customer():
     cur = db.cursor()
 
     try:
-        cur.execute("DELETE FROM customers WHERE customer_id=%d", (customer_id,))
+        cur.execute("DELETE FROM customers WHERE customer_id=%s", (customer_id,))
         db.commit()
     except pymssql.Error as e:
         print(f"SQL error: {e}")
@@ -883,7 +754,7 @@ def delete_car():
     cur = db.cursor()
 
     try:
-        cur.execute("DELETE FROM cars WHERE car_id=%d", (car_id,))
+        cur.execute("DELETE FROM cars WHERE car_id=%s", (car_id,))
         db.commit()
     except pymssql.Error as e:
         print(f"SQL error: {e}")
@@ -901,7 +772,7 @@ def delete_project():
     cur = db.cursor()
 
     try:
-        cur.execute("DELETE FROM projects WHERE project_id=%d", (project_id,))
+        cur.execute("DELETE FROM projects WHERE project_id=%s", (project_id,))
         db.commit()
     except pymssql.Error as e:
         print(f"SQL error: {e}")
@@ -938,7 +809,7 @@ def delete_assignment():
 
     try:
         cur.execute(
-            "DELETE FROM assignment_table WHERE assignment_id=%d", (assignment_id,)
+            "DELETE FROM assignment_table WHERE assignment_id=%s", (assignment_id,)
         )
         db.commit()
         result = {"status": "success"}
@@ -952,9 +823,9 @@ def delete_assignment():
 
 @app.route("/belegungsplan")
 def belegungsplan():
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
-    
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+
     db = get_db()
     cur = db.cursor()
     form = LoginForm()
@@ -1027,9 +898,17 @@ def reserve_meeting():
             print("Next Meeting ID:", next_meeting_id)
 
             for participant in participants_list:
-                print(participant, date, start_time, end_time, room, services, next_meeting_id)
+                print(
+                    participant,
+                    date,
+                    start_time,
+                    end_time,
+                    room,
+                    services,
+                    next_meeting_id,
+                )
                 cur.execute(
-                    "INSERT INTO meetings (user_id, date, startTime, endTime, room, service, m_group) VALUES (%d, %s, %s, %s, %s, %s, %d)",
+                    "INSERT INTO meetings (user_id, date, startTime, endTime, room, service, m_group) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                     (
                         participant,
                         date,
@@ -1037,17 +916,20 @@ def reserve_meeting():
                         end_time,
                         room,
                         services,
-                        next_meeting_id
-                    )
+                        next_meeting_id,
+                    ),
                 )
 
             db.commit()
             print("Meeting erfolgreich erstellt.")
-            return jsonify({"status": "success","message": "Meeting reserved successfully"})
+            return jsonify(
+                {"status": "success", "message": "Meeting reserved successfully"}
+            )
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
     finally:
         db.close()
+
 
 # Get assignment details
 @app.route("/get_assignment_details/<int:assignment_id>")
@@ -1055,24 +937,59 @@ def get_assignment_details(assignment_id):
     db = get_db()
     cur = db.cursor()
     try:
-        cur.execute("""
-            SELECT a.startDate, a.endDate, a.hinweis, a.user_id
-            FROM assignment_table a
-            WHERE a.assignment_id = %s OR a.group_id = (
-                SELECT group_id FROM assignment_table WHERE assignment_id = %s
+        # First get the group_id of this assignment
+        cur.execute(
+            """
+            SELECT group_id 
+            FROM assignment_table 
+            WHERE assignment_id = %s
+            """,
+            (assignment_id,),
+        )
+        result = cur.fetchone()
+        if not result:
+            return jsonify({"error": "Assignment not found"}), 404
+
+        group_id = result[0]
+
+        # Get assignment details based on whether it's a group assignment
+        if group_id > 0:
+            # For group assignments, get all employees in the group
+            cur.execute(
+                """
+                SELECT a.startDate, a.endDate, a.hinweis, a.user_id, a.group_id
+                FROM assignment_table a
+                WHERE a.group_id = %s
+                """,
+                (group_id,),
             )
-        """, (assignment_id, assignment_id))
+        else:
+            # For standalone assignments, get only this specific assignment
+            cur.execute(
+                """
+                SELECT a.startDate, a.endDate, a.hinweis, a.user_id, a.group_id
+                FROM assignment_table a
+                WHERE a.assignment_id = %s
+                """,
+                (assignment_id,),
+            )
+
         assignments = cur.fetchall()
-        
+
         if not assignments:
             return jsonify({"error": "Assignment not found"}), 404
-        
-        return jsonify({
-            "start_date": assignments[0][0].strftime('%Y-%m-%d'),
-            "end_date": assignments[0][1].strftime('%Y-%m-%d'),
-            "hinweis": assignments[0][2],
-            "employees": [a[3] for a in assignments]
-        })
+
+        return jsonify(
+            {
+                "start_date": assignments[0][0],
+                "end_date": assignments[0][1],
+                "hinweis": assignments[0][2] if assignments[0][2] else "",
+                "employees": [a[3] for a in assignments],
+                "group_id": assignments[0][4],
+                "is_group": group_id > 0,
+            }
+        )
+
     except Exception as e:
         print(f"Error fetching assignment details: {e}")
         return jsonify({"error": "Internal server error"}), 500
@@ -1086,62 +1003,166 @@ def edit_assignment():
     assignment_id = request.form.get("assignment_id")
     new_start_date = request.form.get("start_date")
     new_end_date = request.form.get("end_date")
-    new_hinweis = request.form.get("hinweis")
+    new_hinweis = request.form.get("hinweis", "")
     new_employees = request.form.getlist("employees[]")
 
     db = get_db()
     cur = db.cursor()
 
     try:
-        # Check for overlaps
-        overlap_query = """
-        SELECT user_id FROM assignment_table 
-        WHERE user_id IN %s 
-        AND ((startDate <= %s AND endDate >= %s) 
-        OR (startDate <= %s AND endDate >= %s))
-        AND assignment_id != %s
-        AND group_id != (SELECT group_id FROM assignment_table WHERE assignment_id = %s)
-        """
-        cur.execute(overlap_query, (tuple(new_employees), new_end_date, new_start_date, new_start_date, new_end_date, assignment_id, assignment_id))
+        # Get the original assignment details
+        cur.execute(
+            """
+            SELECT group_id, project_id, car_id, extra1, extra2, extra3, 
+                   ort, abwesend, project_name
+            FROM assignment_table 
+            WHERE assignment_id = %s
+        """,
+            (assignment_id,),
+        )
+        orig_assignment = cur.fetchone()
+
+        if not orig_assignment:
+            return jsonify({"status": "error", "message": "Assignment not found"}), 404
+
+        group_id = orig_assignment[0]
+
+        # Modified overlap check that excludes current group/assignment
+        if group_id > 0:
+            # For group assignments, exclude the current group
+            placeholders = ",".join(["%s"] * len(new_employees))
+            overlap_query = f"""
+                SELECT DISTINCT user_id 
+                FROM assignment_table 
+                WHERE user_id IN ({placeholders})
+                AND ((startDate <= %s AND endDate >= %s) 
+                    OR (startDate <= %s AND endDate >= %s))
+                AND group_id != %s
+            """
+            # Create params list with employee IDs first, then other parameters
+            params = new_employees + [
+                new_end_date,
+                new_start_date,
+                new_start_date,
+                new_end_date,
+                group_id,
+            ]
+        else:
+            # For single assignments, exclude the current assignment
+            placeholders = ",".join(["%s"] * len(new_employees))
+            overlap_query = f"""
+                SELECT DISTINCT user_id 
+                FROM assignment_table 
+                WHERE user_id IN ({placeholders})
+                AND ((startDate <= %s AND endDate >= %s) 
+                    OR (startDate <= %s AND endDate >= %s))
+                AND assignment_id != %s
+            """
+            params = new_employees + [
+                new_end_date,
+                new_start_date,
+                new_start_date,
+                new_end_date,
+                assignment_id,
+            ]
+
+        cur.execute(overlap_query, params)
         overlaps = cur.fetchall()
 
         if overlaps:
-            return jsonify({"status": "error", "message": "Overlap detected for employees: " + ", ".join([str(o[0]) for o in overlaps])})
-
-        # Get the group_id
-        cur.execute("SELECT group_id FROM assignment_table WHERE assignment_id = %s", (assignment_id,))
-        group_id = cur.fetchone()[0]
-
-        # Update all assignments in the group
-        update_query = """
-        UPDATE assignment_table 
-        SET startDate = %s, endDate = %s, hinweis = %s
-        WHERE group_id = %s
-        """
-        cur.execute(update_query, (new_start_date, new_end_date, new_hinweis, group_id))
-
-        # Delete old employee assignments not in the new list
-        cur.execute("DELETE FROM assignment_table WHERE group_id = %s AND user_id NOT IN %s", (group_id, tuple(new_employees)))
-
-        # Insert new employee assignments
-        for employee in new_employees:
-            cur.execute("""
-                INSERT INTO assignment_table (user_id, startDate, endDate, hinweis, group_id)
-                SELECT %s, %s, %s, %s, %s
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM assignment_table WHERE group_id = %s AND user_id = %s
+            overlapping_users = []
+            # Get names of overlapping users for better error message
+            for user_id in [o[0] for o in overlaps]:
+                cur.execute(
+                    """
+                    SELECT first_name, last_name 
+                    FROM users 
+                    WHERE user_id = %s
+                """,
+                    (user_id,),
                 )
-            """, (employee, new_start_date, new_end_date, new_hinweis, group_id, group_id, employee))
+                user = cur.fetchone()
+                if user:
+                    overlapping_users.append(f"{user[0]} {user[1]} ({user_id})")
+
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "Überschneidung gefunden für Mitarbeiter: "
+                    + ", ".join(overlapping_users),
+                }
+            )
+
+        # Rest of your existing update logic...
+        if group_id > 0:
+            # Handle group assignment update
+            cur.execute("DELETE FROM assignment_table WHERE group_id = %s", (group_id,))
+
+            # Insert new assignments for each employee
+            for employee_id in new_employees:
+                cur.execute(
+                    """
+                    INSERT INTO assignment_table 
+                    (user_id, car_id, project_id, startDate, endDate, year, week_id,
+                    extra1, extra2, extra3, ort, group_id, hinweis, abwesend, project_name)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """,
+                    (
+                        employee_id,
+                        orig_assignment[2],
+                        orig_assignment[1],
+                        new_start_date,
+                        new_end_date,
+                        datetime.strptime(new_start_date, "%Y-%m-%d").year,
+                        getNumberOfWeek(datetime.strptime(new_start_date, "%Y-%m-%d")),
+                        orig_assignment[3],
+                        orig_assignment[4],
+                        orig_assignment[5],
+                        orig_assignment[6],
+                        group_id,
+                        new_hinweis,
+                        orig_assignment[7],
+                        orig_assignment[8],
+                    ),
+                )
+        else:
+            # Handle single assignment update
+            cur.execute(
+                """
+                UPDATE assignment_table 
+                SET startDate = %s, endDate = %s, hinweis = %s, 
+                    year = %s, week_id = %s
+                WHERE assignment_id = %s
+            """,
+                (
+                    new_start_date,
+                    new_end_date,
+                    new_hinweis,
+                    datetime.strptime(new_start_date, "%Y-%m-%d").year,
+                    getNumberOfWeek(datetime.strptime(new_start_date, "%Y-%m-%d")),
+                    assignment_id,
+                ),
+            )
 
         db.commit()
-        return jsonify({"status": "success", "message": "Assignment updated successfully"})
+        return jsonify(
+            {"status": "success", "message": "Assignment updated successfully"}
+        )
 
+    except pymssql.Error as e:
+        db.rollback()
+        print(f"SQL Server error updating assignment: {e}")
+        return jsonify({"status": "error", "message": f"Database error: {str(e)}"})
     except Exception as e:
         db.rollback()
         print(f"Error updating assignment: {e}")
         return jsonify({"status": "error", "message": str(e)})
     finally:
         db.close()
+
+
+def getNumberOfWeek(date):
+    return date.isocalendar()[1]
 
 
 @app.route("/delete_meeting", methods=["POST"])
@@ -1152,7 +1173,7 @@ def delete_meeting():
     cur = db.cursor()
 
     try:
-        cur.execute("DELETE FROM meetings WHERE m_group=%d", (m_group,))
+        cur.execute("DELETE FROM meetings WHERE m_group=%s", (m_group,))
         db.commit()
     except pymssql.Error as e:
         print(f"SQL error: {e}")
@@ -1162,11 +1183,131 @@ def delete_meeting():
     return jsonify({"status": "success"})
 
 
+# For the all assignments modal
+@app.route("/get_all_assignments", methods=["GET"])
+def get_all_assignments():
+    db = get_db()
+    cur = db.cursor()
+
+    try:
+        cur.execute(
+            """
+            SELECT 
+                a.assignment_id,
+                a.user_id,
+                u.first_name,
+                u.last_name,
+                a.project_id,
+                a.startDate,
+                a.endDate,
+                a.group_id,
+                p.project_name,
+                a.hinweis
+            FROM assignment_table a
+            LEFT JOIN users u ON a.user_id = u.user_id
+            LEFT JOIN projects p ON a.project_id = p.project_id
+            ORDER BY a.startDate DESC, a.group_id
+            """
+        )
+
+        assignments = cur.fetchall()
+
+        result = []
+        for row in assignments:
+            result.append(
+                {
+                    "assignment_id": row[0],
+                    "user_id": row[1],
+                    "employee_name": f"{row[2]} {row[3]}",
+                    "project_id": row[4],
+                    "project_name": row[8] or "Kein Projekt",
+                    "start_date": row[5],
+                    "end_date": row[6],
+                    "group_id": row[7],
+                    "hinweis": row[9],
+                }
+            )
+
+        return jsonify({"assignments": result})
+
+    except Exception as e:
+        print(f"Error fetching assignments: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+    finally:
+        db.close()
+
+
+@app.route("/delete_assignments_bulk", methods=["POST"])
+def delete_assignments_bulk():
+    assignment_ids = request.json.get("assignment_ids", [])
+
+    if not assignment_ids:
+        return jsonify({"error": "No assignments selected"}), 400
+
+    db = get_db()
+    cur = db.cursor()
+
+    try:
+        # First get all group_ids that need to be deleted completely
+        placeholders = ",".join(["%s"] * len(assignment_ids))
+        cur.execute(
+            f"""
+            SELECT DISTINCT group_id 
+            FROM assignment_table 
+            WHERE assignment_id IN ({placeholders})
+            AND group_id > 0
+            """,
+            assignment_ids,
+        )
+
+        group_ids = [row[0] for row in cur.fetchall()]
+
+        # Delete assignments by group
+        if group_ids:
+            group_placeholders = ",".join(["%s"] * len(group_ids))
+            cur.execute(
+                f"""
+                DELETE FROM assignment_table 
+                WHERE group_id IN ({group_placeholders})
+                """,
+                group_ids,
+            )
+
+        # Delete individual assignments
+        cur.execute(
+            f"""
+            DELETE FROM assignment_table 
+            WHERE assignment_id IN ({placeholders})
+            AND (group_id = 0 OR group_id IS NULL)
+            """,
+            assignment_ids,
+        )
+
+        db.commit()
+        return jsonify(
+            {
+                "status": "success",
+                "message": f"Successfully deleted {len(assignment_ids)} assignments",
+            }
+        )
+
+    except pymssql.Error as e:
+        db.rollback()
+        print(f"SQL Server error deleting assignments: {e}")
+        return jsonify({"error": f"Database error: {str(e)}"}), 500
+    except Exception as e:
+        db.rollback()
+        print(f"Error deleting assignments: {e}")
+        return jsonify({"error": "Error deleting assignments"}), 500
+    finally:
+        db.close()
+
+
 class LoginForm(FlaskForm):
     username = StringField("Username", [validators.DataRequired()])
     password = PasswordField("Password", [validators.DataRequired()])
     submit = SubmitField("Login")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=DEBUG)

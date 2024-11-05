@@ -97,10 +97,12 @@
                     </select>
                     <label>Von-Bis-Datum:</label>
                     <input type="text" id="date-select" name="datefilter" value="" required />
+                    <br>
                     <div>
                       <label for="is_recurring">Wiederkehrende Zuweisung:</label>
                       <input type="checkbox" id="is_recurring" name="is_recurring">
                     </div>
+                    <br>
                     <div id="recurring_options" style="display: none;">
                       <label for="recurrence_interval">Wiederholungsintervall (in Wochen):</label>
                       <input type="number" id="recurrence_interval" name="recurrence_interval" min="1" value="2">
@@ -136,7 +138,7 @@
                       <select name="extra1" id="dd-x">
                         <option value="no" disabled selected>Weiteres..</option>
                         <option value="no">Kein Extra</option>
-                        {% for row in extra_table_data1 %}
+                        {% for row in extra_table_data %}
                           <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                         {% endfor %}
                       </select>
@@ -144,7 +146,7 @@
                       <select name="extra2" id="dd-xx">
                         <option value="no" disabled selected>Weiteres..</option>
                         <option value="no">Kein Extra</option>
-                        {% for row in extra_table_data2 %}
+                        {% for row in extra_table_data %}
                           <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                         {% endfor %}
                       </select>
@@ -152,7 +154,7 @@
                       <select name="extra3" id="dd-xxx">
                         <option value="no" disabled selected>Weiteres..</option>
                         <option value="no">Kein Extra</option>
-                        {% for row in extra_table_data3 %}
+                        {% for row in extra_table_data %}
                           <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                         {% endfor %}
                       </select>
@@ -185,10 +187,12 @@
                     </select>
                     <label>Von-Bis-Datum:</label>
                     <input type="text" id="date-select" name="datefilter-g" value="" required />
+                    <br>
                     <div>
                       <label for="is_recurring_group">Wiederkehrende Zuweisung:</label>
                       <input type="checkbox" id="is_recurring_group" name="is_recurring_group">
                     </div>
+                    <br>
                     <div id="recurring_options_group" style="display: none;">
                       <label for="recurrence_interval_group">Wiederholungsintervall (in Wochen):</label>
                       <input type="number" id="recurrence_interval_group" name="recurrence_interval_group" min="1" value="2">
@@ -222,7 +226,7 @@
                       Zusatz:</label><select name="extra1" id="dd-x-g">
                         <option value="no" disabled selected>Weiteres..</option>
                         <option value="no">Kein Extra</option>
-                        {% for row in extra_table_data4 %}
+                        {% for row in extra_table_data %}
                         <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                         {% endfor %}
                       </select>
@@ -230,7 +234,7 @@
                       <select name="extra2" id="dd-xx-g">
                         <option value="no" disabled selected>Weiteres..</option>
                         <option value="no">Kein Extra</option>
-                        {% for row in extra_table_data5 %}
+                        {% for row in extra_table_data %}
                         <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                         {% endfor %}
                       </select>
@@ -238,7 +242,7 @@
                       <select name="extra3" id="dd-xxx-g">
                         <option value="no" disabled selected>Weiteres..</option>
                         <option value="no">Kein Extra</option>
-                        {% for row in extra_table_data6 %}
+                        {% for row in extra_table_data %}
                         <option value="{{ row[0] }}">{{ row[0] }}: {{ row[1] }}</option>
                         {% endfor %}
                       </select>
@@ -371,8 +375,12 @@
                 </div>
               {% endblock %}
             </div>
+            <br>
+            <button type="button" id="showAllAssignmentsListBtn" class="assignments-utility-button">
+              Alle Zuweisungen Anzeigen
+            </button>
+            <br>
           {% endif %}
-
             <h1>Einsatzplan</h1>
             <div class="legende">
               <table>
@@ -392,11 +400,14 @@
                 </tr>
               </table>
             </div>
-            <button onclick="navigateWeeks(-1)" id="b-week-c">Vorherige Woche</button>
-            <button onclick="navigateWeeks(1)" id="b-week-c">Nächste Woche</button>
-            <button onclick="jumpToToday()" id="b-week-c">HEUTE</button>
-            <input type="number" id="weekInput" min="1" max="53" placeholder="KW">
-            <button onclick="jumpToWeek()">Gehe zu KW</button>
+            
+            <button id="prev-week">Vorherige Woche</button>
+            <button id="next-week">Nächste Woche</button>
+            <button id="today-button">HEUTE</button>
+            <form id="jump-to-week-form">
+              <input type="number" id="week-number-input" min="1" max="52">
+              <button type="submit">Gehe zu KW</button>
+            </form>
 
             <div class="tables-container" style="padding-top: 10px;">
               <p class="week-number" id="w-n-1">KW {{ kw_1 }}</p>
@@ -1224,36 +1235,89 @@
         {% endblock %}
       </main>
 
-      <div id="editAssignmentModal" class="modal">
-        <div class="modal-content">
-          <span class="close">&times;</span>
-          <h2>Edit Assignment</h2>
-          <form id="editAssignmentForm">
-            <input type="hidden" id="editAssignmentId" name="assignment_id">
-            <div>
-              <label for="editStartDate">Start Date:</label>
-              <input type="date" id="editStartDate" name="start_date" required>
-            </div>
-            <div>
-              <label for="editEndDate">End Date:</label>
-              <input type="date" id="editEndDate" name="end_date" required>
-            </div>
-            <div>
-              <label for="editHinweis">Hinweis:</label>
-              <textarea id="editHinweis" name="hinweis"></textarea>
-            </div>
-            <div>
-              <label for="editEmployees">Employees:</label>
-              <select id="editEmployees" name="employees[]" multiple required>
-                {% for row in data %}
-                  <option value="{{ row[0] }}">{{ row[1] }} {{ row[2] }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <button type="submit">Update Assignment</button>
-          </form>
+        <div id="editAssignmentModal" class="modal">
+          <div class="modal-content">
+              <span class="close">&times;</span>
+              <h2>Edit Assignment</h2>
+              <form id="editAssignmentForm">
+                  <input type="hidden" id="editAssignmentId" name="assignment_id">
+                  
+                  <div class="form-group">
+                      <label for="editStartDate">Start Datum:</label>
+                      <input type="date" id="editStartDate" name="start_date" required>
+                  </div>
+      
+                  <div class="form-group">
+                      <label for="editEndDate">End Datum:</label>
+                      <input type="date" id="editEndDate" name="end_date" required>
+                  </div>
+      
+                  <div class="form-group">
+                      <label for="editHinweis">Hinweis:</label>
+                      <textarea id="editHinweis" name="hinweis"></textarea>
+                  </div>
+      
+                  <div class="form-group">
+                    <label>Mitarbeiter:</label>
+                      <div class="employee-checklist">
+                        {% set work_fields = data|groupby('3') %}  {# Group by work_field (index 3) #}
+                        {% for work_field, employees in work_fields %}
+                            <div class="work-field-group">
+                                <div class="work-field-title">{{ work_field }}</div>
+                                {% for employee in employees %}
+                                    <div class="employee-checkbox">
+                                        <input type="checkbox" 
+                                              id="employee_{{ employee[0] }}" 
+                                              name="employees[]" 
+                                              value="{{ employee[0] }}">
+                                        <label for="employee_{{ employee[0] }}">
+                                            {{ employee[1] }} {{ employee[2] }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                      </div>
+                  </div>
+      
+                  <button type="submit">Aktualisieren</button>
+              </form>
+          </div>
         </div>
-      </div>
+        <!-- Assignments List Modal -->
+        <div id="allAssignmentsListModal" class="assignments-modal">
+          <div class="assignments-modal-content">
+              <span class="assignments-close">&times;</span>
+              <h2>Alle Zuweisungen</h2>
+              
+              <div style="margin-bottom: 15px;">
+                  <input type="text" id="assignmentsListSearch" placeholder="Suchen..." 
+                         class="search-input">
+                  <button id="deleteSelectedAssignmentsList" class="assignments-danger-button">
+                      Ausgewählte Löschen
+                  </button>
+              </div>
+      
+              <table class="assignments-table">
+                  <thead>
+                      <tr>
+                          <th>
+                              <input type="checkbox" id="selectAllAssignmentsList">
+                          </th>
+                          <th>Mitarbeiter</th>
+                          <th>Projekt</th>
+                          <th>Start Datum</th>
+                          <th>End Datum</th>
+                          <th>Gruppe</th>
+                      </tr>
+                  </thead>
+                  <tbody id="assignmentsListTableBody">
+                      <!-- Will be filled dynamically -->
+                  </tbody>
+              </table>
+          </div>
+        </div>
+      
 
       <script type="text/javascript" src="{{ url_for('static', filename = 'jquery-3.7.1.js') }}"></script>
       <script type="text/javascript" src="{{ url_for('static', filename = 'jquery-ui.js') }}"></script>
@@ -1263,152 +1327,6 @@
       <script type="text/javascript" src="{{ url_for('static', filename = 'daterangepicker.js') }}"></script>
       <script type="text/javascript" src="{{ url_for('static', filename = 'brython.js') }}"></script>
       <script type="text/javascript" src="{{ url_for('static', filename = 'javascript.js') }}"></script>
-      
-      <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          document
-            .getElementById("login-admin-form")
-            .addEventListener("submit", function (e) {
-              e.preventDefault();
-              var formData = new FormData(this);
-              fetch("/login_admin", {
-                method: "POST",
-                body: formData,
-              })
-                .then((response) => response.json())
-                .then((data) => {
-                  console.log("Login Response:", data); // Log the response to the console
-                  if (data.status === "success") {
-                    console.log("User Role:", data.user_role); // Log the user role to the console
-                    const userRole = data.user_role || "user";
-                    updateWeekURL(userRole);
-                    window.location.href = `/?user_role=${userRole}`;
-                  } else {
-                    alert("Falscher username oder password. Versuche es erneut.");
-                  }
-                })
-                .catch((error) => {
-                  console.error("Error:", error);
-                });
-            });
-        });
-
-        document.getElementById("logout-admin-form").addEventListener("submit", function(event) {
-          event.preventDefault();
-          fetch("/logout_admin", {
-              method: "POST",
-              credentials: "same-origin"  // Include this line for session cookie to be sent
-          })
-          .then(response => {
-              if (response.redirected) {
-                  window.location.href = response.url;  // Redirect to the index page after logout
-              }
-          })
-          .catch(error => {
-              console.error("Error:", error);
-          });
-      });
-
-      document.getElementById("abmelden").addEventListener("submit", function(event) {
-        event.preventDefault();
-        fetch("/logout", {
-            method: "POST",
-            credentials: "same-origin"  // Include this line for session cookie to be sent
-        })
-        .then(response => {
-            if (response.redirected) {
-                window.location.href = response.url;  // Redirect to the index page after logout
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-    });
-        
-        $(document).ready(function () {
-          $('#date-range').daterangepicker({
-            startDate: '2023-01-01',
-            endDate: '2035-12-31',
-            minDate: '2023-01-01',
-            maxDate: '2035-12-31'
-          })
-        })
-
-        function navigateWeeks(offset) {
-          const urlParams = new URLSearchParams(window.location.search);
-          let kw1 = parseInt(urlParams.get('kw_1')) || getCurrentWeek();
-          let kw2 = parseInt(urlParams.get('kw_2')) || (kw1 + 1);
-          const userRole = urlParams.get('user_role') || 'user';
-      
-          kw1 += direction;
-          kw2 += direction;
-      
-          if (kw1 < 1) {
-              kw1 = 52;
-              kw2 = 1;
-          } else if (kw1 > 52) {
-              kw1 = 1;
-              kw2 = 2;
-          }
-        
-          window.location.href = `/?user_role=${userRole}&kw_1=${kw1}&kw_2=${kw2}`;
-        }
-
-        function jumpToToday() {
-          const currentWeek = getCurrentWeek();
-          const urlParams = new URLSearchParams(window.location.search);
-          const userRole = urlParams.get('user_role') || 'user';
-          window.location.href = `/?user_role=${userRole}&kw_1=${currentWeek}&kw_2=${currentWeek + 1}`;
-        }
-      
-        function jumpToWeek() {
-          const weekInput = document.getElementById('weekInput');
-          let targetWeek = parseInt(weekInput.value);
-          const urlParams = new URLSearchParams(window.location.search);
-          const userRole = urlParams.get('user_role') || 'user';
-      
-          if (targetWeek < 1) targetWeek = 1;
-          if (targetWeek > 52) targetWeek = 52;
-      
-          let nextWeek = targetWeek + 1;
-          if (nextWeek > 52) nextWeek = 1;
-      
-          window.location.href = `/?user_role=${userRole}&kw_1=${targetWeek}&kw_2=${nextWeek}`;
-        }
-      
-        function getCurrentWeek() {
-          const now = new Date();
-          const onejan = new Date(now.getFullYear(), 0, 1);
-          return Math.ceil((((now - onejan) / 86400000) + onejan.getDay() + 1) / 7);
-        }
-
-        function updateWeekURL(userRole) {
-          const currentURL = new URL(window.location.href);
-          currentURL.searchParams.set('user_role', userRole);
-          window.history.replaceState({}, document.title, currentURL.href);
-        }
-        
-        function resetWeek() {
-          const userRole = getUrlParameter('user_role') || 'user';
-          window.location.href = `/?user_role=${userRole}`;
-        }
-        
-        function getUrlParameter(name) {
-          const urlParams = new URLSearchParams(window.location.search);
-          return urlParams.get(name);
-        }
-      </script>
-      <script>
-        $(document).ready(function() {
-          $('#is_recurring_group').change(function() {
-            if (this.checked) {
-              $('#recurring_options_group').show();
-            } else {
-              $('#recurring_options_group').hide();
-            }
-          });
-        });
-      </script>
     </body>
   {% endblock %}
 

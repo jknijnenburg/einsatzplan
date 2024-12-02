@@ -21,7 +21,7 @@ import math
 import holidays
 import pymssql
 import os
-from flask_caching import Cache
+# from flask_caching import Cache
 
 
 # debug mode
@@ -36,7 +36,7 @@ print(SQL_SERVER)
 
 # app
 app = Flask(__name__)
-cache = Cache(app, config={"CACHE_TYPE": "simple"})
+# cache = Cache(app, config={"CACHE_TYPE": "simple"})
 
 # secret for flask CSRF
 app.config["SECRET_KEY"] = "your_secret_key"
@@ -119,7 +119,7 @@ def generate_week_dates(start_date):
 
 
 def generate_week_days(start_date):
-    locale.setlocale(locale.LC_TIME, "de_DE")
+    # locale.setlocale(locale.LC_TIME, "de_DE")
     week_days = [start_date + timedelta(days=i) for i in range(7)]
     return [date.strftime("%a") for date in week_days]
 
@@ -200,7 +200,6 @@ def logout():
 
 @app.route("/")
 @app.route("/index")
-@cache.cached(timeout=300)
 def index():
     if not session.get("logged_in"):
         return redirect(url_for("login"))
@@ -265,7 +264,7 @@ def index():
     week_dates2 = [date.strftime("%Y-%m-%d") for date in week_dates2]
 
     # Generate weekday names
-    locale.setlocale(locale.LC_TIME, "de_DE.UTF-8")
+    # locale.setlocale(locale.LC_TIME, "de_DE.UTF-8")
     week_days1 = [(start_date1 + timedelta(days=i)).strftime("%a") for i in range(7)]
     week_days2 = [(start_date2 + timedelta(days=i)).strftime("%a") for i in range(7)]
 
